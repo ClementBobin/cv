@@ -96,7 +96,7 @@ export function GenerateForm() {
     const encodedConfig = encodeUrl(configUrl)
     const baseUrl = window.location.origin + window.location.pathname.replace(/\/generate\/?$/, '')
     
-    let link = `${baseUrl}/?config=${encodedConfig}`
+    let link = `${baseUrl}/view?config=${encodedConfig}`
     
     if (techRegistryUrl.trim()) {
       const encodedTechRegistry = encodeUrl(techRegistryUrl)
@@ -119,7 +119,7 @@ export function GenerateForm() {
       const encodedTech = btoa(encodeURIComponent(techJson))
       
       const baseUrl = window.location.origin + window.location.pathname.replace(/\/generate\/?$/, '')
-      const link = `${baseUrl}/?configData=${encodedConfig}&techData=${encodedTech}`
+      const link = `${baseUrl}/view?configData=${encodedConfig}&techData=${encodedTech}`
       
       setGeneratedLink(link)
       setCopied(false)
