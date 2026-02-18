@@ -4,7 +4,7 @@ An open-source interactive resume template. Clone it, fill in your info, deploy 
 
 Built with React, TypeScript, Tailwind CSS, and Framer Motion.
 
-**[▶ Live Demo](https://clementbouly.github.io/interactive-resume-template/)**
+**[▶ Live Demo](https://clementbobin.github.io/cv/)**
 
 <p align="center">
   <img src="docs/demo.gif" alt="Interactive Resume Template demo" width="480" />
