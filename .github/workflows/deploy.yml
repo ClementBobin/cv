@@ -28,6 +28,10 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+      
+      # Copier index.html en 404.html pour le routage SPA
+      - name: Copy index.html to 404.html for SPA routing
+        run: cp dist/index.html dist/404.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
