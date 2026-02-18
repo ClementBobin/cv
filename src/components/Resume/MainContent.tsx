@@ -1,13 +1,18 @@
 import { useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
+import type { ResumeConfig } from '@/data/types'
 import { ExperienceItem } from './ExperienceItem'
 import { ProjectItem } from './ProjectItem'
 import { EducationItem } from './EducationItem'
 
-export function MainContent() {
+interface MainContentProps {
+  config?: ResumeConfig
+}
+
+export function MainContent({ config = resumeConfig }: MainContentProps) {
   const { resolve, resolveArray } = useTranslation()
-  const { personal, experiences, projects, education, labels } = resumeConfig
+  const { personal, experiences, projects, education, labels } = config
   const [expandedExp, setExpandedExp] = useState<string | null>(null)
 
   const toggleExp = (id: string) => {

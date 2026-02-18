@@ -128,6 +128,78 @@ export interface ResumeLabels {
     switchTheme: LocalizedString
     downloadPdf?: LocalizedString
   }
+  hero?: {
+    badge: LocalizedString
+    title: LocalizedString
+    subtitle: LocalizedString
+    description: LocalizedString
+    getStarted: LocalizedString
+    viewDemo: LocalizedString
+    features: {
+      themes: LocalizedString
+      multilang: LocalizedString
+      privacy: LocalizedString
+      fast: LocalizedString
+      customTech: LocalizedString
+      mobile: LocalizedString
+    }
+    whyChoose: LocalizedString
+    whyDescription: LocalizedString
+    featureCards: {
+      customizable: {
+        title: LocalizedString
+        description: LocalizedString
+      }
+      privacy: {
+        title: LocalizedString
+        description: LocalizedString
+      }
+      devFriendly: {
+        title: LocalizedString
+        description: LocalizedString
+      }
+    }
+    ctaTitle: LocalizedString
+    ctaDescription: LocalizedString
+    ctaButton: LocalizedString
+  }
+  generateLink?: {
+    title: LocalizedString
+    description: LocalizedString
+    configUrlLabel: LocalizedString
+    configUrlRequired: LocalizedString
+    techRegistryLabel: LocalizedString
+    techRegistryOptional: LocalizedString
+    techRegistryNote: LocalizedString
+    generateButton: LocalizedString
+    generatedLinkLabel: LocalizedString
+    copyButton: LocalizedString
+    copiedButton: LocalizedString
+    backToResume: LocalizedString
+    jsonExamples: LocalizedString
+    resumeConfigExample: LocalizedString
+    resumeConfigDescription: LocalizedString
+    techRegistryExample: LocalizedString
+    techRegistryDescription: LocalizedString
+    copyJson: LocalizedString
+    alertConfigRequired: LocalizedString
+    alertInvalidUrl: LocalizedString
+    alertCopyFailed: LocalizedString
+    alertJsonCopied: LocalizedString
+  }
+  notFound?: {
+    title: LocalizedString
+    subtitle: LocalizedString
+    description: LocalizedString
+    goHome: LocalizedString
+    viewResume: LocalizedString
+    lookingFor: LocalizedString
+    generateLink: LocalizedString
+    github: LocalizedString
+    documentation: LocalizedString
+    proTip: LocalizedString
+    proTipText: LocalizedString
+  }
 }
 
 // ===== MAIN CONFIG =====
