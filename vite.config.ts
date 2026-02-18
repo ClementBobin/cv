@@ -5,7 +5,7 @@ import path from 'path'
 import { resumeSeoPlugin } from './vite-plugin-resume-seo'
 
 export default defineConfig({
-  base: '/cv/',
+  base: '/',
   plugins: [react(), tailwindcss(), resumeSeoPlugin()],
   resolve: {
     alias: {

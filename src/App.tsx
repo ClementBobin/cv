@@ -144,7 +144,7 @@ function ResumeRoute() {
 
 export default function App() {
   return (
-    <BrowserRouter basename='/cv'>
+    <BrowserRouter>
       <ThemeProvider>
         <LanguageProvider>
           <Routes>
