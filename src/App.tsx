@@ -142,11 +142,11 @@ function ResumeRoute() {
 
 export default function App() {
   return (
-    <BrowserRouter basename="/cv">
+    <BrowserRouter>
       <ThemeProvider>
         <LanguageProvider>
           <Routes>
-            <Route path="/" element={<ResumeRoute />} />
+            <Route path="/cv" element={<ResumeRoute />} />
             <Route path="/generate" element={<GenerateLink />} />
           </Routes>
         </LanguageProvider>

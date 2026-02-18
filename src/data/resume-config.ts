@@ -1,9 +1,18 @@
 import type { ResumeConfig } from './types'
 
+/**
+ * This is an example configuration file.
+ * Copy this file to `resume-config.ts` and fill in your own information.
+ *
+ * All text fields that support multiple languages use the `LocalizedString` format:
+ * { en: "English text", fr: "Texte français" }
+ *
+ * Add as many languages as you need — just make sure to list them in `languages.available`.
+ */
 export const resumeConfig: ResumeConfig = {
   // ===== PERSONAL INFO =====
   personal: {
-    name: 'Clément BOBIN',
+    name: 'Jane Doe',
     photo: '/images/photo.jpg', // Place your photo in public/images/
     photoBackEmoji: '👩‍💻', // Shown when clicking the photo (3D flip)
     title: {
@@ -19,7 +28,7 @@ export const resumeConfig: ResumeConfig = {
 
   // ===== SEO (used in <head> meta tags) =====
   seo: {
-    title: 'Clément BOBIN — Fullstack Developer',
+    title: 'Jane Doe — Fullstack Developer',
     description: 'Interactive resume of Jane Doe, Fullstack Developer specializing in React and TypeScript.',
   },
 
@@ -35,9 +44,11 @@ export const resumeConfig: ResumeConfig = {
 
   // ===== CONTACT =====
   contact: [
-    { type: 'github', label: 'Clément Bobin', href: 'https://github.com/ClementBobin' },
-    { type: 'linkedin', label: 'Clément Bobin', href: 'https://www.linkedin.com/in/cl%C3%A9ment-bobin-958559293' },
-    { type: 'location', label: 'Dijon, France' },
+    { type: 'github', label: 'janedoe', href: 'https://github.com/janedoe' },
+    { type: 'linkedin', label: 'Jane Doe', href: 'https://linkedin.com/in/janedoe' },
+    { type: 'email', label: 'jane@example.com' },
+    { type: 'phone', label: '+33 6 12 34 56 78' },
+    { type: 'location', label: 'Paris, France' },
   ],
 
   // ===== SKILLS =====
@@ -288,8 +299,27 @@ export const resumeConfig: ResumeConfig = {
   // ===== HOBBIES (optional) =====
   hobbies: [
     {
+      title: { en: 'Photography', fr: 'Photographie' },
+      details: [
+        { en: 'Street photography', fr: 'Photo de rue' },
+        { en: '5 years', fr: '5 ans' },
+      ],
+    },
+    {
+      title: { en: 'Hiking', fr: 'Randonnée' },
+      details: [
+        { en: 'Mountain trails', fr: 'Sentiers de montagne' },
+      ],
+    },
+    {
       title: { en: 'Open Source', fr: 'Open Source' },
-    }
+    },
+    {
+      title: { en: 'Guitar', fr: 'Guitare' },
+      details: [
+        { en: '3 years', fr: '3 ans' },
+      ],
+    },
   ],
 
   // ===== PDF (optional — place your PDF in public/cv/) =====
@@ -302,7 +332,7 @@ export const resumeConfig: ResumeConfig = {
 
   // ===== THEME =====
   theme: {
-    preset: 'slate', // 'minimal' | 'warm' | 'ocean' | 'forest' | 'slate' | 'lilac'
+    preset: 'warm', // 'minimal' | 'warm' | 'ocean' | 'forest' | 'slate' | 'lilac'
     // You can override individual colors:
     // colors: {
     //   primary: '#8B5A2B',
