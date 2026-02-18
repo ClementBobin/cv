@@ -36,7 +36,7 @@ export function GenerateForm() {
   // Load data from URLs to pre-fill form
   const handleLoadFromUrls = async () => {
     if (!loadDataUrl.trim()) {
-      alert('Please provide at least a configuration URL to load')
+      alert('Please provide a configuration URL to load data')
       return
     }
 
@@ -63,7 +63,7 @@ export function GenerateForm() {
       alert('Data loaded successfully! You can now edit the fields below.')
     } catch (error) {
       console.error('Error loading data:', error)
-      alert('Failed to load data from URLs. Please check the URLs and try again.')
+      alert(`Failed to load data: ${error instanceof Error ? error.message : 'Unknown error'}. Please check the URLs and try again.`)
     } finally {
       setLoading(false)
     }
@@ -110,20 +110,11 @@ export function GenerateForm() {
   // Generate link from form data
   const handleGenerateFromForm = () => {
     try {
-      // Convert form data to JSON and upload to a temporary storage
-      // For now, we'll encode the JSON data directly in the URL
+      // Convert form data to JSON and encode directly in the URL
       const configJson = JSON.stringify(formData)
       const techJson = JSON.stringify(techRegistry)
       
-      // Create data URLs
-      const configBlob = new Blob([configJson], { type: 'application/json' })
-      const techBlob = new Blob([techJson], { type: 'application/json' })
-      
-      const configDataUrl = URL.createObjectURL(configBlob)
-      const techDataUrl = URL.createObjectURL(techBlob)
-      
-      // Note: data URLs won't work across sessions. We need to encode the actual data.
-      // Let's use base64 encoding of the JSON data
+      // Use base64 encoding of the JSON data
       const encodedConfig = btoa(encodeURIComponent(configJson))
       const encodedTech = btoa(encodeURIComponent(techJson))
       
@@ -132,13 +123,9 @@ export function GenerateForm() {
       
       setGeneratedLink(link)
       setCopied(false)
-      
-      // Clean up blob URLs
-      URL.revokeObjectURL(configDataUrl)
-      URL.revokeObjectURL(techDataUrl)
     } catch (error) {
       console.error('Error generating link:', error)
-      alert('Failed to generate link. Please check your form data.')
+      alert(`Failed to generate link: ${error instanceof Error ? error.message : 'Unknown error'}. Please check your form data.`)
     }
   }
 
@@ -400,8 +387,9 @@ export function GenerateForm() {
                     try {
                       const parsed = JSON.parse(e.target.value)
                       setFormData(parsed)
-                    } catch {
+                    } catch (error) {
                       // Invalid JSON, don't update
+                      console.error('Invalid JSON in config editor:', error)
                     }
                   }}
                   rows={10}
@@ -421,8 +409,9 @@ export function GenerateForm() {
                     try {
                       const parsed = JSON.parse(e.target.value)
                       setTechRegistry(parsed)
-                    } catch {
+                    } catch (error) {
                       // Invalid JSON, don't update
+                      console.error('Invalid JSON in tech registry editor:', error)
                     }
                   }}
                   rows={8}
