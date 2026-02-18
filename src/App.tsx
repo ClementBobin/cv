@@ -10,7 +10,6 @@ import { loadResumeConfig } from '@/data/configLoader'
 import { presets } from '@/data/presets'
 import type { PresetName } from '@/data/types'
 import type { ResumeConfig } from '@/data/types'
-import defineConfig from '../vite.config'
 
 const Agentation = lazy(() =>
   import('agentation').then((m) => ({ default: m.Agentation }))
