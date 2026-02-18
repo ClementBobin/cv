@@ -1,13 +1,15 @@
 # URL Parameter Feature
 
-This feature allows users to generate shareable links with encoded resume configuration URLs.
+This feature allows users to generate shareable links with encoded resume configuration URLs and optional custom tech registry URLs.
 
 ## Overview
 
-The application now supports loading resume configurations from external URLs using an encoded URL parameter. This enables users to:
+The application now supports loading resume configurations and tech registries from external URLs using encoded URL parameters. This enables users to:
 - Share their resume with a custom configuration without modifying the repository
-- Keep their configuration URL private (base64 encoded)
+- Keep their configuration URLs private (base64 encoded)
 - Host their resume configuration anywhere (GitHub Pages, personal website, etc.)
+- Optionally provide custom technology colors via a tech registry
+- Use the default tech registry if no custom one is provided
 
 ## How It Works
 
@@ -15,32 +17,41 @@ The application now supports loading resume configurations from external URLs us
 
 1. Navigate to the **Generate Link** page by clicking the "Generate Link" button on the resume page, or by visiting `/generate` route
 2. Enter the URL to your resume configuration JSON file (e.g., `https://example.com/my-cv-config.json`)
-3. Click "Generate Link"
-4. Copy the generated link and share it
+3. Optionally enter a URL to your custom tech registry JSON file (e.g., `https://example.com/tech-registry.json`)
+4. Click "Generate Link"
+5. Copy the generated link and share it
 
 The generated link will look like:
 ```
 https://yoursite.com/cv/?config=aHR0cHM6Ly9leGFtcGxlLmNvbS9teS1jdi1jb25maWcuanNvbg==
 ```
 
+Or with a custom tech registry:
+```
+https://yoursite.com/cv/?config=aHR0cHM6Ly9leGFtcGxlLmNvbS9teS1jdi1jb25maWcuanNvbg==&tech-registry=aHR0cHM6Ly9leGFtcGxlLmNvbS90ZWNoLXJlZ2lzdHJ5Lmpzb24=
+```
+
 ### 2. URL Encoding
 
-The configuration URL is encoded using base64 encoding to:
+Both URLs are encoded using base64 encoding to:
 - Provide a level of obfuscation (not security, but privacy)
-- Make the URL parameter more compact
+- Make the URL parameters more compact
 - Avoid special characters in the URL
 
 **Note:** Base64 encoding is NOT encryption. It can be easily decoded. Don't rely on it for security.
 
-### 3. Loading External Configuration
+### 3. Loading External Configuration and Tech Registry
 
-When a user visits a URL with the `config` parameter:
-1. The application decodes the base64 parameter
-2. Fetches the configuration JSON from the decoded URL
-3. Validates the configuration structure
-4. Renders the resume with the external configuration
+When a user visits a URL with parameters:
+1. The application first loads the tech registry (if provided)
+2. Then decodes the base64 config parameter
+3. Fetches the configuration JSON from the decoded URL
+4. Validates the configuration structure
+5. Renders the resume with the external configuration and custom tech colors
 
-If the fetch fails or the configuration is invalid, the application falls back to the default configuration.
+If either fetch fails or is invalid, the application falls back to defaults:
+- Default config if config fetch fails
+- Default tech registry if tech registry fetch fails or is not provided
 
 ## Configuration Requirements
 
@@ -48,6 +59,17 @@ Your external configuration JSON must follow the same structure as `resume-confi
 - Must be valid JSON
 - Must include `personal` and `languages` fields at minimum
 - Should be hosted on a server with proper CORS headers
+
+## Tech Registry Requirements (Optional)
+
+Your custom tech registry JSON must be an object with this structure:
+```json
+{
+  "TechnologyName": { "color": "#HexColor" }
+}
+```
+
+See [TECH_REGISTRY.md](./TECH_REGISTRY.md) for detailed documentation.
 
 Example minimal configuration:
 ```json
