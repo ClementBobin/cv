@@ -118,10 +118,11 @@ export function GenerateForm() {
       const baseUrl = window.location.origin + window.location.pathname.replace(/\/generate\/?$/, '')
       
       // Estimate final URL length
-      const estimatedLength = estimateUrlLength(baseUrl + '/view?configData=&techData=', configJson, techJson)
+      const estimatedLength = estimateUrlLength(baseUrl + '/view', configJson, techJson)
       
-      // Warn if URL might be too long (most browsers support ~2KB in practice, but servers often limit to 8KB)
-      // We'll warn at 6KB to be safe
+      // Warn if URL might be too long
+      // Note: Most servers limit headers to 8KB, but we warn at 6KB for safety
+      // Modern browsers support much larger URLs (Chrome: 2MB, Firefox: 64KB)
       if (estimatedLength > 6000) {
         const proceed = confirm(
           `Warning: The generated link will be approximately ${Math.round(estimatedLength / 1000)}KB, which may be too long for some browsers or servers.\n\n` +

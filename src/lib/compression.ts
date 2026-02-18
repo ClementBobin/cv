@@ -12,8 +12,13 @@ export function compressAndEncode(data: string): string {
     // Compress using gzip
     const compressed = pako.gzip(uint8Array)
     
-    // Convert to base64 - use URL-safe base64
-    let base64 = btoa(String.fromCharCode(...compressed))
+    // Convert to base64 - use URL-safe base64 (handle large arrays safely)
+    let base64 = ''
+    const chunkSize = 8192
+    for (let i = 0; i < compressed.length; i += chunkSize) {
+      const chunk = compressed.slice(i, i + chunkSize)
+      base64 += btoa(String.fromCharCode.apply(null, Array.from(chunk)))
+    }
     
     // Make URL-safe by replacing characters
     base64 = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
