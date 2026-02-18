@@ -28,8 +28,8 @@ Built with React, TypeScript, Tailwind CSS, and Framer Motion.
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/clementbouly/interactive-resume-template.git
-cd interactive-resume-template
+git clone https://github.com/clementbobin/cv.git
+cd cv
 npm install
 ```
 
