@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
+import type { ResumeConfig } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 import { SidebarSection } from './SidebarSection'
 import { ContactItem } from './ContactItem'
@@ -73,9 +74,13 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
   )
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  config?: ResumeConfig
+}
+
+export function Sidebar({ config = resumeConfig }: SidebarProps) {
   const { resolve } = useTranslation()
-  const { personal, contact, skills, hobbies, labels } = resumeConfig
+  const { personal, contact, skills, hobbies, labels } = config
 
   return (
     <div className="md:w-[38%] bg-gradient-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">

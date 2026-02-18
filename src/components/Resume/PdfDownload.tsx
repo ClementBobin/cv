@@ -1,14 +1,19 @@
 import { DownloadIcon } from '@/components/icons'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
+import type { ResumeConfig } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 
-export function PdfDownload() {
+interface PdfDownloadProps {
+  config?: ResumeConfig
+}
+
+export function PdfDownload({ config = resumeConfig }: PdfDownloadProps) {
   const { language, resolve } = useTranslation()
 
-  if (!resumeConfig.pdf) return null
+  if (!config.pdf) return null
 
-  const { path, label } = resumeConfig.pdf
+  const { path, label } = config.pdf
 
   // Resolve path: string = same PDF for all languages, LocalizedString = per-language PDF
   // Hides the button if no PDF exists for the current language
@@ -20,8 +25,8 @@ export function PdfDownload() {
 
   const downloadLabel = label
     ? resolve(label)
-    : resumeConfig.labels.actions.downloadPdf
-      ? resolve(resumeConfig.labels.actions.downloadPdf)
+    : config.labels.actions.downloadPdf
+      ? resolve(config.labels.actions.downloadPdf)
       : 'Download PDF'
 
   return (

@@ -1,10 +1,15 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { LanguageProvider } from '@/lib/i18n'
 import { ThemeProvider, useTheme } from '@/lib/theme'
 import { Resume } from '@/components/Resume'
+import { GenerateLink } from '@/components/GenerateLink'
+import { Hero } from '@/components/Hero'
+import { NotFound } from '@/components/NotFound'
+import { loadResumeConfig } from '@/data/configLoader'
 import { presets } from '@/data/presets'
 import type { PresetName } from '@/data/types'
-import { resumeConfig } from '@/data/resume-config'
+import type { ResumeConfig } from '@/data/types'
 
 const Agentation = lazy(() =>
   import('agentation').then((m) => ({ default: m.Agentation }))
@@ -15,12 +20,12 @@ const Agentation = lazy(() =>
  * JSON-LD structured data and noscript fallback are injected at build time
  * by the vite-plugin-resume-seo plugin.
  */
-function SeoHead() {
+function SeoHead({ config }: { config: ResumeConfig }) {
   useEffect(() => {
-    const { title, description } = resumeConfig.seo
+    const { title, description } = config.seo
     document.title = title
     document.querySelector('meta[name="description"]')?.setAttribute('content', description)
-  }, [])
+  }, [config])
   return null
 }
 
@@ -77,23 +82,87 @@ function DevPresetSelector() {
   )
 }
 
+function LoadingSpinner() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-resume-bg">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-resume-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-resume-text-secondary">Loading resume...</p>
+      </div>
+    </div>
+  )
+}
+
+function ResumeRoute() {
+  const [config, setConfig] = useState<ResumeConfig | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadResumeConfig()
+      .then((loadedConfig) => {
+        setConfig(loadedConfig)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('Failed to load config:', err)
+        setError('Failed to load resume configuration')
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return <LoadingSpinner />
+  }
+
+  if (error || !config) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-resume-bg p-4">
+        <div className="max-w-md text-center">
+          <h1 className="text-2xl font-bold text-resume-text mb-4">Error Loading Resume</h1>
+          <p className="text-resume-text-secondary mb-4">{error || 'Configuration not found'}</p>
+          <Link
+            to="/generate"
+            className="inline-block px-4 py-2 bg-resume-primary text-white rounded hover:bg-resume-primary/80 transition-colors"
+          >
+            Generate New Link
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <SeoHead config={config} />
+      <ThemeVarsInjector>
+        <Resume config={config} />
+      </ThemeVarsInjector>
+    </>
+  )
+}
+
 export default function App() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <SeoHead />
-        <ThemeVarsInjector>
-          <Resume />
-        </ThemeVarsInjector>
-      </LanguageProvider>
-      {import.meta.env.DEV && (
-        <>
-          <DevPresetSelector />
-          <Suspense>
-            <Agentation />
-          </Suspense>
-        </>
-      )}
-    </ThemeProvider>
+    <BrowserRouter basename='/cv'>
+      <ThemeProvider>
+        <LanguageProvider>
+          <Routes>
+            <Route path="/view" element={<ResumeRoute />} />
+            <Route path="/generate" element={<GenerateLink />} />
+            <Route path="/" element={<Hero />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </LanguageProvider>
+        {import.meta.env.DEV && (
+          <>
+            <DevPresetSelector />
+            <Suspense>
+              <Agentation />
+            </Suspense>
+          </>
+        )}
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
