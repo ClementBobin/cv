@@ -23,9 +23,7 @@ export function GenerateForm() {
   
   // Raw JSON text state (for uncontrolled editing)
   const [configJsonText, setConfigJsonText] = useState(JSON.stringify(exampleResumeConfig, null, 2))
-  const [techJsonText, setTechJsonText] = useState(JSON.stringify(exampleTechRegistry, null, 2))
   const [configJsonError, setConfigJsonError] = useState<string>('')
-  const [techJsonError, setTechJsonError] = useState<string>('')
   
   // URL mode state
   const [configUrl, setConfigUrl] = useState('')
@@ -67,8 +65,6 @@ export function GenerateForm() {
         }
         const techData = await techResponse.json() as TechRegistry
         setTechRegistry(techData)
-        setTechJsonText(JSON.stringify(techData, null, 2))
-        setTechJsonError('')
       }
 
       alert('Data loaded successfully! You can now edit the fields below.')
@@ -85,9 +81,7 @@ export function GenerateForm() {
     setFormData(exampleResumeConfig as ResumeConfig)
     setTechRegistry(exampleTechRegistry)
     setConfigJsonText(JSON.stringify(exampleResumeConfig, null, 2))
-    setTechJsonText(JSON.stringify(exampleTechRegistry, null, 2))
     setConfigJsonError('')
-    setTechJsonError('')
     alert('Default template loaded! You can now edit the fields below.')
   }
   
@@ -101,19 +95,6 @@ export function GenerateForm() {
     } catch (error) {
       // Keep the text but show error
       setConfigJsonError(error instanceof Error ? error.message : 'Invalid JSON')
-    }
-  }
-  
-  // Handle tech registry JSON text changes
-  const handleTechJsonChange = (text: string) => {
-    setTechJsonText(text)
-    try {
-      const parsed = JSON.parse(text)
-      setTechRegistry(parsed)
-      setTechJsonError('')
-    } catch (error) {
-      // Keep the text but show error
-      setTechJsonError(error instanceof Error ? error.message : 'Invalid JSON')
     }
   }
 
@@ -153,10 +134,6 @@ export function GenerateForm() {
     // Check for JSON errors before generating
     if (configJsonError) {
       alert('Cannot generate link: Configuration JSON has errors. Please fix the JSON syntax first.')
-      return
-    }
-    if (techJsonError) {
-      alert('Cannot generate link: Tech Registry JSON has errors. Please fix the JSON syntax first.')
       return
     }
     
@@ -317,7 +294,7 @@ export function GenerateForm() {
                   Initialize Form Data
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Load Config URL (Optional)
@@ -327,20 +304,6 @@ export function GenerateForm() {
                       value={loadDataUrl}
                       onChange={(e) => setLoadDataUrl(e.target.value)}
                       placeholder="https://example.com/cv-config.json"
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded
-                               bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm
-                               focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Load Tech Registry URL (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={loadTechUrl}
-                      onChange={(e) => setLoadTechUrl(e.target.value)}
-                      placeholder="https://example.com/tech-registry.json"
                       className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded
                                bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm
                                focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -395,25 +358,6 @@ export function GenerateForm() {
                 {configJsonError && (
                   <div className="text-xs text-red-600 dark:text-red-400 mt-1">
                     ⚠️ JSON Error: {configJsonError}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  Tech Registry JSON
-                </h3>
-                <textarea
-                  value={techJsonText}
-                  onChange={(e) => handleTechJsonChange(e.target.value)}
-                  rows={8}
-                  className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded
-                           bg-slate-900 text-slate-100 font-mono text-xs
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {techJsonError && (
-                  <div className="text-xs text-red-600 dark:text-red-400 mt-1">
-                    ⚠️ JSON Error: {techJsonError}
                   </div>
                 )}
               </div>
