@@ -26,17 +26,27 @@ jobs:
           cache: npm
 
       - run: npm ci
+      
       - name: Set base path
         id: base
         run: |
           REPO="${{ github.event.repository.name }}"
-          OWNER="${{ github.repository_owner }}"
           echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
+          echo "Base path set to: /${REPO}/"
 
       - name: Build
         run: npm run build
         env:
           VITE_BASE_PATH: ${{ steps.base.outputs.path }}
+
+      - name: Debug - List build output
+        run: |
+          echo "Files in dist:"
+          ls -la dist/
+          echo "Files in dist/assets:"
+          ls -la dist/assets/
+          echo "Content of index.html:"
+          cat dist/index.html | grep -A 10 "<script"
 
       - uses: actions/upload-pages-artifact@v3
         with:
