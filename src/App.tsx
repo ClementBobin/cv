@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { LanguageProvider } from '@/lib/i18n'
 import { ThemeProvider, useTheme } from '@/lib/theme'
 import { Resume } from '@/components/Resume'
-import { GenerateLink } from '@/components/GenerateLink'
+import { GenerateForm } from '@/components/GenerateForm'
 import { Hero } from '@/components/Hero'
 import { NotFound } from '@/components/NotFound'
 import { loadResumeConfig } from '@/data/configLoader'
@@ -149,7 +149,7 @@ export default function App() {
         <LanguageProvider>
           <Routes>
             <Route path="/view" element={<ResumeRoute />} />
-            <Route path="/generate" element={<GenerateLink />} />
+            <Route path="/generate" element={<GenerateForm />} />
             <Route path="/" element={<Hero />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
