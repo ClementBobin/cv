@@ -1,8 +1,13 @@
 import { useState } from 'react'
 import { encodeUrl } from '@/lib/urlEncoder'
 import { exampleResumeConfig, exampleTechRegistry } from '@/data/exampleConfigs'
+import { useTranslation } from '@/lib/i18n'
+import { resumeConfig } from '@/data/resume-config'
 
 export function GenerateLink() {
+  const { resolve } = useTranslation()
+  const labels = resumeConfig.labels.generateLink!
+  
   const [configUrl, setConfigUrl] = useState('')
   const [techRegistryUrl, setTechRegistryUrl] = useState('')
   const [generatedLink, setGeneratedLink] = useState('')
@@ -12,7 +17,7 @@ export function GenerateLink() {
 
   const handleGenerate = () => {
     if (!configUrl.trim()) {
-      alert('Please enter a valid configuration URL')
+      alert(resolve(labels.alertConfigRequired))
       return
     }
 
@@ -23,7 +28,7 @@ export function GenerateLink() {
         new URL(techRegistryUrl)
       }
     } catch {
-      alert('Please enter valid URL formats')
+      alert(resolve(labels.alertInvalidUrl))
       return
     }
 
@@ -50,17 +55,17 @@ export function GenerateLink() {
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       console.error('Failed to copy:', error)
-      alert('Failed to copy to clipboard')
+      alert(resolve(labels.alertCopyFailed))
     }
   }
 
   const copyJson = async (json: object, type: string) => {
     try {
       await navigator.clipboard.writeText(JSON.stringify(json, null, 2))
-      alert(`${type} example copied to clipboard!`)
+      alert(`${type} ${resolve(labels.alertJsonCopied)}`)
     } catch (error) {
       console.error('Failed to copy:', error)
-      alert('Failed to copy to clipboard')
+      alert(resolve(labels.alertCopyFailed))
     }
   }
 
@@ -70,17 +75,16 @@ export function GenerateLink() {
         {/* Main Generation Card */}
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            Generate Resume Link
+            {resolve(labels.title)}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mb-6">
-            Enter URLs to your resume configuration and optional tech registry JSON files to generate a shareable link.
-            The URLs will be encoded for privacy.
+            {resolve(labels.description)}
           </p>
 
           <div className="space-y-4">
             <div>
               <label htmlFor="config-url" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Configuration URL <span className="text-red-500">*</span>
+                {resolve(labels.configUrlLabel)} <span className="text-red-500">{resolve(labels.configUrlRequired)}</span>
               </label>
               <input
                 id="config-url"
@@ -97,7 +101,7 @@ export function GenerateLink() {
 
             <div>
               <label htmlFor="tech-registry-url" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Tech Registry URL <span className="text-slate-500">(Optional)</span>
+                {resolve(labels.techRegistryLabel)} <span className="text-slate-500">{resolve(labels.techRegistryOptional)}</span>
               </label>
               <input
                 id="tech-registry-url"
@@ -111,7 +115,7 @@ export function GenerateLink() {
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                If not provided, the default tech registry will be used
+                {resolve(labels.techRegistryNote)}
               </p>
             </div>
 
@@ -120,13 +124,13 @@ export function GenerateLink() {
               className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg
                        transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              Generate Link
+              {resolve(labels.generateButton)}
             </button>
 
             {generatedLink && (
               <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Generated Link
+                  {resolve(labels.generatedLinkLabel)}
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -142,7 +146,7 @@ export function GenerateLink() {
                     className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded
                              transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500"
                   >
-                    {copied ? 'Copied!' : 'Copy'}
+                    {copied ? resolve(labels.copiedButton) : resolve(labels.copyButton)}
                   </button>
                 </div>
               </div>
@@ -154,7 +158,7 @@ export function GenerateLink() {
               href="/"
               className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
             >
-              ← Back to Resume
+              {resolve(labels.backToResume)}
             </a>
           </div>
         </div>
@@ -162,7 +166,7 @@ export function GenerateLink() {
         {/* JSON Examples Section */}
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-            JSON Examples
+            {resolve(labels.jsonExamples)}
           </h2>
           
           {/* Resume Config Example */}
@@ -173,10 +177,10 @@ export function GenerateLink() {
             >
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  Resume Configuration Example
+                  {resolve(labels.resumeConfigExample)}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Complete example of a resume config JSON file
+                  {resolve(labels.resumeConfigDescription)}
                 </p>
               </div>
               <svg
@@ -193,11 +197,11 @@ export function GenerateLink() {
               <div className="px-6 pb-6">
                 <div className="flex justify-end mb-2">
                   <button
-                    onClick={() => copyJson(exampleResumeConfig, 'Resume config')}
+                    onClick={() => copyJson(exampleResumeConfig, resolve(labels.resumeConfigExample))}
                     className="px-3 py-1 text-sm bg-slate-600 hover:bg-slate-700 text-white rounded
                              transition-colors duration-200"
                   >
-                    Copy JSON
+                    {resolve(labels.copyJson)}
                   </button>
                 </div>
                 <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-xs">
@@ -215,10 +219,10 @@ export function GenerateLink() {
             >
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                  Tech Registry Example
+                  {resolve(labels.techRegistryExample)}
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Example of a custom tech registry with colors (optional)
+                  {resolve(labels.techRegistryDescription)}
                 </p>
               </div>
               <svg
@@ -235,11 +239,11 @@ export function GenerateLink() {
               <div className="px-6 pb-6">
                 <div className="flex justify-end mb-2">
                   <button
-                    onClick={() => copyJson(exampleTechRegistry, 'Tech registry')}
+                    onClick={() => copyJson(exampleTechRegistry, resolve(labels.techRegistryExample))}
                     className="px-3 py-1 text-sm bg-slate-600 hover:bg-slate-700 text-white rounded
                              transition-colors duration-200"
                   >
-                    Copy JSON
+                    {resolve(labels.copyJson)}
                   </button>
                 </div>
                 <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-xs">

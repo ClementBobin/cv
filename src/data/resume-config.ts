@@ -362,5 +362,89 @@ export const resumeConfig: ResumeConfig = {
       switchTheme: { en: 'Toggle dark mode', fr: 'Changer le thème' },
       downloadPdf: { en: 'Download PDF', fr: 'Télécharger le PDF' },
     },
+    hero: {
+      badge: { en: 'Open Source & Free', fr: 'Open Source & Gratuit' },
+      title: { en: 'Create Your', fr: 'Créez Votre' },
+      subtitle: { en: 'Interactive Resume', fr: 'CV Interactif' },
+      description: { 
+        en: 'Beautiful, modern, and fully customizable resume template. Host your resume configuration anywhere and share it with encoded links.',
+        fr: 'Modèle de CV magnifique, moderne et entièrement personnalisable. Hébergez votre configuration de CV n\'importe où et partagez-la avec des liens encodés.'
+      },
+      getStarted: { en: 'Get Started →', fr: 'Commencer →' },
+      viewDemo: { en: 'View Demo', fr: 'Voir la Démo' },
+      features: {
+        themes: { en: 'Multiple theme presets with dark mode support', fr: 'Plusieurs thèmes prédéfinis avec support du mode sombre' },
+        multilang: { en: 'Multi-language support (i18n ready)', fr: 'Support multi-langues (i18n prêt)' },
+        privacy: { en: 'Privacy-focused with URL encoding', fr: 'Axé sur la confidentialité avec encodage d\'URL' },
+        fast: { en: 'Fast, responsive, and accessible', fr: 'Rapide, réactif et accessible' },
+        customTech: { en: 'Custom tech registry support', fr: 'Support de registre technologique personnalisé' },
+        mobile: { en: 'Mobile-optimized design', fr: 'Design optimisé pour mobile' },
+      },
+      whyChoose: { en: 'Why Choose This Template?', fr: 'Pourquoi Choisir Ce Modèle ?' },
+      whyDescription: { 
+        en: 'Built with modern web technologies and best practices for performance and accessibility',
+        fr: 'Construit avec des technologies web modernes et les meilleures pratiques pour la performance et l\'accessibilité'
+      },
+      featureCards: {
+        customizable: {
+          title: { en: 'Fully Customizable', fr: 'Entièrement Personnalisable' },
+          description: { en: 'Host your resume config anywhere. Update it without touching code.', fr: 'Hébergez votre configuration de CV n\'importe où. Mettez-la à jour sans toucher au code.' },
+        },
+        privacy: {
+          title: { en: 'Privacy First', fr: 'Confidentialité d\'Abord' },
+          description: { en: 'Your config URLs are base64 encoded for privacy protection.', fr: 'Vos URLs de configuration sont encodées en base64 pour la protection de la confidentialité.' },
+        },
+        devFriendly: {
+          title: { en: 'Developer Friendly', fr: 'Convivial pour les Développeurs' },
+          description: { en: 'Built with React, TypeScript, and Tailwind CSS. Easy to extend.', fr: 'Construit avec React, TypeScript et Tailwind CSS. Facile à étendre.' },
+        },
+      },
+      ctaTitle: { en: 'Ready to Create Your Resume?', fr: 'Prêt à Créer Votre CV ?' },
+      ctaDescription: { en: 'Get started in minutes. No signup required.', fr: 'Commencez en quelques minutes. Aucune inscription requise.' },
+      ctaButton: { en: 'Generate Your Link Now', fr: 'Générer Votre Lien Maintenant' },
+    },
+    generateLink: {
+      title: { en: 'Generate Resume Link', fr: 'Générer un Lien de CV' },
+      description: { 
+        en: 'Enter URLs to your resume configuration and optional tech registry JSON files to generate a shareable link. The URLs will be encoded for privacy.',
+        fr: 'Entrez les URLs de votre configuration de CV et des fichiers JSON de registre technologique optionnels pour générer un lien partageable. Les URLs seront encodées pour la confidentialité.'
+      },
+      configUrlLabel: { en: 'Configuration URL', fr: 'URL de Configuration' },
+      configUrlRequired: { en: '*', fr: '*' },
+      techRegistryLabel: { en: 'Tech Registry URL', fr: 'URL du Registre Technologique' },
+      techRegistryOptional: { en: '(Optional)', fr: '(Optionnel)' },
+      techRegistryNote: { en: 'If not provided, the default tech registry will be used', fr: 'Si non fourni, le registre technologique par défaut sera utilisé' },
+      generateButton: { en: 'Generate Link', fr: 'Générer le Lien' },
+      generatedLinkLabel: { en: 'Generated Link', fr: 'Lien Généré' },
+      copyButton: { en: 'Copy', fr: 'Copier' },
+      copiedButton: { en: 'Copied!', fr: 'Copié !' },
+      backToResume: { en: '← Back to Resume', fr: '← Retour au CV' },
+      jsonExamples: { en: 'JSON Examples', fr: 'Exemples JSON' },
+      resumeConfigExample: { en: 'Resume Configuration Example', fr: 'Exemple de Configuration de CV' },
+      resumeConfigDescription: { en: 'Complete example of a resume config JSON file', fr: 'Exemple complet d\'un fichier JSON de configuration de CV' },
+      techRegistryExample: { en: 'Tech Registry Example', fr: 'Exemple de Registre Technologique' },
+      techRegistryDescription: { en: 'Example of a custom tech registry with colors (optional)', fr: 'Exemple de registre technologique personnalisé avec couleurs (optionnel)' },
+      copyJson: { en: 'Copy JSON', fr: 'Copier JSON' },
+      alertConfigRequired: { en: 'Please enter a valid configuration URL', fr: 'Veuillez entrer une URL de configuration valide' },
+      alertInvalidUrl: { en: 'Please enter valid URL formats', fr: 'Veuillez entrer des formats d\'URL valides' },
+      alertCopyFailed: { en: 'Failed to copy to clipboard', fr: 'Échec de la copie dans le presse-papiers' },
+      alertJsonCopied: { en: 'example copied to clipboard!', fr: 'exemple copié dans le presse-papiers !' },
+    },
+    notFound: {
+      title: { en: '404', fr: '404' },
+      subtitle: { en: 'Page Not Found', fr: 'Page Non Trouvée' },
+      description: { en: 'Oops! The page you\'re looking for doesn\'t exist or has been moved.', fr: 'Oups ! La page que vous recherchez n\'existe pas ou a été déplacée.' },
+      goHome: { en: 'Go to Home', fr: 'Aller à l\'Accueil' },
+      viewResume: { en: 'View Resume Demo', fr: 'Voir la Démo du CV' },
+      lookingFor: { en: 'Looking for something specific?', fr: 'Vous cherchez quelque chose de spécifique ?' },
+      generateLink: { en: 'Generate Link', fr: 'Générer un Lien' },
+      github: { en: 'GitHub', fr: 'GitHub' },
+      documentation: { en: 'Documentation', fr: 'Documentation' },
+      proTip: { en: 'Pro Tip:', fr: 'Astuce :' },
+      proTipText: { 
+        en: 'You can create your own custom resume by hosting a JSON config file and generating a shareable link in the Generate page!',
+        fr: 'Vous pouvez créer votre propre CV personnalisé en hébergeant un fichier de configuration JSON et en générant un lien partageable dans la page Générer !'
+      },
+    },
   },
 }

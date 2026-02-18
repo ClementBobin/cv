@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from '@/lib/i18n'
+import { resumeConfig } from '@/data/resume-config'
 
 export function Hero() {
+  const { resolve } = useTranslation()
+  const labels = resumeConfig.labels.hero!
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
       {/* Navigation */}
@@ -13,10 +18,10 @@ export function Hero() {
             <span className="text-xl font-bold text-slate-900 dark:text-white">Resume Builder</span>
           </div>
           <Link
-            to="/cv"
+            to="/view"
             className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
-            View Demo
+            {resolve(labels.viewDemo)}
           </Link>
         </div>
       </nav>
@@ -31,31 +36,30 @@ export function Hero() {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Open Source & Free</span>
+                <span>{resolve(labels.badge)}</span>
               </div>
               
               <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight">
-                Create Your
+                {resolve(labels.title)}
                 <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Interactive Resume
+                  {resolve(labels.subtitle)}
                 </span>
               </h1>
               
               <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
-                Beautiful, modern, and fully customizable resume template. 
-                Host your resume configuration anywhere and share it with encoded links.
+                {resolve(labels.description)}
               </p>
             </div>
 
             {/* Feature List */}
             <div className="space-y-4">
               {[
-                { icon: '🎨', text: 'Multiple theme presets with dark mode support' },
-                { icon: '🌐', text: 'Multi-language support (i18n ready)' },
-                { icon: '🔒', text: 'Privacy-focused with URL encoding' },
-                { icon: '⚡', text: 'Fast, responsive, and accessible' },
-                { icon: '🛠️', text: 'Custom tech registry support' },
-                { icon: '📱', text: 'Mobile-optimized design' },
+                { icon: '🎨', text: resolve(labels.features.themes) },
+                { icon: '🌐', text: resolve(labels.features.multilang) },
+                { icon: '🔒', text: resolve(labels.features.privacy) },
+                { icon: '⚡', text: resolve(labels.features.fast) },
+                { icon: '🛠️', text: resolve(labels.features.customTech) },
+                { icon: '📱', text: resolve(labels.features.mobile) },
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-3">
                   <span className="text-2xl">{feature.icon}</span>
@@ -71,15 +75,15 @@ export function Hero() {
                 className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg 
                          shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                Get Started →
+                {resolve(labels.getStarted)}
               </Link>
               <Link
-                to="/cv"
+                to="/view"
                 className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-lg 
                          shadow-lg hover:shadow-xl border-2 border-slate-200 dark:border-slate-700
                          transform hover:scale-105 transition-all duration-200"
               >
-                View Demo
+                {resolve(labels.viewDemo)}
               </Link>
             </div>
           </div>
@@ -131,28 +135,28 @@ export function Hero() {
       <div className="container mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-            Why Choose This Template?
+            {resolve(labels.whyChoose)}
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Built with modern web technologies and best practices for performance and accessibility
+            {resolve(labels.whyDescription)}
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {[
             {
-              title: 'Fully Customizable',
-              description: 'Host your resume config anywhere. Update it without touching code.',
+              title: resolve(labels.featureCards.customizable.title),
+              description: resolve(labels.featureCards.customizable.description),
               icon: '⚙️',
             },
             {
-              title: 'Privacy First',
-              description: 'Your config URLs are base64 encoded for privacy protection.',
+              title: resolve(labels.featureCards.privacy.title),
+              description: resolve(labels.featureCards.privacy.description),
               icon: '🔐',
             },
             {
-              title: 'Developer Friendly',
-              description: 'Built with React, TypeScript, and Tailwind CSS. Easy to extend.',
+              title: resolve(labels.featureCards.devFriendly.title),
+              description: resolve(labels.featureCards.devFriendly.description),
               icon: '💻',
             },
           ].map((feature, index) => (
@@ -173,17 +177,17 @@ export function Hero() {
       <div className="container mx-auto px-6 py-16">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-12 text-center shadow-2xl">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Ready to Create Your Resume?
+            {resolve(labels.ctaTitle)}
           </h2>
           <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-            Get started in minutes. No signup required.
+            {resolve(labels.ctaDescription)}
           </p>
           <Link
             to="/generate"
             className="inline-block px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg 
                      shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
-            Generate Your Link Now
+            {resolve(labels.ctaButton)}
           </Link>
         </div>
       </div>

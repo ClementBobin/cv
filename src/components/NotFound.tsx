@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from '@/lib/i18n'
+import { resumeConfig } from '@/data/resume-config'
 
 export function NotFound() {
+  const { resolve } = useTranslation()
+  const labels = resumeConfig.labels.notFound!
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center">
@@ -23,15 +28,15 @@ export function NotFound() {
           </div>
           
           <h1 className="text-7xl lg:text-9xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-            404
+            {resolve(labels.title)}
           </h1>
           
           <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white mb-4">
-            Page Not Found
+            {resolve(labels.subtitle)}
           </h2>
           
           <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-            Oops! The page you're looking for doesn't exist or has been moved.
+            {resolve(labels.description)}
           </p>
         </div>
 
@@ -43,29 +48,29 @@ export function NotFound() {
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg 
                        shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
-              Go to Home
+              {resolve(labels.goHome)}
             </Link>
             
             <Link
-              to="/cv"
+              to="/view"
               className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-lg 
                        shadow-lg hover:shadow-xl border-2 border-slate-200 dark:border-slate-700
                        transform hover:scale-105 transition-all duration-200"
             >
-              View Resume Demo
+              {resolve(labels.viewResume)}
             </Link>
           </div>
 
           <div className="pt-8">
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-              Looking for something specific?
+              {resolve(labels.lookingFor)}
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link
                 to="/generate"
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
-                Generate Link
+                {resolve(labels.generateLink)}
               </Link>
               <span className="text-slate-300 dark:text-slate-600">•</span>
               <a
@@ -74,14 +79,14 @@ export function NotFound() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                GitHub
+                {resolve(labels.github)}
               </a>
               <span className="text-slate-300 dark:text-slate-600">•</span>
               <a
                 href="/docs"
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
-                Documentation
+                {resolve(labels.documentation)}
               </a>
             </div>
           </div>
@@ -90,8 +95,7 @@ export function NotFound() {
         {/* Fun fact or tip */}
         <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            💡 <strong>Pro Tip:</strong> You can create your own custom resume by hosting a JSON config file 
-            and generating a shareable link in the Generate page!
+            💡 <strong>{resolve(labels.proTip)}</strong> {resolve(labels.proTipText)}
           </p>
         </div>
       </div>
