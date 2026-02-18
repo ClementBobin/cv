@@ -26,13 +26,18 @@ jobs:
           cache: npm
 
       - run: npm ci
-      
+      - run: npm run lint
       - name: Set base path
         id: base
         run: |
           REPO="${{ github.event.repository.name }}"
-          echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
-          echo "Base path set to: /${REPO}/"
+          OWNER="${{ github.repository_owner }}"
+          # If repo is named <owner>.github.io, deploy to root
+          if [ "$REPO" = "${OWNER}.github.io" ]; then
+            echo "path=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build
         run: npm run build

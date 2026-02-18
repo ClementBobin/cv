@@ -6,22 +6,14 @@ import { resumeSeoPlugin } from './vite-plugin-resume-seo'
 import { assetsDetectPlugin } from './vite-plugin-assets-detect'
 import { resumeValidatePlugin } from './vite-plugin-resume-validate'
 
-export default defineConfig(({ command }) => {
-  // En développement, utiliser '/'
-  // En production, utiliser la variable d'environnement ou '/cv/'
-  const base = command === 'serve'
-    ? '/'
-    : (process.env.VITE_BASE_PATH || '/cv/')
-  
-  console.log(`Building with base path: ${base}`)
-  
-  return {
-    base,
-    plugins: [react(), tailwindcss(), assetsDetectPlugin(), resumeValidatePlugin(), resumeSeoPlugin()],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
+export default defineConfig({
+  // Dynamic base path: set automatically by GitHub Actions deploy workflow.
+  // Falls back to repo name for local development.
+  base: process.env.VITE_BASE_PATH ?? '/cv/',
+  plugins: [react(), tailwindcss(), assetsDetectPlugin(), resumeValidatePlugin(), resumeSeoPlugin()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
     },
-  }
+  },
 })
