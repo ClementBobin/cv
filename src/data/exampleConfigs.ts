@@ -119,6 +119,10 @@ export const exampleResumeConfig = {
       "github": "https://github.com/janedoe/portfolio"
     }
   ],
+  "pdf": {
+    "label": { "en": "Download PDF", "fr": "Télécharger le PDF" },
+    "path": { "en": "/cv/resume-en.pdf", "fr": "/cv/resume-fr.pdf" }
+  },
   "labels": {
     "sections": {
       "contact": { "en": "CONTACT", "fr": "CONTACT" },
@@ -135,7 +139,8 @@ export const exampleResumeConfig = {
     },
     "actions": {
       "clickHint": { "en": "Click on experiences to see details", "fr": "Cliquez sur les expériences" },
-      "switchTheme": { "en": "Toggle theme", "fr": "Changer le thème" }
+      "switchTheme": { "en": "Toggle theme", "fr": "Changer le thème" },
+      "downloadPdf": { "en": "Download PDF", "fr": "Télécharger le PDF" }
     }
   }
 }
