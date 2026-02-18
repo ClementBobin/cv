@@ -31,7 +31,6 @@ export function GenerateForm() {
   
   // Load from URL state
   const [loadDataUrl, setLoadDataUrl] = useState('')
-  const [loadTechUrl, setLoadTechUrl] = useState('')
   const [loading, setLoading] = useState(false)
   
   // Output state
@@ -56,16 +55,6 @@ export function GenerateForm() {
       setFormData(configData)
       setConfigJsonText(JSON.stringify(configData, null, 2))
       setConfigJsonError('')
-
-      // Load tech registry if provided
-      if (loadTechUrl.trim()) {
-        const techResponse = await fetch(loadTechUrl)
-        if (!techResponse.ok) {
-          throw new Error('Failed to fetch tech registry')
-        }
-        const techData = await techResponse.json() as TechRegistry
-        setTechRegistry(techData)
-      }
 
       alert('Data loaded successfully! You can now edit the fields below.')
     } catch (error) {
