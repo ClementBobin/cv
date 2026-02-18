@@ -22,12 +22,6 @@ export function Resume({ config = resumeConfig }: ResumeProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <PdfDownload config={config} />
-          <Link
-            to="/generate"
-            className="px-3 py-1.5 text-sm bg-resume-primary hover:bg-resume-primary-light text-white rounded-md transition-colors duration-200"
-          >
-            Generate Link
-          </Link>
         </div>
         <div className="flex items-center gap-2">
           <LanguageToggle />
