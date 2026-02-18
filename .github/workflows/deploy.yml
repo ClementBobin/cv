@@ -31,12 +31,7 @@ jobs:
         run: |
           REPO="${{ github.event.repository.name }}"
           OWNER="${{ github.repository_owner }}"
-          # If repo is named <owner>.github.io, deploy to root
-          if [ "$REPO" = "${OWNER}.github.io" ]; then
-            echo "path=/" >> "$GITHUB_OUTPUT"
-          else
-            echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
-          fi
+          echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
 
       - name: Build
         run: npm run build
