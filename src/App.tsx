@@ -145,7 +145,7 @@ function ResumeRoute() {
 
 export default function App() {
   return (
-    <BrowserRouter basename={defineConfig().base}>
+    <BrowserRouter basename={defineConfig.base}>
       <ThemeProvider>
         <LanguageProvider>
           <Routes>
