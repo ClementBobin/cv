@@ -105,7 +105,7 @@ export function GenerateLink() {
 
         <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
           <a
-            href={window.location.pathname}
+            href="/"
             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
           >
             ← Back to Resume

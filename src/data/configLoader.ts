@@ -34,8 +34,17 @@ export async function loadResumeConfig(): Promise<ResumeConfig> {
     const externalConfig = await response.json() as ResumeConfig
     
     // Validate that it has the required structure
-    if (!externalConfig.personal || !externalConfig.languages) {
-      throw new Error('Invalid config structure')
+    if (!externalConfig.personal || !externalConfig.languages || !externalConfig.labels) {
+      throw new Error('Invalid config structure: missing required fields')
+    }
+
+    // Validate nested required fields
+    if (!externalConfig.personal.name || !externalConfig.personal.title) {
+      throw new Error('Invalid config structure: missing personal.name or personal.title')
+    }
+
+    if (!externalConfig.languages.default || !externalConfig.languages.available) {
+      throw new Error('Invalid config structure: missing language configuration')
     }
 
     return externalConfig
