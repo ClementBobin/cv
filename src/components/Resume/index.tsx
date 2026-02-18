@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
 import type { ResumeConfig } from '@/data/types'
