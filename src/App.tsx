@@ -4,6 +4,8 @@ import { LanguageProvider } from '@/lib/i18n'
 import { ThemeProvider, useTheme } from '@/lib/theme'
 import { Resume } from '@/components/Resume'
 import { GenerateLink } from '@/components/GenerateLink'
+import { Hero } from '@/components/Hero'
+import { NotFound } from '@/components/NotFound'
 import { loadResumeConfig } from '@/data/configLoader'
 import { presets } from '@/data/presets'
 import type { PresetName } from '@/data/types'
@@ -142,12 +144,14 @@ function ResumeRoute() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/cv">
       <ThemeProvider>
         <LanguageProvider>
           <Routes>
-            <Route path="/cv" element={<ResumeRoute />} />
+            <Route path="/" element={<ResumeRoute />} />
             <Route path="/generate" element={<GenerateLink />} />
+            <Route path="/home" element={<Hero />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </LanguageProvider>
         {import.meta.env.DEV && (

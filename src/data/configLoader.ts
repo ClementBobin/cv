@@ -1,11 +1,16 @@
 import { resumeConfig as defaultConfig } from './resume-config'
 import { decodeUrl } from '@/lib/urlEncoder'
+import { loadTechRegistry } from './techRegistryLoader'
 import type { ResumeConfig } from './types'
 
 /**
  * Loads resume configuration from URL parameter or uses default config
+ * Also loads custom tech registry if provided
  */
 export async function loadResumeConfig(): Promise<ResumeConfig> {
+  // Load tech registry first (if provided)
+  await loadTechRegistry()
+
   // Check if there's a config parameter in the URL
   const params = new URLSearchParams(window.location.search)
   const encodedUrl = params.get('config')
