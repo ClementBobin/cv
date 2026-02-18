@@ -1,5 +1,6 @@
 import { getTechColor as getDefaultTechColor } from './tech-registry'
 import { decodeUrl } from '@/lib/urlEncoder'
+import { decodeAndDecompress } from '@/lib/compression'
 
 // Cache for loaded tech registry
 let cachedTechRegistry: Record<string, { color: string }> | null = null
@@ -16,10 +17,19 @@ export async function loadTechRegistry(): Promise<void> {
   const encodedUrl = params.get('tech-registry')
   const encodedData = params.get('techData')
 
-  // If techData parameter exists, use it directly (form mode)
+  // If techData parameter exists, use it directly (form mode with compression)
   if (encodedData) {
     try {
-      const registryJson = decodeURIComponent(atob(encodedData))
+      // Try to decompress (new format with compression)
+      let registryJson: string
+      try {
+        registryJson = decodeAndDecompress(encodedData)
+      } catch {
+        // Fallback to old uncompressed format for backwards compatibility
+        console.log('Attempting to decode tech data as uncompressed...')
+        registryJson = decodeURIComponent(atob(encodedData))
+      }
+      
       const externalRegistry = JSON.parse(registryJson) as Record<string, { color: string }>
       
       // Validate structure

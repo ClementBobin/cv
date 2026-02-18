@@ -1,5 +1,6 @@
 import { resumeConfig as defaultConfig } from './resume-config'
 import { decodeUrl } from '@/lib/urlEncoder'
+import { decodeAndDecompress } from '@/lib/compression'
 import { loadTechRegistry } from './techRegistryLoader'
 import type { ResumeConfig } from './types'
 
@@ -19,10 +20,19 @@ export async function loadResumeConfig(): Promise<ResumeConfig> {
   const encodedUrl = params.get('config')
   const encodedData = params.get('configData')
 
-  // If configData parameter exists, use it directly (form mode)
+  // If configData parameter exists, use it directly (form mode with compression)
   if (encodedData) {
     try {
-      const configJson = decodeURIComponent(atob(encodedData))
+      // Try to decompress (new format with compression)
+      let configJson: string
+      try {
+        configJson = decodeAndDecompress(encodedData)
+      } catch {
+        // Fallback to old uncompressed format for backwards compatibility
+        console.log('Attempting to decode as uncompressed data...')
+        configJson = decodeURIComponent(atob(encodedData))
+      }
+      
       const externalConfig = JSON.parse(configJson) as ResumeConfig
       
       // Validate structure

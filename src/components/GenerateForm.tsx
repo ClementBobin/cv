@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { encodeUrl } from '@/lib/urlEncoder'
+import { compressAndEncode, estimateUrlLength } from '@/lib/compression'
 import { exampleResumeConfig, exampleTechRegistry } from '@/data/exampleConfigs'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
@@ -110,15 +111,34 @@ export function GenerateForm() {
   // Generate link from form data
   const handleGenerateFromForm = () => {
     try {
-      // Convert form data to JSON and encode directly in the URL
+      // Convert form data to JSON
       const configJson = JSON.stringify(formData)
       const techJson = JSON.stringify(techRegistry)
       
-      // Use base64 encoding of the JSON data
-      const encodedConfig = btoa(encodeURIComponent(configJson))
-      const encodedTech = btoa(encodeURIComponent(techJson))
-      
       const baseUrl = window.location.origin + window.location.pathname.replace(/\/generate\/?$/, '')
+      
+      // Estimate final URL length
+      const estimatedLength = estimateUrlLength(baseUrl + '/view?configData=&techData=', configJson, techJson)
+      
+      // Warn if URL might be too long (most browsers support ~2KB in practice, but servers often limit to 8KB)
+      // We'll warn at 6KB to be safe
+      if (estimatedLength > 6000) {
+        const proceed = confirm(
+          `Warning: The generated link will be approximately ${Math.round(estimatedLength / 1000)}KB, which may be too long for some browsers or servers.\n\n` +
+          `Consider:\n` +
+          `1. Using the "URL Mode" instead and hosting your JSON files\n` +
+          `2. Reducing the amount of data in your CV\n\n` +
+          `Do you want to continue generating the link anyway?`
+        )
+        if (!proceed) {
+          return
+        }
+      }
+      
+      // Compress and encode the JSON data
+      const encodedConfig = compressAndEncode(configJson)
+      const encodedTech = compressAndEncode(techJson)
+      
       const link = `${baseUrl}/view?configData=${encodedConfig}&techData=${encodedTech}`
       
       setGeneratedLink(link)
