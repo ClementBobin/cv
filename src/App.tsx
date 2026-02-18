@@ -144,13 +144,13 @@ function ResumeRoute() {
 
 export default function App() {
   return (
-    <BrowserRouter basename="/cv">
+    <BrowserRouter basename='/cv'>
       <ThemeProvider>
         <LanguageProvider>
           <Routes>
-            <Route path="/" element={<ResumeRoute />} />
+            <Route path="/view" element={<ResumeRoute />} />
             <Route path="/generate" element={<GenerateLink />} />
-            <Route path="/home" element={<Hero />} />
+            <Route path="/" element={<Hero />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </LanguageProvider>
