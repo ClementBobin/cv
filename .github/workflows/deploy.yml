@@ -38,6 +38,15 @@ jobs:
           else
             echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
           fi
+          
+      - name: Debug env
+        run: |
+          echo "VITE_BASE_PATH=${VITE_BASE_PATH}"
+          echo "VITE_RESSOURCES_URL is set? ${VITE_RESSOURCES_URL:+yes}"
+          echo "VITE_RESSOURCES_URL=${VITE_RESSOURCES_URL}"
+        env:
+          VITE_BASE_PATH: ${{ steps.base.outputs.path }}
+          VITE_RESSOURCES_URL: ${{ secrets.VITE_RESSOURCES_URL }}
 
       - name: Build
         run: npm run build
