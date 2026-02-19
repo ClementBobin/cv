@@ -100,9 +100,9 @@ export const resumeConfig: ResumeConfig = {
       title: { en: 'Methodologies', fr: 'Méthodologies' },
       type: 'text',
       items: [
-        { name: { en: 'Agile/Scrum, TDD, Code Review, CI/CD', fr: 'Agile/Scrum, TDD, Code Review, CI/CD' } },
-      ],
-    },
+        { name: { en: 'Agile/Scrum, TDD, Code Review, CI/CD', fr: 'Agile/Scrum, TDD, Code Review, CI/CD' } }
+      ]
+    }
   ],
 
   // ===== PROFESSIONAL EXPERIENCES =====
