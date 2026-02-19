@@ -9,6 +9,7 @@ let cachedRegistry: TechRegistry | null = null
  */
 export async function fetchTechRegistry(): Promise<TechRegistry> {
   if (cachedRegistry) return cachedRegistry
+  console.log('VITE_RESSOURCES_URL', import.meta.env.VITE_RESSOURCES_URL)
 
   const url = import.meta.env.VITE_RESSOURCES_URL
   if (!url) throw new Error('VITE_RESSOURCES_URL is not defined')
