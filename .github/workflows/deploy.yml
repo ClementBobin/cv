@@ -27,12 +27,12 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+
       - name: Set base path
         id: base
         run: |
           REPO="${{ github.event.repository.name }}"
           OWNER="${{ github.repository_owner }}"
-          # If repo is named <owner>.github.io, deploy to root
           if [ "$REPO" = "${OWNER}.github.io" ]; then
             echo "path=/" >> "$GITHUB_OUTPUT"
           else
@@ -43,6 +43,7 @@ jobs:
         run: npm run build
         env:
           VITE_BASE_PATH: ${{ steps.base.outputs.path }}
+          VITE_RESSOURCES_URL: ${{ secrets.RESSOURCES_URL }}
 
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/index.html dist/404.html
