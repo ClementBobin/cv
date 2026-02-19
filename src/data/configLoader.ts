@@ -8,12 +8,12 @@ import type { ResumeConfig } from './types'
  * Custom error for config validation
  * --------------------------------------------- */
 class ResumeConfigError extends Error {
-  constructor(
-    message: string,
-    public readonly source: 'configData' | 'configUrl' | 'unknown'
-  ) {
+  public readonly source: 'configData' | 'configUrl' | 'unknown'
+
+  constructor(message: string, source: 'configData' | 'configUrl' | 'unknown') {
     super(message)
     this.name = 'ResumeConfigError'
+    this.source = source
   }
 }
 
