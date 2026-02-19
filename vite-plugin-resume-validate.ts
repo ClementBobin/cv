@@ -25,13 +25,10 @@ export function resumeValidatePlugin(): Plugin {
         console.warn('[resume-seo] VITE_RESSOURCES_URL is not defined, skipping SEO injection.');
         return;
       }
-      // Dynamically import the resume config (works because Vite resolves TS)
+
       try {
-        // Fetch the JSON config dynamically
         const res = await fetch(`${url}cv-config.json`);
         if (!res.ok) throw new Error(`Failed to fetch cv-config.json: ${res.statusText}`);
-        
-        // Assert the type
         config = (await res.json()) as ResumeConfig
       } catch {
         console.warn('\n⚠️  [resume-validate] Impossible de charger resume-config.ts — vérification ignorée.\n')
@@ -41,7 +38,7 @@ export function resumeValidatePlugin(): Plugin {
       const publicDir = path.resolve(process.cwd(), 'public')
       const warnings: string[] = []
 
-      // --- Check for example data (Jane Doe) ---
+      // --- Check example data ---
       if (
         config.personal.name.toLowerCase().includes('jane') &&
         config.personal.name.toLowerCase().includes('doe')
@@ -55,16 +52,17 @@ export function resumeValidatePlugin(): Plugin {
       // --- Check photo ---
       const imagesDir = path.join(publicDir, 'images')
       if (config.personal.photo) {
-        // Check if explicitly referenced photo exists
-        const photoPath = path.join(publicDir, config.personal.photo)
-        if (!fs.existsSync(photoPath)) {
-          warnings.push(
-            `⚠️  L'image "${config.personal.photo}" n'existe pas dans public/.\n` +
-            '   Vérifiez le nom du fichier ou déposez votre photo/image de profil dans public/images/',
-          )
+        const isUrl = /^https?:\/\//.test(config.personal.photo)
+        if (!isUrl) {
+          const photoPath = path.join(publicDir, config.personal.photo)
+          if (!fs.existsSync(photoPath)) {
+            warnings.push(
+              `⚠️  L'image locale "${config.personal.photo}" n'existe pas dans public/.\n` +
+              '   Vérifiez le nom du fichier ou déposez votre photo/image de profil dans public/images/',
+            )
+          }
         }
       } else {
-        // Check if any image exists for auto-detection
         const hasImage = fs.existsSync(imagesDir) &&
           fs.readdirSync(imagesDir).some((f) => IMAGE_EXTENSIONS.includes(path.extname(f).toLowerCase()))
         if (!hasImage) {
@@ -75,21 +73,22 @@ export function resumeValidatePlugin(): Plugin {
         }
       }
 
-      // --- Check PDF paths if explicitly configured ---
+      // --- Check PDF paths ---
       if (config.pdf) {
-        const pdfPaths: string[] = []
-        if (typeof config.pdf.path === 'string') {
-          pdfPaths.push(config.pdf.path)
-        } else {
-          pdfPaths.push(...Object.values(config.pdf.path))
-        }
+        const pdfPaths: string[] = typeof config.pdf.path === 'string'
+          ? [config.pdf.path]
+          : Object.values(config.pdf.path)
+
         for (const pdfPath of pdfPaths) {
-          const fullPath = path.join(publicDir, pdfPath)
-          if (!fs.existsSync(fullPath)) {
-            warnings.push(
-              `❌ Le fichier PDF "${pdfPath}" n'existe pas dans public/.\n` +
-              '   Vérifiez le chemin ou déposez vos PDFs dans public/cv/fr/ et public/cv/en/',
-            )
+          const isUrl = /^https?:\/\//.test(pdfPath)
+          if (!isUrl) {
+            const fullPath = path.join(publicDir, pdfPath)
+            if (!fs.existsSync(fullPath)) {
+              warnings.push(
+                `❌ Le fichier PDF local "${pdfPath}" n'existe pas dans public/.\n` +
+                '   Vérifiez le chemin ou déposez vos PDFs dans public/cv/fr/ et public/cv/en/',
+              )
+            }
           }
         }
       }
