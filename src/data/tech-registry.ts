@@ -13,7 +13,7 @@ export async function fetchTechRegistry(): Promise<TechRegistry> {
   const url = import.meta.env.VITE_RESSOURCES_URL
   if (!url) throw new Error('VITE_RESSOURCES_URL is not defined')
 
-  const res = await fetch(`${url}tech-registry.jsonc`)
+  const res = await fetch(`${url}tech-registry.json`)
   if (!res.ok) throw new Error(`Failed to fetch tech registry: ${res.statusText}`)
 
   cachedRegistry = (await res.json()) as TechRegistry
