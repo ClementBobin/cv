@@ -104,9 +104,13 @@ export function ExperienceItem({
             <p className="text-xs text-resume-text-secondary/80 mt-1 line-clamp-2">{description}</p>
 
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {techs.map((tech) => (
-                <TechBadge key={tech} tech={tech} />
-              ))}
+            {techs && techs.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {techs.map((tech) => (
+                  <TechBadge key={tech} tech={tech} />
+                ))}
+              </div>
+            )}
             </div>
 
             {subItem && (
