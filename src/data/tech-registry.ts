@@ -24,7 +24,7 @@ export async function fetchTechRegistry(): Promise<TechRegistry> {
  * Resolves the color for a given tech name.
  * Synchronous after the first fetch.
  */
-export function getTechColorSync(name: string): string {
+export function getTechColor(name: string): string {
   if (!cachedRegistry) {
     console.warn(
       "Tech registry not loaded yet. Call `await fetchTechRegistry()` first."
