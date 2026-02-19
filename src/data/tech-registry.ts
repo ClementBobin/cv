@@ -1,5 +1,6 @@
 export type TechEntry = { color: string }
 export type TechRegistry = Record<string, TechEntry>
+export type TechName = keyof TechRegistry
 
 /**
  * Dynamically fetches the tech registry from the URL in .env
