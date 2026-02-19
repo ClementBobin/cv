@@ -127,7 +127,7 @@ function buildJsonLd(
 
 function buildNoscriptHtml(
   config: ResumeConfig,
-  resolveFn: (ls?: Record<string, string>) => string, // ls can now be undefined
+  resolveFn: (ls: Record<string, string>) => string, // ls can now be undefined
   base: string,
 ): string {
   const {
@@ -145,7 +145,7 @@ function buildNoscriptHtml(
   const indent = '      '
 
   // Safe resolve function
-  const resolve = (ls?: Record<string, string> | string): string => {
+  const resolve = (ls: Record<string, string> | string): string => {
     if (!ls) return ''
     if (typeof ls === 'string') return ls
     return ls[config.languages.default] ?? Object.values(ls)[0] ?? ''
