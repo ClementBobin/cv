@@ -43,15 +43,6 @@ jobs:
         run: npm run build
         env:
           VITE_BASE_PATH: ${{ steps.base.outputs.path }}
-          VITE_RESSOURCES_URL: ${{ secrets.RESSOURCES_URL }}
-
-      - name: Debug env
-        run: |
-          echo "VITE_BASE_PATH=${VITE_BASE_PATH}"
-          echo "VITE_RESSOURCES_URL is set? ${VITE_RESSOURCES_URL:+yes}"
-          echo "VITE_RESSOURCES_URL=${VITE_RESSOURCES_URL}"
-        env:
-          VITE_BASE_PATH: ${{ steps.base.outputs.path }}
           VITE_RESSOURCES_URL: ${{ secrets.VITE_RESSOURCES_URL }}
 
       - name: Copy index.html to 404.html for SPA routing
