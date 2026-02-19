@@ -11,8 +11,12 @@ export function cn(...inputs: ClassValue[]) {
  * when the app is deployed under a subpath (e.g. GitHub Pages).
  */
 export function assetUrl(path: string): string {
+  // If the path is already an absolute URL, return as-is
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path
+  }
+
   const base = import.meta.env.BASE_URL
-  // Avoid double slashes: base already ends with "/", path starts with "/"
   if (path.startsWith('/')) {
     return `${base}${path.slice(1)}`
   }
