@@ -4,99 +4,147 @@ import { decodeAndDecompress } from '@/lib/compression'
 import { loadTechRegistry } from './techRegistryLoader'
 import type { ResumeConfig } from './types'
 
-/**
- * Loads resume configuration from URL parameter or uses default config
- * Also loads custom tech registry if provided
- * Supports two modes:
- * 1. config parameter: URL to fetch JSON config
- * 2. configData parameter: base64-encoded JSON config data directly
- */
+/* ---------------------------------------------
+ * Custom error for config validation
+ * --------------------------------------------- */
+class ResumeConfigError extends Error {
+  constructor(
+    message: string,
+    public readonly source: 'configData' | 'configUrl' | 'unknown'
+  ) {
+    super(message)
+    this.name = 'ResumeConfigError'
+  }
+}
+
+/* ---------------------------------------------
+ * Runtime validation
+ * --------------------------------------------- */
+function validateResumeConfig(
+  config: unknown,
+  source: ResumeConfigError['source']
+): ResumeConfig {
+  if (!config || typeof config !== 'object') {
+    throw new ResumeConfigError('Config is not a valid object', source)
+  }
+
+  const c = config as Partial<ResumeConfig>
+
+  if (!c.personal) {
+    throw new ResumeConfigError('Missing "personal" section', source)
+  }
+
+  if (!c.languages) {
+    throw new ResumeConfigError('Missing "languages" section', source)
+  }
+
+  if (!c.labels) {
+    throw new ResumeConfigError('Missing "labels" section', source)
+  }
+
+  if (!c.personal.name) {
+    throw new ResumeConfigError('Missing "personal.name"', source)
+  }
+
+  if (!c.personal.title) {
+    throw new ResumeConfigError('Missing "personal.title"', source)
+  }
+
+  if (!c.languages.default) {
+    throw new ResumeConfigError('Missing "languages.default"', source)
+  }
+
+  if (!Array.isArray(c.languages.available)) {
+    throw new ResumeConfigError(
+      '"languages.available" must be an array',
+      source
+    )
+  }
+
+  return c as ResumeConfig
+}
+
+/* ---------------------------------------------
+ * Main loader
+ * --------------------------------------------- */
 export async function loadResumeConfig(): Promise<ResumeConfig> {
-  // Load tech registry first (if provided)
   await loadTechRegistry()
 
-  // Check URL parameters
   const params = new URLSearchParams(window.location.search)
   const encodedUrl = params.get('config')
   const encodedData = params.get('configData')
 
-  // If configData parameter exists, use it directly (form mode with compression)
+  /* ---------- CONFIG DATA MODE ---------- */
   if (encodedData) {
     try {
-      // Try to decompress (new format with compression)
       let configJson: string
+
       try {
         configJson = decodeAndDecompress(encodedData)
       } catch {
-        // Fallback to old uncompressed format for backwards compatibility
-        console.log('Attempting to decode as uncompressed data...')
+        console.warn('[resume-config] Falling back to uncompressed decoding')
         configJson = decodeURIComponent(atob(encodedData))
       }
-      
-      const externalConfig = JSON.parse(configJson) as ResumeConfig
-      
-      // Validate structure
-      if (!externalConfig.personal || !externalConfig.languages || !externalConfig.labels) {
-        throw new Error('Invalid config structure: missing required fields')
-      }
 
-      if (!externalConfig.personal.name || !externalConfig.personal.title) {
-        throw new Error('Invalid config structure: missing personal.name or personal.title')
-      }
-
-      if (!externalConfig.languages.default || !externalConfig.languages.available) {
-        throw new Error('Invalid config structure: missing language configuration')
-      }
-
-      return externalConfig
+      const parsed = JSON.parse(configJson)
+      return validateResumeConfig(parsed, 'configData')
     } catch (error) {
-      console.error('Error loading config from data:', error)
+      logConfigError(error, 'configData')
       return defaultConfig
     }
   }
 
-  // If config parameter exists, fetch from URL (URL mode)
+  /* ---------- CONFIG URL MODE ---------- */
   if (encodedUrl) {
     try {
-      // Decode the URL
       const configUrl = decodeUrl(encodedUrl)
-      
+
       if (!configUrl) {
-        console.error('Failed to decode config URL')
-        return defaultConfig
+        throw new ResumeConfigError('Decoded config URL is empty', 'configUrl')
       }
 
-      // Fetch the external config
       const response = await fetch(configUrl)
-      
+
       if (!response.ok) {
-        throw new Error(`Failed to fetch config: ${response.status} ${response.statusText}`)
+        throw new ResumeConfigError(
+          `HTTP ${response.status} – ${response.statusText}`,
+          'configUrl'
+        )
       }
 
-      const externalConfig = await response.json() as ResumeConfig
-      
-      // Validate that it has the required structure
-      if (!externalConfig.personal || !externalConfig.languages || !externalConfig.labels) {
-        throw new Error('Invalid config structure: missing required fields')
-      }
-
-      // Validate nested required fields
-      if (!externalConfig.personal.name || !externalConfig.personal.title) {
-        throw new Error('Invalid config structure: missing personal.name or personal.title')
-      }
-
-      if (!externalConfig.languages.default || !externalConfig.languages.available) {
-        throw new Error('Invalid config structure: missing language configuration')
-      }
-
-      return externalConfig
+      const parsed = await response.json()
+      return validateResumeConfig(parsed, 'configUrl')
     } catch (error) {
-      console.error('Error loading external config:', error)
-      // Fall back to default config on error
+      logConfigError(error, 'configUrl')
       return defaultConfig
     }
   }
 
-  // No parameters, use default config
+  /* ---------- DEFAULT ---------- */
   return defaultConfig
+}
+
+/* ---------------------------------------------
+ * Centralized logging
+ * --------------------------------------------- */
+function logConfigError(
+  error: unknown,
+  source: ResumeConfigError['source']
+) {
+  if (error instanceof ResumeConfigError) {
+    console.error(
+      `[resume-config:${source}] ${error.message}`
+    )
+  } else if (error instanceof Error) {
+    console.error(
+      `[resume-config:${source}] Unexpected error:`,
+      error.message,
+      error
+    )
+  } else {
+    console.error(
+      `[resume-config:${source}] Unknown error`,
+      error
+    )
+  }
 }
