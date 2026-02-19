@@ -130,7 +130,16 @@ function buildNoscriptHtml(
   resolve: (ls: Record<string, string>) => string,
   base: string,
 ): string {
-  const { personal, contact, skills, experiences, education, projects, hobbies, pdf } = config
+  const {
+    personal,
+    contact = [],
+    skills = [],
+    experiences = [],
+    education = [],
+    projects = [],
+    hobbies = [],
+    pdf,
+  } = config
   const lines: string[] = []
 
   const indent = '      '
