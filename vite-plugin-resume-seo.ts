@@ -22,10 +22,19 @@ export function resumeSeoPlugin(): Plugin {
       base = resolvedConfig.base
     },
     async buildStart() {
+      const url = import.meta.env.VITE_RESSOURCES_URL;
+      if (!url) {
+        console.warn('[resume-seo] VITE_RESSOURCES_URL is not defined, skipping SEO injection.');
+        return;
+      }
       // Dynamically import the resume config (works because Vite resolves TS)
       try {
-        const mod = await import('./src/data/resume-config')
-        config = mod.resumeConfig
+        // Fetch the JSON config dynamically
+        const res = await fetch(`${url}cv-config.json`);
+        if (!res.ok) throw new Error(`Failed to fetch cv-config.json: ${res.statusText}`);
+        
+        const json = await res.json();
+        config = json.resumeConfig
       } catch (e) {
         console.warn('[resume-seo] Could not load resume-config, skipping SEO injection:', e)
       }
