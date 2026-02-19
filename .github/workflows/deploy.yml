@@ -38,7 +38,13 @@ jobs:
           else
             echo "path=/${REPO}/" >> "$GITHUB_OUTPUT"
           fi
-          
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ steps.base.outputs.path }}
+          VITE_RESSOURCES_URL: ${{ secrets.RESSOURCES_URL }}
+
       - name: Debug env
         run: |
           echo "VITE_BASE_PATH=${VITE_BASE_PATH}"
@@ -47,12 +53,6 @@ jobs:
         env:
           VITE_BASE_PATH: ${{ steps.base.outputs.path }}
           VITE_RESSOURCES_URL: ${{ secrets.VITE_RESSOURCES_URL }}
-
-      - name: Build
-        run: npm run build
-        env:
-          VITE_BASE_PATH: ${{ steps.base.outputs.path }}
-          VITE_RESSOURCES_URL: ${{ secrets.RESSOURCES_URL }}
 
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/index.html dist/404.html
