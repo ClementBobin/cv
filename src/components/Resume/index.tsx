@@ -7,6 +7,7 @@ import { MainContent } from './MainContent'
 import { ThemeToggle } from './ThemeToggle'
 import { LanguageToggle } from './LanguageToggle'
 import { PdfDownload } from './PdfDownload'
+import { fetchTechRegistry } from '@/data/tech-registry'
 
 interface ResumeProps {
   config?: ResumeConfig
@@ -14,6 +15,8 @@ interface ResumeProps {
 
 export function Resume({ config = resumeConfig }: ResumeProps) {
   const { resolve } = useTranslation()
+  // Load registry once (e.g., on app startup)
+  await fetchTechRegistry()
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
