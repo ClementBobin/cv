@@ -33,8 +33,8 @@ export function resumeSeoPlugin(): Plugin {
         const res = await fetch(`${url}cv-config.json`);
         if (!res.ok) throw new Error(`Failed to fetch cv-config.json: ${res.statusText}`);
         
-        const json = await res.json();
-        config = json.resumeConfig
+        // Assert the type
+        config = (await res.json()) as ResumeConfig
       } catch (e) {
         console.warn('[resume-seo] Could not load resume-config, skipping SEO injection:', e)
       }
