@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
@@ -13,12 +14,23 @@ interface ResumeProps {
   config?: ResumeConfig
 }
 
-// Load registry once (e.g., on app startup)
-await fetchTechRegistry()
-
 export function Resume({ config = resumeConfig }: ResumeProps) {
   const { resolve } = useTranslation()
+  const [loaded, setLoaded] = useState(false)
 
+    useEffect(() => {
+    async function loadRegistry() {
+      try {
+        await fetchTechRegistry()
+        setLoaded(true)
+      } catch (err) {
+        console.error('Failed to load tech registry:', err)
+      }
+    }
+    loadRegistry()
+  }, [])
+
+  if (!loaded) return <div>Loading resume…</div>
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
       {/* Top bar: theme toggle + language + pdf */}
