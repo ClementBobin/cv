@@ -20,7 +20,7 @@ export function resumeValidatePlugin(): Plugin {
     async buildStart() {
       let config: ResumeConfig
 
-      const url = import.meta.env.VITE_RESSOURCES_URL;
+      const url = process.env.VITE_RESSOURCES_URL;
       if (!url) {
         console.warn('[resume-seo] VITE_RESSOURCES_URL is not defined, skipping SEO injection.');
         return;
