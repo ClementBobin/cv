@@ -31,8 +31,8 @@ export function resumeValidatePlugin(): Plugin {
         const res = await fetch(`${url}cv-config.json`);
         if (!res.ok) throw new Error(`Failed to fetch cv-config.json: ${res.statusText}`);
         
-        const json = await res.json();
-        config = json.resumeConfig
+        // Assert the type
+        config = (await res.json()) as ResumeConfig
       } catch {
         console.warn('\n⚠️  [resume-validate] Impossible de charger resume-config.ts — vérification ignorée.\n')
         return
