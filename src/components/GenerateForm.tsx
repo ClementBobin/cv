@@ -3,7 +3,7 @@ import { encodeUrl } from '@/lib/urlEncoder'
 import { compressAndEncode, estimateUrlLength } from '@/lib/compression'
 import { exampleResumeConfig, exampleTechRegistry } from '@/data/exampleConfigs'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
+import { appLabels } from '@/data/resume-config'
 import type { ResumeConfig } from '@/data/types'
 
 interface TechRegistry {
@@ -12,7 +12,7 @@ interface TechRegistry {
 
 export function GenerateForm() {
   const { resolve } = useTranslation()
-  const labels = resumeConfig.labels.generateLink!
+  const labels = appLabels.generateLink!
   
   // Mode: 'url' or 'form'
   const [mode, setMode] = useState<'url' | 'form'>('url')

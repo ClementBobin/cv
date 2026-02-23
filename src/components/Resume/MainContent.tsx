@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
-import type { ResumeConfig } from '@/data/types'
+import type { ResumeConfig, LocalizedTrainingArray, TrainingItem } from '@/data/types'
 import { ExperienceItem } from './ExperienceItem'
 import { ProjectItem } from './ProjectItem'
 import { EducationItem } from './EducationItem'
@@ -10,22 +10,54 @@ interface MainContentProps {
   config?: ResumeConfig
 }
 
+/** Resolve a LocalizedTrainingArray to an array of { text, href } objects for a given language. */
+function resolveTrainingItems(
+  lta: LocalizedTrainingArray,
+  language: string,
+  defaultLang: string
+): Array<{ text: string; href?: string }> {
+  const items: TrainingItem[] =
+    lta[language] ?? lta[defaultLang] ?? Object.values(lta)[0] ?? []
+  return items.map((item) =>
+    typeof item === 'string' ? { text: item } : item
+  )
+}
+
 export function MainContent({ config = resumeConfig }: MainContentProps) {
-  const { resolve, resolveArray } = useTranslation()
-  const { personal, experiences, projects, education, labels } = config
+  const { resolve, resolveArray, language } = useTranslation()
+  const { personal, experiences, projects, education, labels, limits } = config
   const [expandedExp, setExpandedExp] = useState<string | null>(null)
+  const [showAllExp, setShowAllExp] = useState(false)
+  const [showAllProjects, setShowAllProjects] = useState(false)
 
   const toggleExp = (id: string) => {
     setExpandedExp(expandedExp === id ? null : id)
   }
 
+  const defaultLang = config.languages.default
+
+  const showMoreLabel = labels.actions.showMore ? resolve(labels.actions.showMore) : 'Show more'
+  const showLessLabel = labels.actions.showLess ? resolve(labels.actions.showLess) : 'Show less'
+
   const experienceLabels = {
     mainTasks: resolve(labels.experience.mainTasks),
     moreTasks: resolve(labels.experience.moreTasks),
+    moreTraining: labels.experience.moreTraining ? resolve(labels.experience.moreTraining) : undefined,
     training: labels.experience.training ? resolve(labels.experience.training) : undefined,
     techEnv: resolve(labels.experience.techEnv),
     technologies: resolve(labels.experience.technologies),
+    showLess: showLessLabel,
   }
+
+  const visibleExperiences =
+    limits?.experiences && !showAllExp
+      ? experiences.slice(0, limits.experiences)
+      : experiences
+
+  const visibleProjects =
+    limits?.projects && !showAllProjects && projects
+      ? projects.slice(0, limits.projects)
+      : projects
 
   return (
     <div className="md:w-[62%] p-8">
@@ -48,12 +80,14 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
           {resolve(labels.sections.experience)}
         </h2>
         <div className="space-y-2">
-          {experiences.map((exp) => (
+          {visibleExperiences.map((exp) => (
             <ExperienceItem
               key={exp.id}
               year={resolve(exp.period)}
               company={resolve(exp.company)}
               type={exp.type ? resolve(exp.type) : undefined}
+              workType={exp.workType}
+              href={exp.href}
               role={resolve(exp.role)}
               description={resolve(exp.description)}
               techs={exp.techs}
@@ -64,7 +98,9 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
                   ? {
                       context: resolve(exp.details.context),
                       tasks: exp.details.tasks ? resolveArray(exp.details.tasks) : undefined,
-                      training: exp.details.training ? resolveArray(exp.details.training) : undefined,
+                      training: exp.details.training
+                        ? resolveTrainingItems(exp.details.training, language, defaultLang)
+                        : undefined,
                       env: resolve(exp.details.env),
                     }
                   : undefined
@@ -79,9 +115,22 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               }
               labels={experienceLabels}
               isHighlighted={exp.isHighlighted}
+              maxTasks={limits?.experienceTasks}
+              maxTraining={limits?.experienceTraining}
+              maxTechs={limits?.experienceTechs}
             />
           ))}
         </div>
+        {limits?.experiences && experiences.length > limits.experiences && (
+          <button
+            onClick={() => setShowAllExp(!showAllExp)}
+            className="mt-3 text-xs text-resume-primary hover:underline"
+          >
+            {showAllExp
+              ? showLessLabel
+              : `+${experiences.length - limits.experiences} ${showMoreLabel}`}
+          </button>
+        )}
       </div>
 
       {/* Projects */}
@@ -91,7 +140,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
             {resolve(labels.sections.projects)}
           </h2>
           <div className="space-y-1">
-            {projects.map((project) => (
+            {(visibleProjects ?? []).map((project) => (
               <ProjectItem
                 key={project.id}
                 title={resolve(project.title)}
@@ -102,6 +151,16 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               />
             ))}
           </div>
+          {limits?.projects && projects.length > limits.projects && (
+            <button
+              onClick={() => setShowAllProjects(!showAllProjects)}
+              className="mt-3 text-xs text-resume-primary hover:underline"
+            >
+              {showAllProjects
+                ? showLessLabel
+                : `+${projects.length - limits.projects} ${showMoreLabel}`}
+            </button>
+          )}
         </div>
       )}
 
@@ -116,9 +175,15 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               key={`${resolve(edu.school)}-${resolve(edu.degree)}-${edu.period ?? i}`}
               school={resolve(edu.school)}
               degree={resolve(edu.degree)}
+              degreeHref={edu.degreeHref}
+              href={edu.href}
               specialty={edu.specialty ? resolve(edu.specialty) : undefined}
               period={edu.period}
               logo={edu.logo}
+              techs={edu.techs}
+              maxTechs={limits?.educationTechs}
+              showMoreLabel={showMoreLabel}
+              showLessLabel={showLessLabel}
             />
           ))}
         </div>

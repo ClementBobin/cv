@@ -1,4 +1,4 @@
-import type { ResumeConfig } from './types'
+import type { AppLabels, ResumeConfig } from './types'
 
 /**
  * This is an example configuration file.
@@ -64,35 +64,30 @@ export const resumeConfig: ResumeConfig = {
     {
       title: { en: 'Frontend', fr: 'Frontend' },
       type: 'badges',
+      // Items can be plain strings OR objects with optional href / tooltip
       items: [
-        { name: 'React' },
-        { name: 'TypeScript' },
-        { name: 'Angular' },
+        'React',                                                  // plain string
+        'TypeScript',
+        { name: 'Angular', href: 'https://angular.io' },         // with link
       ],
     },
     {
       title: { en: 'Backend', fr: 'Backend' },
       type: 'badges',
-      items: [
-        { name: 'Node.js' },
-        { name: 'Python' },
-      ],
+      items: ['Node.js', 'Python'],
     },
     {
       title: { en: 'Database', fr: 'Base de données' },
       type: 'badges',
-      items: [
-        { name: 'PostgreSQL' },
-        { name: 'MongoDB' },
-      ],
+      items: ['PostgreSQL', 'MongoDB'],
     },
     {
       title: { en: 'DevOps', fr: 'DevOps' },
       type: 'badges',
       items: [
-        { name: 'Docker' },
-        { name: 'Kubernetes' },
-        { name: 'AWS' },
+        'Docker',
+        { name: 'Kubernetes', href: 'https://kubernetes.io' },
+        { name: 'AWS', href: 'https://aws.amazon.com', tooltip: 'Amazon Web Services' },
         { name: 'GitHub Actions' },
       ],
     },
@@ -112,12 +107,21 @@ export const resumeConfig: ResumeConfig = {
       company: { en: 'TechCorp', fr: 'TechCorp' },
       role: { en: 'Senior Fullstack Developer', fr: 'Développeuse Fullstack Senior' },
       type: { en: 'Permanent', fr: 'CDI' },
+      workType: 'work',                // 'work' (blue badge) | 'experience' (violet badge)
       period: { en: '2022 - Present', fr: '2022 - Présent' },
       description: {
         en: 'Led the development of a SaaS platform used by 10k+ users. Built microservices architecture and modern React frontend.',
         fr: 'Direction du développement d\'une plateforme SaaS utilisée par 10k+ utilisateurs. Architecture microservices et frontend React moderne.',
       },
-      techs: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS'],
+      // techs: plain strings OR objects with optional href / tooltip
+      techs: [
+        'React',
+        'TypeScript',
+        'Node.js',
+        { name: 'pg', tooltip: 'PostgreSQL' },           // tooltip used as display text + color key
+        { name: 'Docker', href: 'https://docker.com' }, // badge links out on click
+        'AWS',
+      ],
       isHighlighted: true,
       details: {
         context: {
@@ -164,9 +168,11 @@ export const resumeConfig: ResumeConfig = {
     },
     {
       id: 'company-b',
+      href: 'https://webagency.example.com',
       company: { en: 'WebAgency', fr: 'WebAgency' },
       role: { en: 'Frontend Developer', fr: 'Développeuse Frontend' },
       type: { en: 'Permanent', fr: 'CDI' },
+      workType: 'work',
       period: { en: '2019 - 2022', fr: '2019 - 2022' },
       description: {
         en: 'Developed responsive web applications for various clients. Specialized in React and Angular projects.',
@@ -219,6 +225,7 @@ export const resumeConfig: ResumeConfig = {
       company: { en: 'StartupXYZ', fr: 'StartupXYZ' },
       role: { en: 'Fullstack Developer Intern', fr: 'Stagiaire Développeuse Fullstack' },
       type: { en: 'Internship', fr: 'Stage' },
+      workType: 'experience',          // violet badge – non-employment experience
       period: { en: '2018 - 2019', fr: '2018 - 2019' },
       description: {
         en: 'Contributed to the development of an e-commerce platform. Gained experience in fullstack development.',
@@ -265,7 +272,11 @@ export const resumeConfig: ResumeConfig = {
         en: 'A real-time weather dashboard built with React and OpenWeather API.',
         fr: 'Un tableau de bord météo en temps réel construit avec React et l\'API OpenWeather.',
       },
-      techs: ['React', 'TypeScript'],
+      // project techs support the same string / object format
+      techs: [
+        'React',
+        { name: 'TypeScript', href: 'https://typescriptlang.org' },
+      ],
       url: 'https://weather-app.example.com',
       github: 'https://github.com/janedoe/weather-app',
     },
@@ -286,8 +297,16 @@ export const resumeConfig: ResumeConfig = {
     {
       school: { en: 'University of Paris', fr: 'Université de Paris' },
       degree: { en: 'Master in Computer Science', fr: 'Master Informatique' },
+      degreeHref: 'https://example.com/master-cs', // clicking the degree text opens this URL
       specialty: { en: 'Web & Mobile Development', fr: 'Développement Web & Mobile' },
       period: '2017 - 2019',
+      // education techs: same string / object format
+      techs: [
+        'Python',
+        { name: 'Java', href: 'https://java.com' },
+        { name: 'gh-actions', tooltip: 'GitHub Actions' }, // tooltip as color key + display text
+        'Docker',
+      ],
     },
     {
       school: { en: 'University of Paris', fr: 'Université de Paris' },
@@ -340,6 +359,22 @@ export const resumeConfig: ResumeConfig = {
     // },
   },
 
+  // ===== SECTION LIMITS (optional) =====
+  // Control how many items are shown before a "Show more" button appears.
+  // Remove any key (or omit the whole `limits` block) to show all items in that section.
+  // limits: {
+  //   experiences: 3,           // max experiences shown initially
+  //   experienceTasks: 5,        // max tasks shown per experience (in expanded view)
+  //   experienceTraining: 3,     // max training items shown per experience
+  //   experienceTechs: 4,        // max tech badges shown per experience card
+  //   projects: 3,               // max projects shown initially
+  //   educationTechs: 5,         // max tech badges per education entry
+  //   hobbies: 4,                // max hobbies shown initially
+  //   skills: 4,                 // max skill categories shown initially
+  //   skillItems: 5,             // max items per skill category shown initially
+  //   contact: 4,                // max contact items shown initially
+  // },
+
   // ===== UI LABELS =====
   labels: {
     sections: {
@@ -353,6 +388,7 @@ export const resumeConfig: ResumeConfig = {
     experience: {
       mainTasks: { en: 'Main tasks:', fr: 'Tâches principales :' },
       moreTasks: { en: 'more tasks...', fr: 'autres tâches...' },
+      moreTraining: { en: 'more training...', fr: 'autres formations...' },
       training: { en: 'Training:', fr: 'Formations :' },
       techEnv: { en: 'Tech environment:', fr: 'Env. technique :' },
       technologies: { en: 'Technologies', fr: 'Technologies' },
@@ -361,8 +397,17 @@ export const resumeConfig: ResumeConfig = {
       clickHint: { en: 'Click on experiences to see more details', fr: 'Cliquez sur les expériences pour voir plus de détails' },
       switchTheme: { en: 'Toggle dark mode', fr: 'Changer le thème' },
       downloadPdf: { en: 'Download PDF', fr: 'Télécharger le PDF' },
+      showMore: { en: 'Show more', fr: 'Voir plus' },
+      showLess: { en: 'Show less', fr: 'Voir moins' },
     },
-    hero: {
+  },
+}
+
+// ===== APP-LEVEL LABELS (Hero, Generate, NotFound pages) =====
+// These are not part of the CV content and should not be included in resumeConfig.
+
+export const appLabels: AppLabels = {
+  hero: {
       badge: { en: 'Open Source & Free', fr: 'Open Source & Gratuit' },
       title: { en: 'Create Your', fr: 'Créez Votre' },
       subtitle: { en: 'Interactive Resume', fr: 'CV Interactif' },
@@ -402,8 +447,8 @@ export const resumeConfig: ResumeConfig = {
       ctaTitle: { en: 'Ready to Create Your Resume?', fr: 'Prêt à Créer Votre CV ?' },
       ctaDescription: { en: 'Get started in minutes. No signup required.', fr: 'Commencez en quelques minutes. Aucune inscription requise.' },
       ctaButton: { en: 'Generate Your Link Now', fr: 'Générer Votre Lien Maintenant' },
-    },
-    generateLink: {
+  },
+  generateLink: {
       title: { en: 'Generate Resume Link', fr: 'Générer un Lien de CV' },
       description: { 
         en: 'Enter URLs to your resume configuration and optional tech registry JSON files to generate a shareable link. The URLs will be encoded for privacy.',
@@ -429,8 +474,8 @@ export const resumeConfig: ResumeConfig = {
       alertInvalidUrl: { en: 'Please enter valid URL formats', fr: 'Veuillez entrer des formats d\'URL valides' },
       alertCopyFailed: { en: 'Failed to copy to clipboard', fr: 'Échec de la copie dans le presse-papiers' },
       alertJsonCopied: { en: 'example copied to clipboard!', fr: 'exemple copié dans le presse-papiers !' },
-    },
-    notFound: {
+  },
+  notFound: {
       title: { en: '404', fr: '404' },
       subtitle: { en: 'Page Not Found', fr: 'Page Non Trouvée' },
       description: { en: 'Oops! The page you\'re looking for doesn\'t exist or has been moved.', fr: 'Oups ! La page que vous recherchez n\'existe pas ou a été déplacée.' },
@@ -445,6 +490,5 @@ export const resumeConfig: ResumeConfig = {
         en: 'You can create your own custom resume by hosting a JSON config file and generating a shareable link in the Generate page!',
         fr: 'Vous pouvez créer votre propre CV personnalisé en hébergeant un fichier de configuration JSON et en générant un lien partageable dans la page Générer !'
       },
-    },
   },
 }

@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
+import { appLabels } from '@/data/resume-config'
 
 export function Hero() {
   const { resolve } = useTranslation()
-  const labels = resumeConfig.labels.hero!
+  const labels = appLabels.hero!
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">

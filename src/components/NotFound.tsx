@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
+import { appLabels } from '@/data/resume-config'
 
 export function NotFound() {
   const { resolve } = useTranslation()
-  const labels = resumeConfig.labels.notFound!
+  const labels = appLabels.notFound!
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">

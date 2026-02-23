@@ -22,9 +22,11 @@ export function Resume({ config = resumeConfig }: ResumeProps) {
     async function loadRegistry() {
       try {
         await fetchTechRegistry()
-        setLoaded(true)
       } catch (err) {
         console.error('Failed to load tech registry:', err)
+      }
+      finally {
+        setLoaded(true)
       }
     }
     loadRegistry()

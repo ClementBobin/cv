@@ -1,7 +1,10 @@
 import { getTechColor } from '@/data/techRegistryLoader'
+import type { TechEntry } from '@/data/types'
+import { isTechBadgeItem } from '@/data/types'
+import { ExternalLinkIcon } from '../icons'
 
 interface TechBadgeProps {
-  tech: string
+  tech: TechEntry
   /** Override color. If not provided, resolved from tech-registry. */
   color?: string
 }
@@ -58,32 +61,78 @@ function ensureDarkModeReadable(hex: string): string {
 const LUMINANCE_THRESHOLD = 0.4
 
 export function TechBadge({ tech, color: colorOverride }: TechBadgeProps) {
-  const color = colorOverride ?? getTechColor(tech)
+  // Resolve display text, href, and color-lookup key from the TechEntry
+  const isObj = isTechBadgeItem(tech)
+  const displayText = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
+  const colorKey = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
+  const href = isObj ? tech.href : undefined
+
+  const color = colorOverride ?? getTechColor(colorKey)
   const isLight = getLuminance(color) > LUMINANCE_THRESHOLD
   const darkModeColor = ensureDarkModeReadable(color)
 
-  return (
+  const badgeContent = (
     <>
       {/* Light mode */}
-      <span
-        className="px-2 py-1 rounded text-xs font-medium dark:hidden"
-        style={{
-          backgroundColor: `${color}20`,
-          color: isLight ? '#374151' : color,
-        }}
-      >
-        {tech}
-      </span>
+    <span
+      className="inline-flex items-center px-2 py-1 rounded text-xs font-medium dark:hidden"
+      style={{
+        backgroundColor: `${color}20`,
+        color: isLight ? '#374151' : color,
+      }}
+    >
+      {displayText}
+      {href && (
+        <ExternalLinkIcon
+          className="
+            h-3
+            w-0 group-hover:w-3
+            overflow-hidden
+            transition-[width,margin] duration-200
+            ml-0 group-hover:ml-1
+            shrink-0
+          "
+        />
+      )}
+    </span>
       {/* Dark mode */}
       <span
-        className="px-2 py-1 rounded text-xs font-medium hidden dark:inline"
+        className="items-center px-2 py-1 rounded text-xs font-medium hidden dark:inline-flex"
         style={{
           backgroundColor: `${darkModeColor}20`,
           color: darkModeColor,
         }}
       >
-        {tech}
+        {displayText}
+        {href && (
+          <ExternalLinkIcon
+            className="
+              h-3
+              w-0 group-hover:w-3
+              overflow-hidden
+              transition-[width,margin] duration-200
+              ml-0 group-hover:ml-1
+              shrink-0
+            "
+          />
+        )}
       </span>
     </>
   )
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={isObj ? tech.tooltip : undefined}
+        className="group hover:opacity-80 transition-opacity inline-flex"
+      >
+        {badgeContent}
+      </a>
+    )
+  }
+
+  return <span title={isObj ? tech.tooltip : undefined}>{badgeContent}</span>
 }

@@ -185,10 +185,11 @@ function buildNoscriptHtml(
     )
     for (const cat of skills) {
       lines.push(`${indent}    <p style="margin: 0.5rem 0 0.25rem 0; font-weight: 600;">${escapeHtml(resolve(cat.title))}</p>`)
-      const items = cat.items ?? []
+      const items = (cat.items ?? []).map(item => typeof item === 'string' ? { name: item } : item)
       const skillNames = items.map(item => {
-        const name = typeof item.name === 'string' ? item.name : resolve(item.name)
-        if (cat.type === 'languages' && item.level) return `${name} (${resolve(item.level)})`
+        const obj = typeof item === 'string' ? { name: item } : item
+        const name = typeof obj.name === 'string' ? obj.name : resolve(obj.name)
+        if (cat.type === 'languages' && obj.level) return `${name} (${resolve(obj.level)})`
         return name
       })
       if (skillNames.length > 0) lines.push(`${indent}    <p style="margin: 0; color: #555;">${escapeHtml(skillNames.join(' · '))}</p>`)

@@ -49,9 +49,19 @@ export const exampleResumeConfig = {
       "title": { "en": "Frontend", "fr": "Frontend" },
       "type": "badges",
       "items": [
-        { "name": "React" },
-        { "name": "TypeScript" },
-        { "name": "Tailwind CSS" }
+        "React",
+        "TypeScript",
+        { "name": "Tailwind CSS", "href": "https://tailwindcss.com" }
+      ]
+    },
+    {
+      "title": { "en": "DevOps", "fr": "DevOps" },
+      "type": "badges",
+      "items": [
+        "Docker",
+        { "name": "Kubernetes", "href": "https://kubernetes.io" },
+        { "name": "AWS", "href": "https://aws.amazon.com", "tooltip": "Amazon Web Services" },
+        { "name": "GitHub Actions" }
       ]
     },
     {
@@ -60,7 +70,7 @@ export const exampleResumeConfig = {
       "items": [
         { "name": "Node.js" },
         { "name": "Python" },
-        { "name": "PostgreSQL" }
+        { "name": "pg", "tooltip": "PostgreSQL" }
       ]
     }
   ],
@@ -70,12 +80,19 @@ export const exampleResumeConfig = {
       "company": { "en": "Tech Company", "fr": "Tech Company" },
       "role": { "en": "Senior Developer", "fr": "Développeuse Senior" },
       "type": { "en": "Full-time", "fr": "Temps plein" },
+      "workType": "work",
       "period": { "en": "2020 - Present", "fr": "2020 - Présent" },
       "description": {
         "en": "Led development of web applications using modern tech stack",
         "fr": "Direction du développement d'applications web avec stack moderne"
       },
-      "techs": ["React", "Node.js", "PostgreSQL"],
+      "techs": [
+        "React",
+        "Node.js",
+        { "name": "pg", "tooltip": "PostgreSQL", "href": "https://postgresql.org" },
+        { "name": "Docker", "href": "https://docker.com" },
+        { "name": "AWS", "tooltip": "Amazon Web Services" }
+      ],
       "details": {
         "context": {
           "en": "Team of 8 developers in an agile environment",
@@ -93,6 +110,16 @@ export const exampleResumeConfig = {
             "Mentorat de développeurs juniors"
           ]
         },
+        "training": {
+          "en": [
+            { "text": "AWS Solutions Architect certification", "href": "https://aws.amazon.com/certification/" },
+            "Internal Docker workshop"
+          ],
+          "fr": [
+            { "text": "Certification AWS Solutions Architect", "href": "https://aws.amazon.com/certification/" },
+            "Atelier Docker interne"
+          ]
+        },
         "env": {
           "en": "React / TypeScript / Node.js / PostgreSQL / Docker",
           "fr": "React / TypeScript / Node.js / PostgreSQL / Docker"
@@ -104,7 +131,14 @@ export const exampleResumeConfig = {
     {
       "school": { "en": "University of Technology", "fr": "Université de Technologie" },
       "degree": { "en": "Master in Computer Science", "fr": "Master Informatique" },
-      "period": "2015 - 2017"
+      "degreeHref": "https://example.com/master-cs",
+      "period": "2015 - 2017",
+      "techs": [
+        "Python",
+        { "name": "Java", "href": "https://java.com" },
+        { "name": "gh-actions", "tooltip": "GitHub Actions" },
+        "Docker"
+      ]
     }
   ],
   "projects": [
@@ -115,13 +149,28 @@ export const exampleResumeConfig = {
         "en": "Personal portfolio built with React and TypeScript",
         "fr": "Portfolio personnel construit avec React et TypeScript"
       },
-      "techs": ["React", "TypeScript"],
+      "techs": [
+        "React",
+        { "name": "TypeScript", "href": "https://typescriptlang.org" }
+      ],
       "github": "https://github.com/janedoe/portfolio"
     }
   ],
   "pdf": {
     "label": { "en": "Download PDF", "fr": "Télécharger le PDF" },
     "path": { "en": "/cv/resume-en.pdf", "fr": "/cv/resume-fr.pdf" }
+  },
+  "limits": {
+    "experiences": 3,
+    "experienceTasks": 5,
+    "experienceTraining": 3,
+    "experienceTechs": 4,
+    "projects": 3,
+    "educationTechs": 5,
+    "hobbies": 4,
+    "skills": 4,
+    "skillItems": 5,
+    "contact": 4
   },
   "labels": {
     "sections": {
@@ -134,13 +183,17 @@ export const exampleResumeConfig = {
     "experience": {
       "mainTasks": { "en": "Main tasks:", "fr": "Tâches principales :" },
       "moreTasks": { "en": "more tasks...", "fr": "autres tâches..." },
+      "moreTraining": { "en": "more training...", "fr": "autres formations..." },
+      "training": { "en": "Training:", "fr": "Formations :" },
       "techEnv": { "en": "Tech environment:", "fr": "Env. technique :" },
       "technologies": { "en": "Technologies", "fr": "Technologies" }
     },
     "actions": {
       "clickHint": { "en": "Click on experiences to see details", "fr": "Cliquez sur les expériences" },
       "switchTheme": { "en": "Toggle theme", "fr": "Changer le thème" },
-      "downloadPdf": { "en": "Download PDF", "fr": "Télécharger le PDF" }
+      "downloadPdf": { "en": "Download PDF", "fr": "Télécharger le PDF" },
+      "showMore": { "en": "Show more", "fr": "Voir plus" },
+      "showLess": { "en": "Show less", "fr": "Voir moins" }
     }
   }
 }

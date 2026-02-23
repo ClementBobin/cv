@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { encodeUrl } from '@/lib/urlEncoder'
 import { exampleResumeConfig, exampleTechRegistry } from '@/data/exampleConfigs'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
+import { appLabels } from '@/data/resume-config'
 
 export function GenerateLink() {
   const { resolve } = useTranslation()
-  const labels = resumeConfig.labels.generateLink!
+  const labels = appLabels.generateLink!
   
   const [configUrl, setConfigUrl] = useState('')
   const [techRegistryUrl, setTechRegistryUrl] = useState('')

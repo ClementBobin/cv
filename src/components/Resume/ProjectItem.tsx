@@ -1,10 +1,11 @@
 import { TechBadge } from './TechBadge'
 import { GitHubIcon, ExternalLinkIcon } from '@/components/icons'
+import type { TechEntry } from '@/data/types'
 
 interface ProjectItemProps {
   title: string
   description: string
-  techs: string[]
+  techs: TechEntry[]
   url?: string
   github?: string
 }
@@ -27,8 +28,8 @@ export function ProjectItem({ title, description, techs, url, github }: ProjectI
       </div>
       <p className="text-xs text-resume-text-secondary mb-2">{description}</p>
       <div className="flex flex-wrap gap-1.5">
-        {techs.map((tech) => (
-          <TechBadge key={tech} tech={tech} />
+        {techs.map((tech, i) => (
+          <TechBadge key={i} tech={tech} />
         ))}
       </div>
     </div>
