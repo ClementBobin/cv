@@ -127,7 +127,7 @@ export async function loadResumeConfig(): Promise<ResumeConfig> {
         throw new ResumeConfigError('Decoded config URL is empty', 'configUrl')
       }
 
-      const response = await fetch(`${import.meta.env.VITE_RESSOURCES_URL}/cv-config.json`)
+      const response = await fetch(`${import.meta.env.VITE_RESSOURCES_URL}/cv`)
 
       if (!response.ok) {
         throw new ResumeConfigError(

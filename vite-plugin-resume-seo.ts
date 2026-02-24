@@ -31,8 +31,8 @@ export function resumeSeoPlugin(): Plugin {
 
       try {
         // Fetch JSON config dynamically
-        const res = await fetch(`${url}cv-config.json`)
-        if (!res.ok) throw new Error(`Failed to fetch cv-config.json: ${res.statusText}`)
+        const res = await fetch(`${url}/cv`)
+        if (!res.ok) throw new Error(`Failed to fetch cv: ${res.statusText}`)
 
         config = (await res.json()) as ResumeConfig
       } catch (e) {
