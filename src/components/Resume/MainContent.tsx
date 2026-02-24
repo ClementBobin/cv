@@ -152,7 +152,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
                 title={resolve(project.title)}
                 description={resolve(project.description)}
                 techs={project.techs}
-                maxTechs={limits?.projectsTechs}
+                maxTechs={limits?.projectsTech}
                 url={project.url}
                 github={project.github}
                 showMoreLabel={showMoreLabel}
@@ -182,7 +182,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
           <div className="space-y-4">
             {(visibleEducations ?? []).map((education) => (
               <EducationItem
-                key={`${resolve(education.school)}-${resolve(education.degree)}-${education.period ?? i}`}
+                key={`${resolve(education.school)}-${resolve(education.degree)}-${education.period}`}
                 school={resolve(education.school)}
                 degree={resolve(education.degree)}
                 degreeHref={education.degreeHref}
