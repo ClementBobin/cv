@@ -120,8 +120,31 @@ export async function loadResumeConfig(): Promise<ResumeConfig> {
     }
   }
 
+  try {
+      const configUrl = import.meta.env.VITE_RESSOURCES_URL;
+
+      if (!configUrl) {
+        throw new ResumeConfigError('Decoded config URL is empty', 'configUrl')
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_RESSOURCES_URL}/cv-config.json`)
+
+      if (!response.ok) {
+        throw new ResumeConfigError(
+          `HTTP ${response.status} – ${response.statusText}`,
+          'configUrl'
+        )
+      }
+
+      const parsed = await response.json()
+      return parsed
+  } catch (error) {
+    logConfigError(error, 'configUrl')
+    return defaultConfig
+  }
+
   /* ---------- DEFAULT ---------- */
-  return defaultConfig
+  // return defaultConfig
 }
 
 /* ---------------------------------------------

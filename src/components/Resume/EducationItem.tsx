@@ -41,6 +41,7 @@ export function EducationItem({
   const inner = (
     <EducationItemInner
       school={school}
+      href={href}
       degree={degree}
       degreeHref={degreeHref}
       specialty={specialty}
@@ -51,19 +52,7 @@ export function EducationItem({
 
   return (
     <div>
-      {href ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-start gap-4 w-full hover:opacity-80 transition-opacity"
-        >
-          {inner}
-          <ExternalLinkIcon className="w-4 h-4 text-resume-primary mt-1" />
-        </a>
-      ) : (
-        <div className="flex items-start gap-4">{inner}</div>
-      )}
+      <div className="flex items-start gap-4">{inner}</div>
       {visibleTechs && visibleTechs.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {visibleTechs.map((tech, i) => (
@@ -85,6 +74,7 @@ export function EducationItem({
 
 function EducationItemInner({
   school,
+  href,
   degree,
   degreeHref,
   specialty,
@@ -92,6 +82,7 @@ function EducationItemInner({
   logo,
 }: {
   school: string
+  href?: string
   degree: string
   degreeHref?: string
   specialty?: string
@@ -106,7 +97,19 @@ function EducationItemInner({
         </div>
       )}
       <div>
-        <p className="text-base font-semibold text-resume-text">{school}</p>
+        {href ? (
+          <a 
+            href={degreeHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-base font-semibold text-resume-text flex flex-row hover:text-resume-primary hover:underline transition-colors"
+          >
+            {school}
+            <ExternalLinkIcon className="w-4 h-4 text-resume-primary inline-block ml-1" />
+          </a>
+        ) : (
+          <p className="text-base font-semibold text-resume-text">{school}</p>
+        )}
         {degreeHref ? (
           <a
             href={degreeHref}

@@ -165,6 +165,10 @@ export interface ResumeLimits {
   experienceTechs?: number
   /** Max number of projects to show initially. */
   projects?: number
+  /** Max number of tech badges to show per projects entry. */
+  projectsTech?: number
+  /** Max number of experience to show initially */
+  education?: number
   /** Max number of tech badges to show per education entry. */
   educationTechs?: number
   /** Max number of hobbies to show initially. */

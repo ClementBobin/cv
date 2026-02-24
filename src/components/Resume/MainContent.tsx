@@ -29,6 +29,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
   const [expandedExp, setExpandedExp] = useState<string | null>(null)
   const [showAllExp, setShowAllExp] = useState(false)
   const [showAllProjects, setShowAllProjects] = useState(false)
+  const [showAllEducations, setShowAllEducations] = useState(false)
 
   const toggleExp = (id: string) => {
     setExpandedExp(expandedExp === id ? null : id)
@@ -58,6 +59,11 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
     limits?.projects && !showAllProjects && projects
       ? projects.slice(0, limits.projects)
       : projects
+
+  const visibleEducations =
+    limits?.education && !showAllEducations && education
+      ? education.slice(0, limits.education)
+      : education
 
   return (
     <div className="md:w-[62%] p-8">
@@ -146,8 +152,11 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
                 title={resolve(project.title)}
                 description={resolve(project.description)}
                 techs={project.techs}
+                maxTechs={limits?.projectsTechs}
                 url={project.url}
                 github={project.github}
+                showMoreLabel={showMoreLabel}
+                showLessLabel={showLessLabel}
               />
             ))}
           </div>
@@ -165,29 +174,41 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
       )}
 
       {/* Education */}
-      <div className="mt-8">
-        <h2 className="text-sm font-bold tracking-widest text-resume-text mb-4 pb-2 border-b border-resume-primary/20">
-          {resolve(labels.sections.education)}
-        </h2>
-        <div className="space-y-4">
-          {education.map((edu, i) => (
-            <EducationItem
-              key={`${resolve(edu.school)}-${resolve(edu.degree)}-${edu.period ?? i}`}
-              school={resolve(edu.school)}
-              degree={resolve(edu.degree)}
-              degreeHref={edu.degreeHref}
-              href={edu.href}
-              specialty={edu.specialty ? resolve(edu.specialty) : undefined}
-              period={edu.period}
-              logo={edu.logo}
-              techs={edu.techs}
-              maxTechs={limits?.educationTechs}
-              showMoreLabel={showMoreLabel}
-              showLessLabel={showLessLabel}
-            />
-          ))}
+      {education && education.length > 0 && labels.sections.education && (
+        <div className="mt-8">
+          <h2 className="text-sm font-bold tracking-widest text-resume-text mb-4 pb-2 border-b border-resume-primary/20">
+            {resolve(labels.sections.education)}
+          </h2>
+          <div className="space-y-4">
+            {(visibleEducations ?? []).map((education) => (
+              <EducationItem
+                key={`${resolve(education.school)}-${resolve(education.degree)}-${education.period ?? i}`}
+                school={resolve(education.school)}
+                degree={resolve(education.degree)}
+                degreeHref={education.degreeHref}
+                href={education.href}
+                specialty={education.specialty ? resolve(education.specialty) : undefined}
+                period={education.period}
+                logo={education.logo}
+                techs={education.techs}
+                maxTechs={limits?.educationTechs}
+                showMoreLabel={showMoreLabel}
+                showLessLabel={showLessLabel}
+              />
+            ))}
+          </div>
+          {limits?.education && education.length > limits.education && (
+            <button
+              onClick={() => setShowAllEducations(!showAllEducations)}
+              className="mt-3 text-xs text-resume-primary hover:underline"
+            >
+              {showAllEducations
+                ? showLessLabel
+                : `+${education.length - limits.education} ${showMoreLabel}`}
+            </button>
+          )}
         </div>
-      </div>
+      )}
     </div>
   )
 }
