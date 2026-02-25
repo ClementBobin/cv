@@ -21,11 +21,8 @@ export interface ContactItem {
 /** Allows a tech badge to carry an optional link and tooltip (e.g. when name is an icon identifier). */
 export interface TechBadgeItem {
   name: string
-  href?: string
   /** Plain-string tooltip. Used as display text and color-registry key when set. */
   tooltip?: string
-  icon?: string
-  iconHref?: string
 }
 
 /** A tech entry can be a plain string/tech-name, or a full object with optional href/tooltip. */
