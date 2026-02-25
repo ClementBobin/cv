@@ -50,7 +50,6 @@ export interface SkillItem {
   name: string | LocalizedString
   href?: string
   tooltip?: string
-  color?: string
   level?: LocalizedString
   details?: string
 }
