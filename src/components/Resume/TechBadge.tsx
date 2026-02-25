@@ -1,13 +1,9 @@
-import { getTechColor } from '@/data/techRegistryLoader'
+import { getTech } from '@/data/tech-registry'
 import type { TechEntry } from '@/data/types'
 import { isTechBadgeItem } from '@/data/types'
 import { ExternalLinkIcon } from '../icons'
 
-interface TechBadgeProps {
-  tech: TechEntry
-  /** Override color. If not provided, resolved from tech-registry. */
-  color?: string
-}
+interface TechBadgeProps { tech: TechEntry }
 
 /** Luminance helpers (same as before) */
 function getLuminance(hex: string): number {
@@ -39,16 +35,17 @@ function ensureDarkModeReadable(hex: string): string {
 }
 const LUMINANCE_THRESHOLD = 0.4
 
-export function TechBadge({ tech, color: colorOverride }: TechBadgeProps) {
+export function TechBadge({ tech }: TechBadgeProps) {
   const isObj = isTechBadgeItem(tech)
 
   const displayText = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
   const colorKey = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
   const href = isObj ? tech.href : undefined
-  const iconHref = isObj ? isObj.iconHref : undefined
-  const iconClass = isObj ? isObj.icon : undefined
 
-  const color = colorOverride ?? getTechColor(colorKey)
+  const techConfig = getTech(colorKey)
+  const color = techConfig.color
+  const iconHref = isObj ? techConfig.iconHref : undefined
+  const iconClass = isObj ? techConfig.icon : undefined
   const isLight = getLuminance(color) > LUMINANCE_THRESHOLD
   const darkModeColor = ensureDarkModeReadable(color)
 
