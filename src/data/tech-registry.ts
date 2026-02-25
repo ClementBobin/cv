@@ -1,4 +1,4 @@
-export type TechEntry = { color: string }
+export type TechEntry = { color: string, icon?: string, iconHref?: string }
 export type TechRegistry = Record<string, TechEntry>
 export type TechName = keyof TechRegistry
 
