@@ -24,6 +24,8 @@ export interface TechBadgeItem {
   href?: string
   /** Plain-string tooltip. Used as display text and color-registry key when set. */
   tooltip?: string
+  icon?: string
+  iconHref?: string
 }
 
 /** A tech entry can be a plain string/tech-name, or a full object with optional href/tooltip. */
