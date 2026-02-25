@@ -1,7 +1,7 @@
 import { resumeConfig as defaultConfig } from './resume-config'
 import { decodeUrl } from '@/lib/urlEncoder'
 import { decodeAndDecompress } from '@/lib/compression'
-import { loadTechRegistry } from './techRegistryLoader'
+import { fetchTechRegistry } from './tech-registry'
 import type { ResumeConfig } from './types'
 
 /* ---------------------------------------------
@@ -68,7 +68,7 @@ function validateResumeConfig(
  * Main loader
  * --------------------------------------------- */
 export async function loadResumeConfig(): Promise<ResumeConfig> {
-  await loadTechRegistry()
+  await fetchTechRegistry()
 
   const params = new URLSearchParams(window.location.search)
   const encodedUrl = params.get('config')
