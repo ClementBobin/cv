@@ -46,7 +46,7 @@ export function TechBadge({ tech, color: colorOverride }: TechBadgeProps) {
   const colorKey = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
   const href = isObj ? isObj.href : undefined
   const iconHref = isObj ? isObj.iconHref : undefined
-  const iconClass = isObj ? isObj.icon : undefined
+  const iconClass = isObj ? tech.icon : undefined
 
   const color = colorOverride ?? getTechColor(colorKey)
   const isLight = getLuminance(color) > LUMINANCE_THRESHOLD
