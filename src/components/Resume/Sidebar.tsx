@@ -216,7 +216,7 @@ function SkillCategoryWithLimit({
             const tech = item.href || item.tooltip
               ? { name: techName, href: item.href, tooltip: item.tooltip }
               : techName
-            return <TechBadge key={idx} tech={tech} color={item.color} />
+            return <TechBadge key={idx} tech={tech} />
           })}
           {maxItems && items.length > maxItems && (
             <button
