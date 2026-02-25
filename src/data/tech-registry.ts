@@ -21,15 +21,16 @@ export async function fetchTechRegistry(): Promise<TechRegistry> {
 }
 
 /**
- * Resolves the color for a given tech name.
- * Synchronous after the first fetch.
+ * Resolves the full tech entry for a given name.
+ * Returns a default placeholder if the registry is not loaded yet or the tech is unknown.
  */
-export function getTechColor(name: string): string {
+export function getTech(name: string): TechEntry {
   if (!cachedRegistry) {
     console.warn(
       "Tech registry not loaded yet. Call `await fetchTechRegistry()` first."
     )
-    return '#6b7280'
+    return { color: '#6b7280' }
   }
-  return cachedRegistry[name]?.color ?? '#6b7280'
+
+  return cachedRegistry[name] ?? { color: '#6b7280' }
 }
