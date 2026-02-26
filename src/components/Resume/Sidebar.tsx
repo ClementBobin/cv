@@ -202,9 +202,13 @@ function SkillCategoryWithLimit({
 }) {
   const [expanded, setExpanded] = useState(false)
   // Normalize plain strings to SkillItem so the rest of the render is uniform
-  const items = category.items.map((item): import('@/data/types').SkillItem =>
-    typeof item === 'string' ? { name: item } : item
-  )
+  const items = category.items.map(item => {
+    const skill: SkillItem = typeof item === 'string' ? { name: item } : item;
+    return {
+      ...skill,
+      name: typeof skill.name === 'string' ? skill.name : skill.name.en // or default
+    };
+  });
   const visibleItems = maxItems && !expanded ? items.slice(0, maxItems) : items
 
   return (
