@@ -213,10 +213,7 @@ function SkillCategoryWithLimit({
         <div className="flex flex-wrap gap-1.5">
           {visibleItems.map((item, idx) => {
             const techName = typeof item.name === 'string' ? item.name : Object.values(item.name)[0]
-            const tech = item.href || item.tooltip
-              ? { name: techName, href: item.href, tooltip: item.tooltip }
-              : techName
-            return <TechBadge key={idx} tech={tech} />
+            return <TechBadge key={idx} tech={techName} />
           })}
           {maxItems && items.length > maxItems && (
             <button
