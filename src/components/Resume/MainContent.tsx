@@ -106,8 +106,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
                       tasks: exp.details.tasks ? resolveArray(exp.details.tasks) : undefined,
                       training: exp.details.training
                         ? resolveTrainingItems(exp.details.training, language, defaultLang)
-                        : undefined,
-                      env: resolve(exp.details.env),
+                        : undefined
                     }
                   : undefined
               }
