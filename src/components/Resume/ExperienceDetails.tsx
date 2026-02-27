@@ -12,7 +12,6 @@ interface ExperienceDetailsContentProps {
   context: string
   tasks?: string[]
   training?: ResolvedTrainingItem[]
-  env: string
   techs?: TechEntry[]
   description?: string
   labels: {
@@ -33,7 +32,6 @@ export function ExperienceDetailsContent({
   context,
   tasks,
   training,
-  env,
   techs,
   description,
   labels,
