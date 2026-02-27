@@ -45,7 +45,6 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
     moreTasks: resolve(labels.experience.moreTasks),
     moreTraining: labels.experience.moreTraining ? resolve(labels.experience.moreTraining) : undefined,
     training: labels.experience.training ? resolve(labels.experience.training) : undefined,
-    techEnv: resolve(labels.experience.techEnv),
     technologies: resolve(labels.experience.technologies),
     showLess: showLessLabel,
   }
