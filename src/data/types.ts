@@ -90,6 +90,7 @@ export interface Experience {
     context: LocalizedString
     tasks?: LocalizedStringArray
     training?: LocalizedTrainingArray
+    env?: LocalizedString
   }
 }
 
@@ -195,6 +196,7 @@ export interface ResumeLabels {
     moreTasks: LocalizedString
     moreTraining?: LocalizedString
     training?: LocalizedString
+    techEnv: LocalizedString
     technologies: LocalizedString
   }
   actions: {
