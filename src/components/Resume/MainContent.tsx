@@ -45,6 +45,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
     moreTasks: resolve(labels.experience.moreTasks),
     moreTraining: labels.experience.moreTraining ? resolve(labels.experience.moreTraining) : undefined,
     training: labels.experience.training ? resolve(labels.experience.training) : undefined,
+    techEnv: resolve(labels.experience.techEnv),
     technologies: resolve(labels.experience.technologies),
     showLess: showLessLabel,
   }
@@ -105,7 +106,8 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
                       tasks: exp.details.tasks ? resolveArray(exp.details.tasks) : undefined,
                       training: exp.details.training
                         ? resolveTrainingItems(exp.details.training, language, defaultLang)
-                        : undefined
+                        : undefined,
+                      env: exp.details.env ? resolve(exp.details.env) : undefined,
                     }
                   : undefined
               }
