@@ -12,6 +12,7 @@ interface ExperienceDetailsContentProps {
   context: string
   tasks?: string[]
   training?: ResolvedTrainingItem[]
+  env?: string
   techs?: TechEntry[]
   description?: string
   labels: {
@@ -19,6 +20,7 @@ interface ExperienceDetailsContentProps {
     moreTasks: string
     moreTraining?: string
     training?: string
+    techEnv: string
     technologies: string
     showLess?: string
   }
@@ -31,6 +33,7 @@ export function ExperienceDetailsContent({
   context,
   tasks,
   training,
+   env,
   techs,
   description,
   labels,
@@ -132,6 +135,14 @@ export function ExperienceDetailsContent({
                 : `+${hiddenTrainingCount} ${labels.moreTraining ?? labels.moreTasks}`}
             </button>
           )}
+        </div>
+      )}
+
+      {env && (
+        <div className={variant === 'modal' ? 'pt-3 border-t border-resume-primary/20' : ''}>
+          <p className="text-xs text-resume-primary">
+            <span className="font-semibold">{labels.techEnv}</span> {env}
+          </p>
         </div>
       )}
     </div>
