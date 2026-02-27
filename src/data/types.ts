@@ -90,7 +90,6 @@ export interface Experience {
     context: LocalizedString
     tasks?: LocalizedStringArray
     training?: LocalizedTrainingArray
-    env: LocalizedString
   }
 }
 
