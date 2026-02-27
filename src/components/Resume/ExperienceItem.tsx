@@ -29,6 +29,7 @@ interface ExperienceItemProps {
     context: string
     tasks?: string[]
     training?: ResolvedTrainingItem[]
+    env: string
   }
   subItem?: { title: string; description: string }
   labels: {
@@ -199,6 +200,7 @@ export function ExperienceItem({
                   context={details.context}
                   tasks={details.tasks}
                   training={details.training}
+                  env={details.env}
                   labels={labels}
                   variant="inline"
                   maxTasks={maxTasks}
@@ -228,6 +230,7 @@ export function ExperienceItem({
             training={details.training}
             techs={techs}
             description={description}
+            env={details.env}
             labels={labels}
             variant="modal"
             maxTasks={maxTasks}
