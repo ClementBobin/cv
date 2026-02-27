@@ -14,6 +14,7 @@ const PHOTO_ANIMATION_DURATION = 0.8
 function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emoji?: string }) {
   const [isSpinning, setIsSpinning] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const cvUrl = typeof window !== 'undefined' ? window.location.href : '/'
 
   const handleFlip = () => {
     if (isSpinning) return
@@ -30,16 +31,26 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
   if (hasError) {
     return (
       <div className="flex justify-center mb-6">
-        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-resume-primary to-resume-primary-light flex items-center justify-center border-4 border-resume-bg/30 shadow-lg">
-          <span className="text-4xl">{emoji || '👨‍💻'}</span>
-        </div>
+        <a
+          href={cvUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Open CV of ${name}`}
+        >
+          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-resume-primary to-resume-primary-light flex items-center justify-center border-4 border-resume-bg/30 shadow-lg hover:opacity-90 transition-opacity">
+            <span className="text-4xl">{emoji || '👨‍💻'}</span>
+          </div>
+        </a>
       </div>
     )
   }
 
   return (
     <div className="flex justify-center mb-6" style={{ perspective: '300px' }}>
-      <motion.div
+      <motion.a
+        href={cvUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         onClick={handleFlip}
         onKeyDown={handleKeyDown}
         onAnimationComplete={() => setIsSpinning(false)}
@@ -47,9 +58,7 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
         transition={{ duration: PHOTO_ANIMATION_DURATION, ease: 'easeInOut' }}
         className="relative w-32 h-32 cursor-pointer"
         style={{ transformStyle: 'preserve-3d' }}
-        role="button"
-        tabIndex={0}
-        aria-label={`Photo of ${name} — click to flip`}
+        aria-label={`Open CV of ${name}`}
       >
         <div
           className="absolute inset-0 rounded-full overflow-hidden border-4 border-resume-bg/30 shadow-lg"
@@ -69,16 +78,17 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
         >
           <span className="text-4xl">{emoji || '👨‍💻'}</span>
         </div>
-      </motion.div>
+      </motion.a>
     </div>
   )
 }
 
 interface SidebarProps {
   config?: ResumeConfig
+  printAll?: boolean
 }
 
-export function Sidebar({ config = resumeConfig }: SidebarProps) {
+export function Sidebar({ config = resumeConfig, printAll = false }: SidebarProps) {
   const { resolve } = useTranslation()
   const { personal, contact, skills, hobbies, labels, limits } = config
 
@@ -90,11 +100,11 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
   const showLessLabel = labels.actions.showLess ? resolve(labels.actions.showLess) : 'Show less'
 
   const visibleContact =
-    limits?.contact && !showAllContact ? contact.slice(0, limits.contact) : contact
+    limits?.contact && !showAllContact && !printAll ? contact.slice(0, limits.contact) : contact
   const visibleSkills =
-    limits?.skills && !showAllSkills ? skills.slice(0, limits.skills) : skills
+    limits?.skills && !showAllSkills && !printAll ? skills.slice(0, limits.skills) : skills
   const visibleHobbies =
-    limits?.hobbies && !showAllHobbies && hobbies ? hobbies.slice(0, limits.hobbies) : hobbies
+    limits?.hobbies && !showAllHobbies && !printAll && hobbies ? hobbies.slice(0, limits.hobbies) : hobbies
 
   return (
     <div className="md:w-[38%] bg-gradient-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
@@ -113,10 +123,10 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
           {visibleContact.map((item) => (
             <ContactItem key={`${item.type}-${item.label}`} type={item.type} label={item.label} href={item.href} />
           ))}
-          {limits?.contact && contact.length > limits.contact && (
+          {limits?.contact && contact.length > limits.contact && !printAll && (
             <button
               onClick={() => setShowAllContact(!showAllContact)}
-              className="text-xs text-resume-primary hover:underline"
+              className="text-xs text-resume-primary hover:underline no-print"
             >
               {showAllContact
                 ? showLessLabel
@@ -139,13 +149,14 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
                 maxItems={maxItems}
                 showMoreLabel={showMoreLabel}
                 showLessLabel={showLessLabel}
+                printAll={printAll}
               />
             )
           })}
-          {limits?.skills && skills.length > limits.skills && (
+          {limits?.skills && skills.length > limits.skills && !printAll && (
             <button
               onClick={() => setShowAllSkills(!showAllSkills)}
-              className="text-xs text-resume-primary hover:underline"
+              className="text-xs text-resume-primary hover:underline no-print"
             >
               {showAllSkills
                 ? showLessLabel
@@ -170,10 +181,10 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
               </div>
             ))}
           </div>
-          {limits?.hobbies && hobbies.length > limits.hobbies && (
+          {limits?.hobbies && hobbies.length > limits.hobbies && !printAll && (
             <button
               onClick={() => setShowAllHobbies(!showAllHobbies)}
-              className="mt-2 text-xs text-resume-primary hover:underline"
+              className="mt-2 text-xs text-resume-primary hover:underline no-print"
             >
               {showAllHobbies
                 ? showLessLabel
@@ -193,12 +204,14 @@ function SkillCategoryWithLimit({
   maxItems,
   showMoreLabel,
   showLessLabel,
+  printAll = false,
 }: {
   category: ResumeConfig['skills'][number]
   resolve: (ls: Record<string, string>) => string
   maxItems?: number
   showMoreLabel: string
   showLessLabel: string
+  printAll?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
   // Normalize plain strings to SkillItem so the rest of the render is uniform
@@ -209,7 +222,7 @@ function SkillCategoryWithLimit({
       name: typeof skill.name === 'string' ? skill.name : skill.name.en // or default
     };
   });
-  const visibleItems = maxItems && !expanded ? items.slice(0, maxItems) : items
+  const visibleItems = maxItems && !expanded && !printAll ? items.slice(0, maxItems) : items
 
   return (
     <SkillCategory title={resolve(category.title)}>
@@ -218,10 +231,10 @@ function SkillCategoryWithLimit({
           {visibleItems.map((item, idx) => {
             return <TechBadge key={idx} tech={item} />
           })}
-          {maxItems && items.length > maxItems && (
+          {maxItems && items.length > maxItems && !printAll && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-xs text-resume-primary hover:underline self-center"
+              className="text-xs text-resume-primary hover:underline self-center no-print"
             >
               {expanded
                 ? showLessLabel
@@ -235,10 +248,10 @@ function SkillCategoryWithLimit({
           {visibleItems
             .map((item) => (typeof item.name === 'string' ? item.name : resolve(item.name)))
             .join(', ')}
-          {maxItems && items.length > maxItems && (
+          {maxItems && items.length > maxItems && !printAll && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-xs text-resume-primary hover:underline ml-1"
+              className="text-xs text-resume-primary hover:underline ml-1 no-print"
             >
               {expanded ? showLessLabel : `+${items.length - maxItems} ${showMoreLabel}`}
             </button>
@@ -274,10 +287,10 @@ function SkillCategoryWithLimit({
               </span>
             )
           })}
-          {maxItems && items.length > maxItems && (
+          {maxItems && items.length > maxItems && !printAll && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-xs text-resume-primary hover:underline"
+              className="text-xs text-resume-primary hover:underline no-print"
             >
               {expanded ? showLessLabel : `+${items.length - maxItems} ${showMoreLabel}`}
             </button>

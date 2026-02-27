@@ -8,6 +8,7 @@ import { EducationItem } from './EducationItem'
 
 interface MainContentProps {
   config?: ResumeConfig
+  printAll?: boolean
 }
 
 /** Resolve a LocalizedTrainingArray to an array of { text, href } objects for a given language. */
@@ -23,7 +24,7 @@ function resolveTrainingItems(
   )
 }
 
-export function MainContent({ config = resumeConfig }: MainContentProps) {
+export function MainContent({ config = resumeConfig, printAll = false }: MainContentProps) {
   const { resolve, resolveArray, language } = useTranslation()
   const { personal, experiences, projects, education, labels, limits } = config
   const [expandedExp, setExpandedExp] = useState<string | null>(null)
@@ -51,17 +52,17 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
   }
 
   const visibleExperiences =
-    limits?.experiences && !showAllExp
+    limits?.experiences && !showAllExp && !printAll
       ? experiences.slice(0, limits.experiences)
       : experiences
 
   const visibleProjects =
-    limits?.projects && !showAllProjects && projects
+    limits?.projects && !showAllProjects && !printAll && projects
       ? projects.slice(0, limits.projects)
       : projects
 
   const visibleEducations =
-    limits?.education && !showAllEducations && education
+    limits?.education && !showAllEducations && !printAll && education
       ? education.slice(0, limits.education)
       : education
 
@@ -97,7 +98,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               role={resolve(exp.role)}
               description={resolve(exp.description)}
               techs={exp.techs}
-              expanded={expandedExp === exp.id}
+              expanded={printAll || expandedExp === exp.id}
               onToggle={() => toggleExp(exp.id)}
               details={
                 exp.details
@@ -124,13 +125,14 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               maxTasks={limits?.experienceTasks}
               maxTraining={limits?.experienceTraining}
               maxTechs={limits?.experienceTechs}
+              printAll={printAll}
             />
           ))}
         </div>
-        {limits?.experiences && experiences.length > limits.experiences && (
+        {limits?.experiences && experiences.length > limits.experiences && !printAll && (
           <button
             onClick={() => setShowAllExp(!showAllExp)}
-            className="mt-3 text-xs text-resume-primary hover:underline"
+            className="mt-3 text-xs text-resume-primary hover:underline no-print"
           >
             {showAllExp
               ? showLessLabel
@@ -160,10 +162,10 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               />
             ))}
           </div>
-          {limits?.projects && projects.length > limits.projects && (
+          {limits?.projects && projects.length > limits.projects && !printAll && (
             <button
               onClick={() => setShowAllProjects(!showAllProjects)}
-              className="mt-3 text-xs text-resume-primary hover:underline"
+              className="mt-3 text-xs text-resume-primary hover:underline no-print"
             >
               {showAllProjects
                 ? showLessLabel
@@ -197,10 +199,10 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
               />
             ))}
           </div>
-          {limits?.education && education.length > limits.education && (
+          {limits?.education && education.length > limits.education && !printAll && (
             <button
               onClick={() => setShowAllEducations(!showAllEducations)}
-              className="mt-3 text-xs text-resume-primary hover:underline"
+              className="mt-3 text-xs text-resume-primary hover:underline no-print"
             >
               {showAllEducations
                 ? showLessLabel
