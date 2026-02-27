@@ -19,7 +19,6 @@ interface ExperienceDetailsContentProps {
     moreTasks: string
     moreTraining?: string
     training?: string
-    techEnv: string
     technologies: string
     showLess?: string
   }
