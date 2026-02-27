@@ -195,7 +195,6 @@ export interface ResumeLabels {
     moreTasks: LocalizedString
     moreTraining?: LocalizedString
     training?: LocalizedString
-    techEnv: LocalizedString
     technologies: LocalizedString
   }
   actions: {
