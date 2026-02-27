@@ -226,7 +226,6 @@ export function ExperienceItem({
             context={details.context}
             tasks={details.tasks}
             training={details.training}
-            env={details.env}
             techs={techs}
             description={description}
             labels={labels}
