@@ -159,11 +159,7 @@ export const resumeConfig: ResumeConfig = {
             'Certification AWS Solutions Architect',
             'Formation interne sur l\'orchestration Kubernetes',
           ],
-        },
-        env: {
-          en: 'React / TypeScript / Node.js / PostgreSQL / GraphQL / Redis / Docker / AWS / GitHub Actions / Datadog',
-          fr: 'React / TypeScript / Node.js / PostgreSQL / GraphQL / Redis / Docker / AWS / GitHub Actions / Datadog',
-        },
+        }
       },
     },
     {
@@ -213,11 +209,7 @@ export const resumeConfig: ResumeConfig = {
             'Workshop Angular Avancé (2 jours)',
             'Certification Accessibilité (WCAG 2.1)',
           ],
-        },
-        env: {
-          en: 'React / Angular / TypeScript / SCSS / Tailwind CSS / Storybook / Figma / GitLab CI',
-          fr: 'React / Angular / TypeScript / SCSS / Tailwind CSS / Storybook / Figma / GitLab CI',
-        },
+        }
       },
     },
     {
@@ -254,11 +246,7 @@ export const resumeConfig: ResumeConfig = {
             'Création d\'un tableau de bord admin pour la gestion des commandes et les analytics',
             'Rédaction de la documentation API avec Swagger/OpenAPI',
           ],
-        },
-        env: {
-          en: 'React / Node.js / Express / MongoDB / Stripe / JWT / Docker / Heroku',
-          fr: 'React / Node.js / Express / MongoDB / Stripe / JWT / Docker / Heroku',
-        },
+        }
       },
     },
   ],
