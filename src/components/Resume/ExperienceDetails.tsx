@@ -135,12 +135,6 @@ export function ExperienceDetailsContent({
           )}
         </div>
       )}
-
-      <div className={variant === 'modal' ? 'pt-3 border-t border-resume-primary/20' : ''}>
-        <p className="text-xs text-resume-primary">
-          <span className="font-semibold">{labels.techEnv}</span> {env}
-        </p>
-      </div>
     </div>
   )
 }
