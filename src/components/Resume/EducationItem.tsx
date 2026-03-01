@@ -99,7 +99,7 @@ function EducationItemInner({
       <div>
         {href ? (
           <a 
-            href={degreeHref}
+            href={href}
             target="_blank"
             rel="noopener noreferrer"
             className="text-base font-semibold text-resume-text flex flex-row hover:text-resume-primary hover:underline transition-colors"
