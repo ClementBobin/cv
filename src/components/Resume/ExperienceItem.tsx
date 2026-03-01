@@ -46,6 +46,8 @@ interface ExperienceItemProps {
   maxTraining?: number
   /** Max number of tech badges to show initially (show-more/less). */
   maxTechs?: number
+  /** When true, forces inline display of details (for print/PDF generation). */
+  printAll?: boolean
 }
 
 /** Returns Tailwind color classes for the experience type badge based on workType. */
@@ -75,17 +77,18 @@ export function ExperienceItem({
   maxTasks,
   maxTraining,
   maxTechs,
+  printAll = false,
 }: ExperienceItemProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [techsExpanded, setTechsExpanded] = useState(false)
   const { isDesktop } = useBreakpoints()
 
   const visibleTechs =
-    maxTechs && !techsExpanded && techs.length > maxTechs
+    maxTechs && !techsExpanded && !printAll && techs.length > maxTechs
       ? techs.slice(0, maxTechs)
       : techs
   const hiddenTechsCount =
-    maxTechs && techs.length > maxTechs ? techs.length - maxTechs : 0
+    maxTechs && !printAll && techs.length > maxTechs ? techs.length - maxTechs : 0
 
   const handleToggleTechs = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -186,7 +189,7 @@ export function ExperienceItem({
         </div>
       </button>
 
-      {isDesktop && details && (
+      {(isDesktop || printAll) && details && (
         <AnimatePresence>
           {expanded && (
             <motion.div
@@ -203,8 +206,8 @@ export function ExperienceItem({
                   env={details.env}
                   labels={labels}
                   variant="inline"
-                  maxTasks={maxTasks}
-                  maxTraining={maxTraining}
+                  maxTasks={printAll ? undefined : maxTasks}
+                  maxTraining={printAll ? undefined : maxTraining}
                 />
               </div>
             </motion.div>
@@ -212,7 +215,7 @@ export function ExperienceItem({
         </AnimatePresence>
       )}
 
-      {details && (
+      {!printAll && details && (
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
