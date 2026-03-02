@@ -258,7 +258,7 @@ function SkillCategoryWithLimit({
               </span>
             )
             return (
-              <span key={`${name}-${j}`} className="flex items-center gap-1">
+              <span key={j} className="flex items-center gap-1">
                 {item.href ? (
                   <a
                     href={item.href}
