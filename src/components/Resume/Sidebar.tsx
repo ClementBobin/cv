@@ -30,7 +30,7 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
   if (hasError) {
     return (
       <div className="flex justify-center mb-6">
-        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-resume-primary to-resume-primary-light flex items-center justify-center border-4 border-resume-bg/30 shadow-lg">
+        <div className="w-32 h-32 rounded-full bg-linear-to-br from-resume-primary to-resume-primary-light flex items-center justify-center border-4 border-resume-bg/30 shadow-lg">
           <span className="text-4xl">{emoji || '👨‍💻'}</span>
         </div>
       </div>
@@ -49,7 +49,7 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
         style={{ transformStyle: 'preserve-3d' }}
         role="button"
         tabIndex={0}
-        aria-label={`Photo of ${name} — click to flip`}
+        aria-label={`Photo de ${name} — cliquer pour retourner`}
       >
         <div
           className="absolute inset-0 rounded-full overflow-hidden border-4 border-resume-bg/30 shadow-lg"
@@ -57,14 +57,14 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
         >
           <img
             src={photo}
-            alt={`Profile photo of ${name}`}
+            alt={`Photo de profil de ${name}`}
             className="object-cover w-full h-full"
             loading="lazy"
             onError={() => setHasError(true)}
           />
         </div>
         <div
-          className="absolute inset-0 rounded-full border-4 border-resume-bg/30 shadow-lg bg-gradient-to-br from-resume-primary to-resume-primary-light flex items-center justify-center"
+          className="absolute inset-0 rounded-full border-4 border-resume-bg/30 shadow-lg bg-linear-to-br from-resume-primary to-resume-primary-light flex items-center justify-center"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
           <span className="text-4xl">{emoji || '👨‍💻'}</span>
@@ -86,8 +86,8 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
   const [showAllSkills, setShowAllSkills] = useState(false)
   const [showAllHobbies, setShowAllHobbies] = useState(false)
 
-  const showMoreLabel = labels.actions.showMore ? resolve(labels.actions.showMore) : 'Show more'
-  const showLessLabel = labels.actions.showLess ? resolve(labels.actions.showLess) : 'Show less'
+  const showMoreLabel = labels.actions.showMore ? resolve(labels.actions.showMore) : 'Voir plus'
+  const showLessLabel = labels.actions.showLess ? resolve(labels.actions.showLess) : 'Voir moins'
 
   const visibleContact =
     limits?.contact && !showAllContact ? contact.slice(0, limits.contact) : contact
@@ -97,7 +97,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
     limits?.hobbies && !showAllHobbies && hobbies ? hobbies.slice(0, limits.hobbies) : hobbies
 
   return (
-    <div className="md:w-[38%] bg-gradient-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
+    <div className="md:w-[38%] bg-linear-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
       {/* Photo */}
       {personal.photo && (
         <SidebarPhoto
@@ -126,7 +126,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         </div>
       </SidebarSection>
 
-      {/* Skills */}
+      {/* Compétences */}
       <SidebarSection title={resolve(labels.sections.skills)}>
         <div className="space-y-4">
           {visibleSkills.map((category, i) => {
@@ -155,7 +155,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         </div>
       </SidebarSection>
 
-      {/* Hobbies */}
+      {/* Centres d'intérêt */}
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
           <div className="grid grid-cols-2 gap-3">
@@ -186,7 +186,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
   )
 }
 
-/** Renders a single skill category with optional per-category item limit. */
+/** Affiche une catégorie de compétences avec limite optionnelle d'éléments par catégorie. */
 function SkillCategoryWithLimit({
   category,
   resolve,
@@ -201,12 +201,12 @@ function SkillCategoryWithLimit({
   showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
-  // Normalize plain strings to SkillItem so the rest of the render is uniform
+  // Normalisation des chaînes simples en SkillItem pour uniformiser le rendu
   const items = category.items.map(item => {
     const skill: SkillItem = typeof item === 'string' ? { name: item } : item;
     return {
       ...skill,
-      name: typeof skill.name === 'string' ? skill.name : skill.name.en // or default
+      name: typeof skill.name === 'string' ? skill.name : skill.name.en // ou valeur par défaut
     };
   });
   const visibleItems = maxItems && !expanded ? items.slice(0, maxItems) : items
