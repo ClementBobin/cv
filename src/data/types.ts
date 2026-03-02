@@ -22,8 +22,7 @@ export interface ContactItem {
 export interface TechBadgeItem {
   name: string
   /** Plain-string tooltip. Used as display text and color-registry key when set. */
-  icon? : string
-  iconHref? : string
+  tooltip?: string
   href?: string
 }
 

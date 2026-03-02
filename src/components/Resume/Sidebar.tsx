@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
-import type { ResumeConfig, SkillItem, TechBadgeItem } from '@/data/types'
+import type { ResumeConfig, SkillItem } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 import { SidebarSection } from './SidebarSection'
 import { ContactItem } from './ContactItem'
@@ -212,11 +212,7 @@ function SkillCategoryWithLimit({
       {category.type === 'badges' && (
         <div className="flex flex-wrap gap-1.5">
           {visibleItems.map((item, idx) => {
-            const resolvedName = typeof item.name === 'string' ? item.name : resolve(item.name)
-            const tech: TechBadgeItem = (item.href || item.icon)
-              ? { name: resolvedName, href: item.href, icon: item.icon, iconHref: item.iconHref }
-              : { name: resolvedName }
-            return <TechBadge key={idx} tech={tech} />
+            return <TechBadge key={idx} tech={item} />
           })}
           {maxItems && items.length > maxItems && (
             <button
