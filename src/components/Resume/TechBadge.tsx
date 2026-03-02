@@ -1,9 +1,9 @@
 import { getTech } from '@/data/tech-registry'
-import type { TechBadgeItem } from '@/data/types'
+import type { TechEntry } from '@/data/types'
 import { isTechBadgeItem } from '@/data/types'
 import { ExternalLinkIcon } from '../icons'
 
-interface TechBadgeProps { tech: TechBadgeItem }
+interface TechBadgeProps { tech: TechEntry }
 
 /** Luminance helpers (same as before) */
 function getLuminance(hex: string): number {
