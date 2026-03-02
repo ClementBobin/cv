@@ -202,9 +202,13 @@ function SkillCategoryWithLimit({
 }) {
   const [expanded, setExpanded] = useState(false)
   // Normalise plain strings into SkillItem objects without collapsing LocalizedString names
-  const items = category.items.map(item =>
-    typeof item === 'string' ? { name: item } as SkillItem : item as SkillItem
-  )
+  const items = category.items.map(item => {
+    const skill: SkillItem = typeof item === 'string' ? { name: item } : item;
+    return {
+      ...skill,
+      name: typeof skill.name === 'string' ? skill.name : skill.name.en // ou valeur par défaut
+    };
+  });
   const visibleItems = maxItems && !expanded ? items.slice(0, maxItems) : items
 
   return (
