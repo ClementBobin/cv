@@ -22,7 +22,8 @@ export interface ContactItem {
 export interface TechBadgeItem {
   name: string
   /** Plain-string tooltip. Used as display text and color-registry key when set. */
-  tooltip?: string
+  icon? : string
+  iconHref? : string
   href?: string
 }
 
@@ -49,7 +50,6 @@ export interface SkillCategory {
 export interface SkillItem {
   name: string | LocalizedString
   href?: string
-  tooltip?: string
   level?: LocalizedString
   details?: string
 }

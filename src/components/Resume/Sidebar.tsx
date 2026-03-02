@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
-import type { ResumeConfig, SkillItem } from '@/data/types'
+import type { ResumeConfig, SkillItem, TechBadgeItem } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 import { SidebarSection } from './SidebarSection'
 import { ContactItem } from './ContactItem'
@@ -201,14 +201,10 @@ function SkillCategoryWithLimit({
   showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
-  // Normalisation des chaînes simples en SkillItem pour uniformiser le rendu
-  const items = category.items.map(item => {
-    const skill: SkillItem = typeof item === 'string' ? { name: item } : item;
-    return {
-      ...skill,
-      name: typeof skill.name === 'string' ? skill.name : skill.name.en // ou valeur par défaut
-    };
-  });
+  // Normalise plain strings into SkillItem objects without collapsing LocalizedString names
+  const items = category.items.map(item =>
+    typeof item === 'string' ? { name: item } as SkillItem : item as SkillItem
+  )
   const visibleItems = maxItems && !expanded ? items.slice(0, maxItems) : items
 
   return (
@@ -216,7 +212,11 @@ function SkillCategoryWithLimit({
       {category.type === 'badges' && (
         <div className="flex flex-wrap gap-1.5">
           {visibleItems.map((item, idx) => {
-            return <TechBadge key={idx} tech={item} />
+            const resolvedName = typeof item.name === 'string' ? item.name : resolve(item.name)
+            const tech: TechBadgeItem = (item.href || item.icon)
+              ? { name: resolvedName, href: item.href, icon: item.icon, iconHref: item.iconHref }
+              : { name: resolvedName }
+            return <TechBadge key={idx} tech={tech} />
           })}
           {maxItems && items.length > maxItems && (
             <button

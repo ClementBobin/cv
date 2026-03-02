@@ -1,9 +1,9 @@
 import { getTech } from '@/data/tech-registry'
-import type { TechEntry } from '@/data/types'
+import type { TechBadgeItem } from '@/data/types'
 import { isTechBadgeItem } from '@/data/types'
 import { ExternalLinkIcon } from '../icons'
 
-interface TechBadgeProps { tech: TechEntry }
+interface TechBadgeProps { tech: TechBadgeItem }
 
 /** Luminance helpers (same as before) */
 function getLuminance(hex: string): number {
@@ -37,9 +37,10 @@ const LUMINANCE_THRESHOLD = 0.4
 
 export function TechBadge({ tech }: TechBadgeProps) {
   const isObj = isTechBadgeItem(tech)
+  console.log(tech);
 
-  const displayText = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
-  const colorKey = isObj ? (tech.tooltip ?? tech.name) : (tech as string)
+  const displayText = isObj ? (tech.name) : (tech as string)
+  const colorKey = isObj ? (tech.name) : (tech as string)
   const href = isObj ? tech.href : undefined
 
   const techConfig = getTech(colorKey)
