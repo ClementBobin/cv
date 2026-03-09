@@ -118,7 +118,7 @@ export function MainContent({ config = resumeConfig }: MainContentProps) {
       )}
 
       {/* Experiences */}
-      <div className="relative">
+      <div className="relative mt-8">
         <h2 className="text-sm font-bold tracking-widest text-resume-text mb-6 pb-2 border-b border-resume-primary/20">
           {resolve(labels.sections.experience)}
         </h2>
