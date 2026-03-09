@@ -107,7 +107,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         />
       )}
       {personal.summary && (
-        <small className="mb-6">{resolve(personal.summary)}</small>
+        <small className="mb-6 relative">{resolve(personal.summary)}</small>
       )}
 
       {/* Contact */}
