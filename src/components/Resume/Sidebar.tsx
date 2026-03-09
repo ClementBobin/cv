@@ -206,7 +206,7 @@ function HobbyWithLimit({
   showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
-  const details = hobby.details ?? []
+  const details: string[] = hobby.details ?? []
   const visibleDetails = maxDetails && !expanded ? details.slice(0, maxDetails) : details
 
   return (
@@ -218,7 +218,7 @@ function HobbyWithLimit({
 
       {visibleDetails.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">
-          {visibleDetails.map((detail, j) => (
+          {visibleDetails.map((detail: string, j: number) => (
             <span
               key={j}
               className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
