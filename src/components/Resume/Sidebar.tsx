@@ -161,15 +161,22 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
       {/* Centres d'intérêt */}
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {(visibleHobbies ?? []).map((hobby, i) => (
-              <div key={`${resolve(hobby.title)}-${i}`}>
+              <div
+                key={`${resolve(hobby.title)}-${i}`}
+                className="p-3 rounded-md bg-resume-hobby hover:bg-resume-hobby-hover transition-colors"
+              >
                 <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
-                {hobby.details?.map((detail, j) => (
-                  <p key={j} className="text-xs text-resume-text-secondary">
-                    {resolve(detail)}
-                  </p>
-                ))}
+                {hobby.details?.length > 0 && (
+                  <div className="space-y-1 mt-1">
+                    {hobby.details.map((detail, j) => (
+                      <p key={j} className="text-xs text-resume-text-secondary">
+                        {resolve(detail)}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
