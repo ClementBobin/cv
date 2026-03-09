@@ -178,7 +178,7 @@ export function GenerateForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Mode Selector */}
         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-8">

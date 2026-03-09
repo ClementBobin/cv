@@ -48,7 +48,7 @@ export function LanguageToggle() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-1 min-w-[4rem] rounded-lg bg-resume-bg-card border border-resume-primary/15 shadow-lg overflow-hidden z-50"
+            className="absolute right-0 mt-1 min-w-16 rounded-lg bg-resume-bg-card border border-resume-primary/15 shadow-lg overflow-hidden z-50"
             role="listbox"
             aria-label="Language"
           >

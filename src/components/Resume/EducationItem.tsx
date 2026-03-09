@@ -92,7 +92,7 @@ function EducationItemInner({
   return (
     <>
       {logo && (
-        <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
+        <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0">
           <img src={assetUrl(logo)} alt={`${school} logo`} className="object-contain w-full h-full" loading="lazy" />
         </div>
       )}

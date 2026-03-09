@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import { resumeConfig } from '@/data/resume-config'
-import type { ResumeConfig, SkillItem } from '@/data/types'
+import type { ResumeConfig, SkillItem, Hobby } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 import { SidebarSection } from './SidebarSection'
 import { ContactItem } from './ContactItem'
@@ -203,7 +203,7 @@ function HobbyWithLimit({
   showMoreLabel,
   showLessLabel,
 }: {
-  hobby: ResumeConfig['hobbies'][number]
+  hobby: Hobby
   resolve: (ls: Record<string, string>) => string
   maxDetails?: number
   showMoreLabel: string
@@ -216,7 +216,7 @@ function HobbyWithLimit({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-start gap-2">
-        <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
+        <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full shrink-0" />
         <span className="font-medium text-sm text-resume-text">
           {typeof hobby.title === 'string' ? hobby.title : resolve(hobby.title)}
         </span>
