@@ -93,9 +93,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
     limits?.contact && !showAllContact ? contact.slice(0, limits.contact) : contact
   const visibleSkills =
     limits?.skills && !showAllSkills ? skills.slice(0, limits.skills) : skills
-  const visibleHobbies: Hobby[] = (limits?.hobbies && !showAllHobbies && hobbies
-    ? hobbies.slice(0, limits.hobbies)
-    : hobbies) ?? []
+  const visibleHobbies: Hobby[] = hobbies?.slice(0, limits?.hobbies) ?? []
   
   return (
     <div className="md:w-[38%] bg-linear-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
@@ -163,7 +161,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
           <div className="flex flex-col gap-2">
-            {(visibleHobbies ?? []).map((hobby, i) => (
+            {visibleHobbies.map((hobby, i) => (
               <HobbyWithLimit
                 key={i}
                 hobby={hobby}
