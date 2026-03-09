@@ -173,6 +173,8 @@ export interface ResumeLimits {
   educationTechs?: number
   /** Max number of hobbies to show initially. */
   hobbies?: number
+  /** Max number of hobbies details to show initially. */
+  hobbiesDetails?: number
   /** Max number of skill categories to show initially. */
   skills?: number
   /** Max number of items per skill category to show initially. */
