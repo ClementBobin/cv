@@ -106,6 +106,9 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
           emoji={personal.photoBackEmoji}
         />
       )}
+      {personal.summary && (
+        <small>{personal.summary}</small>
+      )}
 
       {/* Contact */}
       <SidebarSection title={resolve(labels.sections.contact)}>
