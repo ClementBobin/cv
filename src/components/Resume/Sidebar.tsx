@@ -93,7 +93,11 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
     limits?.contact && !showAllContact ? contact.slice(0, limits.contact) : contact
   const visibleSkills =
     limits?.skills && !showAllSkills ? skills.slice(0, limits.skills) : skills
-  const visibleHobbies: Hobby[] = hobbies?.slice(0, limits?.hobbies) ?? []
+  const hobbiesArray: Hobby[] = hobbies ?? []
+  const visibleHobbies: Hobby[] =
+    limits?.hobbies && !showAllHobbies
+      ? hobbiesArray.slice(0, limits.hobbies)
+      : hobbiesArray
   
   return (
     <div className="md:w-[38%] bg-linear-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
