@@ -161,24 +161,54 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
       {/* Centres d'intérêt */}
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
-          <div className="flex flex-col gap-3">
-            {(visibleHobbies ?? []).map((hobby, i) => (
-              <div
-                key={`${resolve(hobby.title)}-${i}`}
-                className="p-3 rounded-md border-2 border-resume-primary/30 hover:border-resume-primary/50 bg-resume-primary/5 transition-colors"
-              >
-                <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
-                {(hobby.details ?? []).length > 0 && (
-                  <div className="space-y-1 mt-1">
+          <div className="flex flex-col gap-2">
+            {(visibleHobbies ?? []).map((hobby, i) => {
+              const hasIcons =
+                hobby.details?.some((d) => d.icon && LucideIcons[d.icon]);
+      
+              // Option 1️⃣: Icons + inline bullets
+              if (hasIcons) {
+                return (
+                  <div key={`${resolve(hobby.title)}-${i}`} className="flex flex-col gap-1">
+                    <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(hobby.details ?? []).map((detail, j) => {
+                        const Icon = detail.icon ? LucideIcons[detail.icon] : null;
+                        return (
+                          <span
+                            key={j}
+                            className="flex items-center gap-1 text-xs text-resume-text-secondary"
+                          >
+                            {Icon && <Icon className="w-3 h-3 text-resume-primary" />}
+                            {resolve(detail.text || detail)}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+      
+              // Option 2️⃣: Colored tags + accent indicator
+              return (
+                <div key={`${resolve(hobby.title)}-${i}`} className="flex items-start gap-2">
+                  <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
+                  <div className="flex flex-wrap gap-1">
+                    <span className="font-medium text-sm text-resume-text">
+                      {resolve(hobby.title)}
+                    </span>
                     {(hobby.details ?? []).map((detail, j) => (
-                      <p key={j} className="text-xs text-resume-text-secondary">
-                        {resolve(detail)}
-                      </p>
+                      <span
+                        key={j}
+                        className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
+                      >
+                        {resolve(detail.text || detail)}
+                      </span>
                     ))}
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
           {limits?.hobbies && hobbies.length > limits.hobbies && (
             <button
