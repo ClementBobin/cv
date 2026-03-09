@@ -107,7 +107,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         />
       )}
       {personal.summary && (
-        <small>{personal.summary}</small>
+        <small>{resolve(personal.summary)}</small>
       )}
 
       {/* Contact */}
