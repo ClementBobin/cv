@@ -200,7 +200,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
                           key={j}
                           className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
                         >
-                          {resolve(detail.title)}
+                          {resolve(detail)}
                         </span>
                       ))}
                     </div>
