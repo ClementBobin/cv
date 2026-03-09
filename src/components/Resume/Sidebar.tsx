@@ -162,52 +162,18 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
           <div className="flex flex-col gap-2">
-            {(visibleHobbies ?? []).map((hobby, i) => {
-              //const IconComponent = hobby.icon ? LucideIcons[hobby.icon] : null;
-          
-              // If icon exists → inline icon bullet
-              //if (IconComponent) {
-              //  return (
-              //    <div key={i} className="flex flex-col gap-1">
-              //      <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
-              //      {(hobby.details ?? []).map((detail, j) => (
-              //        <div key={j} className="flex items-center gap-1 text-xs text-resume-text-secondary">
-              //          <IconComponent className="w-3 h-3 text-resume-primary" />
-              //          <span>{resolve(detail)}</span>
-              //        </div>
-              //      ))}
-              //    </div>
-              //  );
-              //}
-          
-              // Fallback → colored tag + dot
-              return (
-                <div key={i} className="flex items-start gap-2">
-                  {/* Bullet */}
-                  <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
-              
-                  {/* Content */}
-                  <div className="flex flex-col gap-1">
-                    {/* Title */}
-                    <span className="font-medium text-sm text-resume-text">
-                      {resolve(hobby.title)}
-                    </span>
-              
-                    {/* Details - always on next line */}
-                    <div className="flex flex-wrap gap-1">
-                      {(hobby.details ?? []).map((detail, j) => (
-                        <span
-                          key={j}
-                          className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
-                        >
-                          {resolve(detail)}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <div className="flex flex-col gap-2">
+              {(visibleHobbies ?? []).map((hobby, i) => (
+                <HobbyWithLimit
+                  key={i}
+                  hobby={hobby}
+                  resolve={resolve}
+                  maxDetails={limits?.hobbiesDetails}
+                  showMoreLabel={showMoreLabel}
+                  showLessLabel={showLessLabel}
+                />
+              ))}
+            </div>
           </div>
           {limits?.hobbies && hobbies.length > limits.hobbies && (
             <button
@@ -220,6 +186,56 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
             </button>
           )}
         </SidebarSection>
+      )}
+    </div>
+  )
+}
+
+/** Display a hobby with optional detail limit */
+function HobbyWithLimit({
+  hobby,
+  resolve,
+  maxDetails,
+  showMoreLabel,
+  showLessLabel,
+}: {
+  hobby: ResumeConfig['hobbies'][number]
+  resolve: (ls: Record<string, string>) => string
+  maxDetails?: number
+  showMoreLabel: string
+  showLessLabel: string
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const details = hobby.details ?? []
+  const visibleDetails = maxDetails && !expanded ? details.slice(0, maxDetails) : details
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-start gap-2">
+        <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
+        <span className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</span>
+      </div>
+
+      {visibleDetails.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-1">
+          {visibleDetails.map((detail, j) => (
+            <span
+              key={j}
+              className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
+            >
+              {resolve(detail)}
+            </span>
+          ))}
+
+          {maxDetails && details.length > maxDetails && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-xs text-resume-primary hover:underline ml-1"
+            >
+              {expanded ? showLessLabel : `+${details.length - maxDetails} ${showMoreLabel}`}
+            </button>
+          )}
+        </div>
       )}
     </div>
   )
