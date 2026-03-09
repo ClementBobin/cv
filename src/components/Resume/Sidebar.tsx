@@ -166,19 +166,19 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
               //const IconComponent = hobby.icon ? LucideIcons[hobby.icon] : null;
           
               // If icon exists → inline icon bullet
-              if (IconComponent) {
-                return (
-                  <div key={i} className="flex flex-col gap-1">
-                    <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
-                    {(hobby.details ?? []).map((detail, j) => (
-                      <div key={j} className="flex items-center gap-1 text-xs text-resume-text-secondary">
-                        {/* <IconComponent className="w-3 h-3 text-resume-primary" /> */}
-                        <span>{resolve(detail)}</span>
-                      </div>
-                    ))}
-                  </div>
-                );
-              }
+              //if (IconComponent) {
+              //  return (
+              //    <div key={i} className="flex flex-col gap-1">
+              //      <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
+              //      {(hobby.details ?? []).map((detail, j) => (
+              //        <div key={j} className="flex items-center gap-1 text-xs text-resume-text-secondary">
+              //          <IconComponent className="w-3 h-3 text-resume-primary" />
+              //          <span>{resolve(detail)}</span>
+              //        </div>
+              //      ))}
+              //    </div>
+              //  );
+              //}
           
               // Fallback → colored tag + dot
               return (
