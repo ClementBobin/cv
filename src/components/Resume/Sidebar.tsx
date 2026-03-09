@@ -165,7 +165,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
             {(visibleHobbies ?? []).map((hobby, i) => (
               <div
                 key={`${resolve(hobby.title)}-${i}`}
-                className="p-3 rounded-md border-2 border-resume-primary/30 hover:border-resume-primary/50 transition-colors"
+                className="p-3 rounded-md border-2 border-resume-primary/30 hover:border-resume-primary/50 bg-resume-primary/5 transition-colors"
               >
                 <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
                 {(hobby.details ?? []).length > 0 && (
