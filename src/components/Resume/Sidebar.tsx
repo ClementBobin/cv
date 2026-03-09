@@ -93,12 +93,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
     limits?.contact && !showAllContact ? contact.slice(0, limits.contact) : contact
   const visibleSkills =
     limits?.skills && !showAllSkills ? skills.slice(0, limits.skills) : skills
-  const hobbiesArray: Hobby[] = hobbies ?? []
-  const visibleHobbies: Hobby[] =
-    limits?.hobbies && !showAllHobbies
-      ? hobbiesArray.slice(0, limits.hobbies)
-      : hobbiesArray
-  
+
   return (
     <div className="md:w-[38%] bg-linear-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
       {/* Photo */}
@@ -117,7 +112,12 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
       <SidebarSection title={resolve(labels.sections.contact)}>
         <div className="space-y-3">
           {visibleContact.map((item) => (
-            <ContactItem key={`${item.type}-${item.label}`} type={item.type} label={item.label} href={item.href} />
+            <ContactItem
+              key={`${item.type}-${item.label}`}
+              type={item.type}
+              label={item.label}
+              href={item.href}
+            />
           ))}
           {limits?.contact && contact.length > limits.contact && (
             <button
@@ -132,7 +132,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         </div>
       </SidebarSection>
 
-      {/* Compétences */}
+      {/* Skills */}
       <SidebarSection title={resolve(labels.sections.skills)}>
         <div className="space-y-4">
           {visibleSkills.map((category, i) => {
@@ -161,23 +161,24 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         </div>
       </SidebarSection>
 
-      {/* Centres d'intérêt */}
+      {/* Hobbies */}
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
           <div className="flex flex-col gap-2">
-            {visibleHobbies.map((hobby, i) => (
-              <HobbyWithLimit
-                key={i}
-                hobby={hobby}
-                resolve={resolve}
-                maxDetails={limits?.hobbiesDetails}
-                showMoreLabel={showMoreLabel}
-                showLessLabel={showLessLabel}
-              />
-            ))}
+            {(hobbies ?? [])
+              .slice(0, limits?.hobbies && !showAllHobbies ? limits.hobbies : undefined)
+              .map((hobby, i) => (
+                <HobbyWithLimit
+                  key={i}
+                  hobby={hobby}
+                  resolve={resolve}
+                  maxDetails={limits?.hobbiesDetails}
+                  showMoreLabel={showMoreLabel}
+                  showLessLabel={showLessLabel}
+                />
+              ))}
           </div>
-      
-          {/* Show all hobbies button */}
+
           {limits?.hobbies && hobbies.length > limits.hobbies && (
             <button
               onClick={() => setShowAllHobbies(!showAllHobbies)}
@@ -214,7 +215,6 @@ function HobbyWithLimit({
 
   return (
     <div className="flex flex-col gap-1">
-      {/* Hobby title */}
       <div className="flex items-start gap-2">
         <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
         <span className="font-medium text-sm text-resume-text">
@@ -222,7 +222,6 @@ function HobbyWithLimit({
         </span>
       </div>
 
-      {/* Hobby details */}
       {visibleDetails.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">
           {visibleDetails.map((detail, j) => (
@@ -250,7 +249,7 @@ function HobbyWithLimit({
   )
 }
 
-/** Affiche une catégorie de compétences avec limite optionnelle d'éléments par catégorie. */
+/** Display skill category with optional limit */
 function SkillCategoryWithLimit({
   category,
   resolve,
@@ -265,23 +264,22 @@ function SkillCategoryWithLimit({
   showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
-  // Normalise plain strings into SkillItem objects without collapsing LocalizedString names
   const items = category.items.map(item => {
-    const skill: SkillItem = typeof item === 'string' ? { name: item } : item;
+    const skill: SkillItem = typeof item === 'string' ? { name: item } : item
     return {
       ...skill,
-      name: typeof skill.name === 'string' ? skill.name : skill.name.en // ou valeur par défaut
-    };
-  });
+      name: typeof skill.name === 'string' ? skill.name : skill.name.en,
+    }
+  })
   const visibleItems = maxItems && !expanded ? items.slice(0, maxItems) : items
 
   return (
     <SkillCategory title={resolve(category.title)}>
       {category.type === 'badges' && (
         <div className="flex flex-wrap gap-1.5">
-          {visibleItems.map((item, idx) => {
-            return <TechBadge key={idx} tech={item} />
-          })}
+          {visibleItems.map((item, idx) => (
+            <TechBadge key={idx} tech={item} />
+          ))}
           {maxItems && items.length > maxItems && (
             <button
               onClick={() => setExpanded(!expanded)}
@@ -297,7 +295,7 @@ function SkillCategoryWithLimit({
       {category.type === 'text' && (
         <p className="text-xs text-resume-text-secondary">
           {visibleItems
-            .map((item) => (typeof item.name === 'string' ? item.name : resolve(item.name)))
+            .map(item => (typeof item.name === 'string' ? item.name : resolve(item.name)))
             .join(', ')}
           {maxItems && items.length > maxItems && (
             <button
@@ -316,25 +314,22 @@ function SkillCategoryWithLimit({
             const content = (
               <span className="text-resume-text-secondary">
                 {name} {item.level ? resolve(item.level) : ''}
-                {item.details && (
-                  <span className="text-xs opacity-70 ml-1">{item.details}</span>
-                )}
+                {item.details && <span className="text-xs opacity-70 ml-1">{item.details}</span>}
               </span>
             )
-            return (
+            return item.href ? (
+              <a
+                key={j}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-resume-primary transition-colors"
+              >
+                {content}
+              </a>
+            ) : (
               <span key={j} className="flex items-center gap-1">
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-resume-primary transition-colors"
-                  >
-                    {content}
-                  </a>
-                ) : (
-                  content
-                )}
+                {content}
               </span>
             )
           })}
