@@ -183,19 +183,27 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
               // Fallback → colored tag + dot
               return (
                 <div key={i} className="flex items-start gap-2">
+                  {/* Bullet */}
                   <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
-                  <div className="flex flex-wrap gap-1">
+              
+                  {/* Content */}
+                  <div className="flex flex-col gap-1">
+                    {/* Title */}
                     <span className="font-medium text-sm text-resume-text">
                       {resolve(hobby.title)}
                     </span>
-                    {(hobby.details ?? []).map((detail, j) => (
-                      <span
-                        key={j}
-                        className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
-                      >
-                        {resolve(detail)}
-                      </span>
-                    ))}
+              
+                    {/* Details - always on next line */}
+                    <div className="flex flex-wrap gap-1">
+                      {(hobby.details ?? []).map((detail, j) => (
+                        <span
+                          key={j}
+                          className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
+                        >
+                          {resolve(detail.title)}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
