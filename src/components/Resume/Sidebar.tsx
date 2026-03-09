@@ -161,7 +161,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
       {/* Centres d'intérêt */}
       {hobbies && hobbies.length > 0 && labels.sections.hobbies && (
         <SidebarSection title={resolve(labels.sections.hobbies)}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3">
             {(visibleHobbies ?? []).map((hobby, i) => (
               <div
                 key={`${resolve(hobby.title)}-${i}`}
