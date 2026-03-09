@@ -93,9 +93,10 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
     limits?.contact && !showAllContact ? contact.slice(0, limits.contact) : contact
   const visibleSkills =
     limits?.skills && !showAllSkills ? skills.slice(0, limits.skills) : skills
-  const visibleHobbies =
-    limits?.hobbies && !showAllHobbies && hobbies ? hobbies.slice(0, limits.hobbies) : hobbies
-
+  const visibleHobbies: Hobby[] = (limits?.hobbies && !showAllHobbies && hobbies
+    ? hobbies.slice(0, limits.hobbies)
+    : hobbies) ?? []
+  
   return (
     <div className="md:w-[38%] bg-linear-to-b from-resume-sidebar-from to-resume-sidebar-to p-8">
       {/* Photo */}
@@ -213,17 +214,16 @@ function HobbyWithLimit({
     <div className="flex flex-col gap-1">
       <div className="flex items-start gap-2">
         <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
-        <span className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</span>
+        <span className="font-medium text-sm text-resume-text">
+          {typeof hobby.title === 'string' ? hobby.title.en : resolve(hobby.title)}
+        </span>
       </div>
 
       {visibleDetails.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">
-          {visibleDetails.map((detail: string, j: number) => (
-            <span
-              key={j}
-              className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
-            >
-              {resolve(detail)}
+          {visibleDetails.map((detail, j) => (
+            <span key={j} className="inline-block ...">
+              {typeof detail === 'string' ? detail.en : resolve(detail)}
             </span>
           ))}
 
