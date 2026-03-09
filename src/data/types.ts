@@ -294,6 +294,7 @@ export interface ResumeConfig {
     photoBackEmoji?: string
     title: LocalizedString
     subtitle?: LocalizedString
+    summary?: LocalizedString
     location?: string
   }
   seo: {
