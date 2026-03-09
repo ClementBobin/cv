@@ -222,28 +222,36 @@ function HobbyWithLimit({
   if (IconComponent) {
     return (
       <div className="flex flex-col gap-1">
-        <p className="font-medium text-sm text-resume-text">
-          {typeof hobby.title === 'string' ? hobby.title : resolve(hobby.title)}
-        </p>
-        <div className="flex flex-col gap-1">
-          {visibleDetails.map((detail, j) => (
-            <div key={j} className="flex items-center gap-1.5 text-xs text-resume-text-secondary">
-              <IconComponent className="w-3.5 h-3.5 text-resume-primary shrink-0" />
-              <span>{typeof detail === 'string' ? detail : resolve(detail)}</span>
-            </div>
-          ))}
-          
-          {maxDetails && details.length > maxDetails && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="text-xs text-resume-primary hover:underline ml-1 mt-1"
-            >
-              {expanded
-                ? showLessLabel
-                : `+${details.length - maxDetails} ${showMoreLabel}`}
-            </button>
-          )}
+        <div className="flex items-center gap-2">
+          <IconComponent className="w-4 h-4 text-resume-primary shrink-0" />
+          <span className="font-medium text-sm text-resume-text">
+            {typeof hobby.title === 'string' ? hobby.title : resolve(hobby.title)}
+          </span>
         </div>
+        
+        {visibleDetails.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1 ml-6">
+            {visibleDetails.map((detail, j) => (
+              <span
+                key={j}
+                className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
+              >
+                {typeof detail === 'string' ? detail : resolve(detail)}
+              </span>
+            ))}
+
+            {maxDetails && details.length > maxDetails && (
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="text-xs text-resume-primary hover:underline ml-1"
+              >
+                {expanded
+                  ? showLessLabel
+                  : `+${details.length - maxDetails} ${showMoreLabel}`}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     )
   }
