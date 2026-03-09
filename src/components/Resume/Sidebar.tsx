@@ -168,9 +168,9 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
                 className="p-3 rounded-md bg-resume-hobby hover:bg-resume-hobby-hover transition-colors"
               >
                 <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
-                {hobby.details?.length > 0 && (
+                {(hobby.details ?? []).length > 0 && (
                   <div className="space-y-1 mt-1">
-                    {hobby.details.map((detail, j) => (
+                    {(hobby.details ?? []).map((detail, j) => (
                       <p key={j} className="text-xs text-resume-text-secondary">
                         {resolve(detail)}
                       </p>
