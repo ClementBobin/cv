@@ -163,35 +163,26 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
         <SidebarSection title={resolve(labels.sections.hobbies)}>
           <div className="flex flex-col gap-2">
             {(visibleHobbies ?? []).map((hobby, i) => {
-              const hasIcons =
-                hobby.details?.some((d) => d.icon && LucideIcons[d.icon]);
-      
-              // Option 1️⃣: Icons + inline bullets
-              if (hasIcons) {
+              const IconComponent = hobby.icon ? LucideIcons[hobby.icon] : null;
+          
+              // If icon exists → inline icon bullet
+              if (IconComponent) {
                 return (
-                  <div key={`${resolve(hobby.title)}-${i}`} className="flex flex-col gap-1">
+                  <div key={i} className="flex flex-col gap-1">
                     <p className="font-medium text-sm text-resume-text">{resolve(hobby.title)}</p>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {(hobby.details ?? []).map((detail, j) => {
-                        const Icon = detail.icon ? LucideIcons[detail.icon] : null;
-                        return (
-                          <span
-                            key={j}
-                            className="flex items-center gap-1 text-xs text-resume-text-secondary"
-                          >
-                            {Icon && <Icon className="w-3 h-3 text-resume-primary" />}
-                            {resolve(detail.text || detail)}
-                          </span>
-                        );
-                      })}
-                    </div>
+                    {(hobby.details ?? []).map((detail, j) => (
+                      <div key={j} className="flex items-center gap-1 text-xs text-resume-text-secondary">
+                        <IconComponent className="w-3 h-3 text-resume-primary" />
+                        <span>{resolve(detail)}</span>
+                      </div>
+                    ))}
                   </div>
                 );
               }
-      
-              // Option 2️⃣: Colored tags + accent indicator
+          
+              // Fallback → colored tag + dot
               return (
-                <div key={`${resolve(hobby.title)}-${i}`} className="flex items-start gap-2">
+                <div key={i} className="flex items-start gap-2">
                   <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full flex-shrink-0" />
                   <div className="flex flex-wrap gap-1">
                     <span className="font-medium text-sm text-resume-text">
@@ -202,7 +193,7 @@ export function Sidebar({ config = resumeConfig }: SidebarProps) {
                         key={j}
                         className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
                       >
-                        {resolve(detail.text || detail)}
+                        {resolve(detail)}
                       </span>
                     ))}
                   </div>
