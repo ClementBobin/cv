@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
 import type { ResumeConfig } from '@/data/types'
 import { Sidebar } from './Sidebar'
 import { MainContent } from './MainContent'
@@ -11,10 +10,10 @@ import { PdfDownload } from './PdfDownload'
 import { fetchTechRegistry } from '@/data/tech-registry'
 
 interface ResumeProps {
-  config?: ResumeConfig
+  config: ResumeConfig
 }
 
-export function Resume({ config = resumeConfig }: ResumeProps) {
+export function Resume({ config }: ResumeProps) {
   const { resolve } = useTranslation()
   const [loaded, setLoaded] = useState(false)
 
@@ -41,7 +40,7 @@ export function Resume({ config = resumeConfig }: ResumeProps) {
           <PdfDownload config={config} />
         </div>
         <div className="flex items-center gap-2">
-          <LanguageToggle />
+          <LanguageToggle config={config} />
           <ThemeToggle label={resolve(config.labels.actions.switchTheme)} />
         </div>
       </div>

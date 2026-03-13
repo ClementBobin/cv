@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
 import type { ResumeConfig, SkillItem, Hobby } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 import { SidebarSection } from './SidebarSection'
@@ -77,10 +76,10 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
 }
 
 interface SidebarProps {
-  config?: ResumeConfig
+  config: ResumeConfig
 }
 
-export function Sidebar({ config = resumeConfig }: SidebarProps) {
+export function Sidebar({ config }: SidebarProps) {
   const { resolve } = useTranslation()
   const { personal, contact, skills, hobbies, labels, limits } = config
 

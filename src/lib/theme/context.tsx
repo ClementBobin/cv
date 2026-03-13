@@ -1,7 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react'
-import { resumeConfig } from '@/data/resume-config'
 import { presets } from '@/data/presets'
-import type { ThemeColors, PresetName } from '@/data/types'
+import type { ThemeColors, PresetName, ResumeConfig } from '@/data/types'
 import { ThemeContext } from './ThemeContext'
 
 function getTimeBasedTheme(): 'light' | 'dark' {
@@ -19,29 +18,34 @@ function getTimeBasedTheme(): 'light' | 'dark' {
   return hour >= eveningThresholds[month] || hour < morningThresholds[month] ? 'dark' : 'light'
 }
 
-function getInitialDark(): boolean {
-  const stored = localStorage.getItem('resume-theme')
-  if (stored === 'dark') return true
-  if (stored === 'light') return false
+export function ThemeProvider({
+  children,
+  resumeConfig,
+}: {
+  children: ReactNode
+  resumeConfig: ResumeConfig
+}) {
+  const getInitialDark = (): boolean => {
+    const stored = localStorage.getItem('resume-theme')
+    if (stored === 'dark') return true
+    if (stored === 'light') return false
 
-  const mode = resumeConfig.theme?.defaultMode
-  if (mode === 'dark') return true
-  if (mode === 'light') return false
-  if (mode === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches
+    const mode = resumeConfig.theme?.defaultMode
+    if (mode === 'dark') return true
+    if (mode === 'light') return false
+    if (mode === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches
 
-  // Default: time-based
-  return getTimeBasedTheme() === 'dark'
-}
+    return getTimeBasedTheme() === 'dark'
+  }
 
-function resolveColors(presetName: PresetName): ThemeColors {
-  const base = presets[presetName]
-  const overrides = resumeConfig.theme?.colors
-  return { ...base, ...overrides }
-}
+  const resolveColors = (presetName: PresetName): ThemeColors => {
+    const base = presets[presetName]
+    const overrides = resumeConfig.theme?.colors
+    return { ...base, ...overrides }
+  }
 
-const defaultPreset: PresetName = resumeConfig.theme?.preset ?? 'minimal'
+  const defaultPreset: PresetName = resumeConfig.theme?.preset ?? 'minimal'
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDark, setIsDark] = useState(getInitialDark)
   const [preset, setPreset] = useState<PresetName>(defaultPreset)
   const colors = resolveColors(preset)

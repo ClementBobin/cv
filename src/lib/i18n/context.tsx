@@ -1,16 +1,15 @@
 import { useState, useEffect, type ReactNode } from 'react'
-import { resumeConfig } from '@/data/resume-config'
-import type { LocalizedString, LocalizedStringArray } from '@/data/types'
+import type { LocalizedString, LocalizedStringArray, ResumeConfig } from '@/data/types'
 import { LanguageContext } from './LanguageContext'
 
-function getUrlLanguage(): string | null {
+function getUrlLanguage(resumeConfig: ResumeConfig): string | null {
   const params = new URLSearchParams(window.location.search)
   const lang = params.get('lang')
   if (lang && resumeConfig.languages.available.includes(lang)) return lang
   return null
 }
 
-function detectBrowserLanguage(): string {
+function detectBrowserLanguage(resumeConfig: ResumeConfig): string {
   const { available, default: defaultLang } = resumeConfig.languages
   const browserLang = navigator.language.split('-')[0]
   return available.includes(browserLang) ? browserLang : defaultLang
@@ -22,23 +21,19 @@ function updateUrlLanguage(lang: string) {
   window.history.replaceState({}, '', url.toString())
 }
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
+export function LanguageProvider({ children, resumeConfig }: { children: ReactNode; resumeConfig: ResumeConfig }) {
   const { default: defaultLang } = resumeConfig.languages
 
   const [language, setLanguageState] = useState(() => {
-    // Priority: 1. URL param  2. localStorage  3. browser detection
-    const urlLang = getUrlLanguage()
+    // Priority: 1. URL param 3. browser detection
+    const urlLang = getUrlLanguage(resumeConfig)
     if (urlLang) return urlLang
 
-    const stored = localStorage.getItem('resume-language')
-    if (stored && resumeConfig.languages.available.includes(stored)) return stored
-
-    return detectBrowserLanguage()
+    return detectBrowserLanguage(resumeConfig)
   })
 
   const setLanguage = (lang: string) => {
     setLanguageState(lang)
-    localStorage.setItem('resume-language', lang)
     updateUrlLanguage(lang)
   }
 

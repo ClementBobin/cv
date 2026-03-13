@@ -1,11 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { LanguageProvider } from '@/lib/i18n'
 import { ThemeProvider } from '@/lib/theme'
 import { Resume } from '@/components/Resume'
-import { GenerateForm } from '@/components/GenerateForm'
-import { Hero } from '@/components/Hero'
-import { NotFound } from '@/components/NotFound'
 import { loadResumeConfig } from '@/data/configLoader'
 import type { ResumeConfig } from '@/data/types'
 import { ThemeVarsInjector, PresetSelector } from '@/components/PresetSelector'
@@ -39,7 +35,7 @@ function LoadingSpinner() {
   )
 }
 
-function ResumeRoute() {
+export default function App() {
   const [config, setConfig] = useState<ResumeConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -67,48 +63,27 @@ function ResumeRoute() {
         <div className="max-w-md text-center">
           <h1 className="text-2xl font-bold text-resume-text mb-4">Error Loading Resume</h1>
           <p className="text-resume-text-secondary mb-4">{error || 'Configuration not found'}</p>
-          <Link
-            to="/generate"
-            className="inline-block px-4 py-2 bg-resume-primary text-white rounded hover:bg-resume-primary/80 transition-colors"
-          >
-            Generate New Link
-          </Link>
         </div>
       </div>
     )
   }
 
   return (
-    <>
-      <SeoHead config={config} />
-      <ThemeVarsInjector>
-        <PresetSelector />
-        <Resume config={config} />
-      </ThemeVarsInjector>
-    </>
-  )
-}
-
-export default function App() {
-  return (
-    <BrowserRouter basename="/cv">
-      <ThemeProvider>
-        <LanguageProvider>
-          <Routes>
-            <Route path="/view" element={<ResumeRoute />} />
-            <Route path="/generate" element={<GenerateForm />} />
-            <Route path="/" element={<Hero />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </LanguageProvider>
-        {import.meta.env.DEV && (
-          <>
-            <Suspense>
-              <Agentation />
-            </Suspense>
-          </>
-        )}
-      </ThemeProvider>
-    </BrowserRouter>
+    <ThemeProvider resumeConfig={config}>
+      <LanguageProvider resumeConfig={config}>
+        <SeoHead config={config} />
+        <ThemeVarsInjector>
+          <PresetSelector />
+          <Resume config={config} />
+        </ThemeVarsInjector>
+      </LanguageProvider>
+      {import.meta.env.DEV && (
+        <>
+          <Suspense>
+            <Agentation />
+          </Suspense>
+        </>
+      )}
+    </ThemeProvider>
   )
 }

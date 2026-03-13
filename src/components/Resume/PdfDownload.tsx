@@ -1,14 +1,13 @@
 import { DownloadIcon } from '@/components/icons'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
 import type { ResumeConfig } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
 
 interface PdfDownloadProps {
-  config?: ResumeConfig
+  config: ResumeConfig
 }
 
-export function PdfDownload({ config = resumeConfig }: PdfDownloadProps) {
+export function PdfDownload({ config }: PdfDownloadProps) {
   const { language, resolve } = useTranslation()
 
   if (!config.pdf) return null

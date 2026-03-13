@@ -1,6 +1,4 @@
-import { resumeConfig as defaultConfig } from './resume-config'
-import { decodeUrl } from '@/lib/urlEncoder'
-import { decodeAndDecompress } from '@/lib/compression'
+
 import { fetchTechRegistry } from './tech-registry'
 import type { ResumeConfig } from './types'
 
@@ -8,60 +6,13 @@ import type { ResumeConfig } from './types'
  * Custom error for config validation
  * --------------------------------------------- */
 class ResumeConfigError extends Error {
-  public readonly source: 'configData' | 'configUrl' | 'unknown'
+  public readonly source: 'data' | 'url' | 'unknown'
 
-  constructor(message: string, source: 'configData' | 'configUrl' | 'unknown') {
+  constructor(message: string, source: 'data' | 'url' | 'unknown') {
     super(message)
     this.name = 'ResumeConfigError'
     this.source = source
   }
-}
-
-/* ---------------------------------------------
- * Runtime validation
- * --------------------------------------------- */
-function validateResumeConfig(
-  config: unknown,
-  source: ResumeConfigError['source']
-): ResumeConfig {
-  if (!config || typeof config !== 'object') {
-    throw new ResumeConfigError('Config is not a valid object', source)
-  }
-
-  const c = config as Partial<ResumeConfig>
-
-  if (!c.personal) {
-    throw new ResumeConfigError('Missing "personal" section', source)
-  }
-
-  if (!c.languages) {
-    throw new ResumeConfigError('Missing "languages" section', source)
-  }
-
-  if (!c.labels) {
-    throw new ResumeConfigError('Missing "labels" section', source)
-  }
-
-  if (!c.personal.name) {
-    throw new ResumeConfigError('Missing "personal.name"', source)
-  }
-
-  if (!c.personal.title) {
-    throw new ResumeConfigError('Missing "personal.title"', source)
-  }
-
-  if (!c.languages.default) {
-    throw new ResumeConfigError('Missing "languages.default"', source)
-  }
-
-  if (!Array.isArray(c.languages.available)) {
-    throw new ResumeConfigError(
-      '"languages.available" must be an array',
-      source
-    )
-  }
-
-  return c as ResumeConfig
 }
 
 /* ---------------------------------------------
@@ -70,61 +21,11 @@ function validateResumeConfig(
 export async function loadResumeConfig(): Promise<ResumeConfig> {
   await fetchTechRegistry()
 
-  const params = new URLSearchParams(window.location.search)
-  const encodedUrl = params.get('config')
-  const encodedData = params.get('configData')
-
-  /* ---------- CONFIG DATA MODE ---------- */
-  if (encodedData) {
-    try {
-      let configJson: string
-
-      try {
-        configJson = decodeAndDecompress(encodedData)
-      } catch {
-        console.warn('[resume-config] Falling back to uncompressed decoding')
-        configJson = decodeURIComponent(atob(encodedData))
-      }
-
-      const parsed = JSON.parse(configJson)
-      return validateResumeConfig(parsed, 'configData')
-    } catch (error) {
-      logConfigError(error, 'configData')
-      return defaultConfig
-    }
-  }
-
-  /* ---------- CONFIG URL MODE ---------- */
-  if (encodedUrl) {
-    try {
-      const configUrl = decodeUrl(encodedUrl)
-
-      if (!configUrl) {
-        throw new ResumeConfigError('Decoded config URL is empty', 'configUrl')
-      }
-
-      const response = await fetch(configUrl)
-
-      if (!response.ok) {
-        throw new ResumeConfigError(
-          `HTTP ${response.status} – ${response.statusText}`,
-          'configUrl'
-        )
-      }
-
-      const parsed = await response.json()
-      return validateResumeConfig(parsed, 'configUrl')
-    } catch (error) {
-      logConfigError(error, 'configUrl')
-      return defaultConfig
-    }
-  }
-
   try {
       const configUrl = import.meta.env.VITE_RESSOURCES_URL;
 
       if (!configUrl) {
-        throw new ResumeConfigError('Decoded config URL is empty', 'configUrl')
+        throw new ResumeConfigError('Decoded config URL is empty', 'url')
       }
 
       const response = await fetch(`${import.meta.env.VITE_RESSOURCES_URL}/cv`)
@@ -132,42 +33,16 @@ export async function loadResumeConfig(): Promise<ResumeConfig> {
       if (!response.ok) {
         throw new ResumeConfigError(
           `HTTP ${response.status} – ${response.statusText}`,
-          'configUrl'
+          'url'
         )
       }
 
       const parsed = await response.json()
       return parsed
   } catch (error) {
-    logConfigError(error, 'configUrl')
-    return defaultConfig
+    throw new ResumeConfigError(`Failed to load resume configuration: ${error}`, 'url')
   }
 
   /* ---------- DEFAULT ---------- */
   // return defaultConfig
-}
-
-/* ---------------------------------------------
- * Centralized logging
- * --------------------------------------------- */
-function logConfigError(
-  error: unknown,
-  source: ResumeConfigError['source']
-) {
-  if (error instanceof ResumeConfigError) {
-    console.error(
-      `[resume-config:${source}] ${error.message}`
-    )
-  } else if (error instanceof Error) {
-    console.error(
-      `[resume-config:${source}] Unexpected error:`,
-      error.message,
-      error
-    )
-  } else {
-    console.error(
-      `[resume-config:${source}] Unknown error`,
-      error
-    )
-  }
 }

@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDownIcon } from '@/components/icons'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
+import type { ResumeConfig } from '@/data/types'
 
-export function LanguageToggle() {
+export function LanguageToggle({ config }: { config: ResumeConfig }) {
   const { language, setLanguage } = useTranslation()
-  const { available, labels } = resumeConfig.languages
+  const { available, labels } = config.languages
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 

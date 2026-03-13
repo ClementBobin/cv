@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { resumeConfig } from '@/data/resume-config'
 import type { ResumeConfig, LocalizedTrainingArray, TrainingItem } from '@/data/types'
 import { ExperienceItem } from './ExperienceItem'
 import { ProjectItem } from './ProjectItem'
 import { EducationItem } from './EducationItem'
 
 interface MainContentProps {
-  config?: ResumeConfig
+  config: ResumeConfig
 }
 
 /** Resolve a LocalizedTrainingArray to an array of { text, href } objects for a given language. */
@@ -23,7 +22,7 @@ function resolveTrainingItems(
   )
 }
 
-export function MainContent({ config = resumeConfig }: MainContentProps) {
+export function MainContent({ config }: MainContentProps) {
   const { resolve, resolveArray, language } = useTranslation()
   const { personal, experiences, projects, education, labels, limits } = config
   const [expandedExp, setExpandedExp] = useState<string | null>(null)
