@@ -274,8 +274,15 @@ function buildNoscriptHtml(
     lines.push(
       `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.hobbies))}</h2>`
     )
-    const hobbyNames = hobbies.map(h => resolve(h.title)).filter(Boolean)
-    if (hobbyNames.length > 0) lines.push(`${indent}    <p style="margin: 0; color: #555;">${escapeHtml(hobbyNames.join(' · '))}</p>`)
+    
+    // Map through each hobby's details array and resolve each LocalizedString
+    const hobbyNames = hobbies.flatMap(h => 
+      h.details?.map(detail => resolve(detail)).filter(Boolean) || []
+    )
+    
+    if (hobbyNames.length > 0) {
+      lines.push(`${indent}    <p style="margin: 0; color: #555;">${escapeHtml(hobbyNames.join(' · '))}</p>`)
+    }
     lines.push(`${indent}  </section>`)
   }
 
