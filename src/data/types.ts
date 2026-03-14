@@ -171,6 +171,10 @@ export interface ResumeLimits {
   education?: number
   /** Max number of tech badges to show per education entry. */
   educationTechs?: number
+  /** Max number of soft skills to show initially. */
+  softSkills?: number
+  /** Max number of soft skills details to show initially. */
+  softSkillsDetails?: number
   /** Max number of hobbies to show initially. */
   hobbies?: number
   /** Max number of hobbies details to show initially. */
@@ -192,6 +196,7 @@ export interface ResumeLabels {
     experience: LocalizedString
     education: LocalizedString
     projects?: LocalizedString
+    softSkills?: LocalizedString
     hobbies?: LocalizedString
   }
   experience: {
@@ -314,6 +319,7 @@ export interface ResumeConfig {
   experiences: Experience[]
   education: Education[]
   projects?: Project[]
+  softSkills?: Hobby[]
   hobbies?: Hobby[]
   pdf?: {
     label?: LocalizedString

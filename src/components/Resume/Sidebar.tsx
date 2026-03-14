@@ -81,11 +81,12 @@ interface SidebarProps {
 
 export function Sidebar({ config }: SidebarProps) {
   const { resolve } = useTranslation()
-  const { personal, contact, skills, hobbies, labels, limits } = config
+  const { personal, contact, skills, softSkills, hobbies, labels, limits } = config
 
   const [showAllContact, setShowAllContact] = useState(false)
   const [showAllSkills, setShowAllSkills] = useState(false)
   const [showAllHobbies, setShowAllHobbies] = useState(false)
+  const [showAllSoftSkills, setShowAllSoftSkills] = useState(false)
 
   const showMoreLabel = labels.actions.showMore ? resolve(labels.actions.showMore) : 'Voir plus'
   const showLessLabel = labels.actions.showLess ? resolve(labels.actions.showLess) : 'Voir moins'
@@ -188,6 +189,37 @@ export function Sidebar({ config }: SidebarProps) {
               {showAllHobbies
                 ? showLessLabel
                 : `+${hobbies.length - limits.hobbies} ${showMoreLabel}`}
+            </button>
+          )}
+        </SidebarSection>
+      )}
+
+      {/* Soft Skills */}
+      {softSkills && softSkills.length > 0 && labels.sections.softSkills && (
+        <SidebarSection title={resolve(labels.sections.softSkills)}>
+          <div className="flex flex-col gap-2">
+            {(softSkills ?? [])
+              .slice(0, limits?.softSkills && !showAllSoftSkills ? limits.softSkills : undefined)
+              .map((softSkill, i) => (
+                <HobbyWithLimit
+                  key={i}
+                  hobby={softSkill}
+                  resolve={resolve}
+                  maxDetails={limits?.softSkillsDetails}
+                  showMoreLabel={showMoreLabel}
+                  showLessLabel={showLessLabel}
+                />
+              ))}
+          </div>
+
+          {limits?.softSkills && softSkills.length > limits.softSkills && (
+            <button
+              onClick={() => setShowAllSoftSkills(!showAllSoftSkills)}
+              className="mt-2 text-xs text-resume-primary hover:underline"
+            >
+              {showAllSoftSkills
+                ? showLessLabel
+                : `+${softSkills.length - limits.softSkills} ${showMoreLabel}`}
             </button>
           )}
         </SidebarSection>
