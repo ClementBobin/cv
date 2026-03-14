@@ -50,6 +50,7 @@ export function Resume({ config }: ResumeProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-resume-bg-card rounded-lg shadow-2xl overflow-hidden dark:border dark:border-resume-primary/10"
+        id='CV'
       >
         <div className="flex flex-col-reverse md:flex-row">
           <Sidebar config={config} />
