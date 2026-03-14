@@ -243,11 +243,13 @@ function HobbyWithLimit({
   showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
+
   const details: (string | Record<string, string>)[] = hobby.details ?? []
   const visibleDetails = maxDetails && !expanded ? details.slice(0, maxDetails) : details
-  
+
   // Get the icon component if icon name is provided
-  const IconComponent = hobby.icon && (LucideIcons as unknown as Record<string, LucideIcon>)[hobby.icon]
+  const IconComponent =
+    hobby.icon && (LucideIcons as unknown as Record<string, LucideIcon>)[hobby.icon]
 
   // If icon exists → show with icon bullets
   if (IconComponent) {
@@ -256,12 +258,11 @@ function HobbyWithLimit({
         {visibleDetails.length > 0 && (
           <div className="flex flex-col gap-1 mt-1 ml-6">
             {visibleDetails.map((detail, j) => (
-              <div key={j}>
-                <IconComponent className="w-4 h-4 text-resume-primary shrink-0" />
-                <span
-                  className="inline-block text-resume-primary text-xs px-2 py-0.5"
-                >
-                  {typeof detail === 'string' ? detail : resolve(detail)}
+              <div key={j} className="flex items-start gap-2">
+                <IconComponent className="w-4 h-4 text-resume-primary shrink-0 mt-[2px]" />
+
+                <span className="text-resume-primary text-xs">
+                  {typeof detail === "string" ? detail : resolve(detail)}
                 </span>
               </div>
             ))}
@@ -269,7 +270,7 @@ function HobbyWithLimit({
             {maxDetails && details.length > maxDetails && (
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="text-xs text-resume-primary hover:underline ml-1"
+                className="text-xs text-resume-primary hover:underline ml-6"
               >
                 {expanded
                   ? showLessLabel
@@ -288,18 +289,15 @@ function HobbyWithLimit({
       {visibleDetails.length > 0 && (
         <div className="flex flex-col gap-1 mt-1">
           {visibleDetails.map((detail, j) => (
-            <span
-              key={j}
-              className="inline-block text-resume-primary text-xs px-2 py-0.5"
-            >
-              {typeof detail === 'string' ? detail : resolve(detail)}
+            <span key={j} className="text-resume-primary text-xs">
+              {typeof detail === "string" ? detail : resolve(detail)}
             </span>
           ))}
 
           {maxDetails && details.length > maxDetails && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-xs text-resume-primary hover:underline ml-1"
+              className="text-xs text-resume-primary hover:underline"
             >
               {expanded
                 ? showLessLabel
