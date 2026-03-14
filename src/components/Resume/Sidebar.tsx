@@ -256,12 +256,14 @@ function HobbyWithLimit({
         {visibleDetails.length > 0 && (
           <div className="flex flex-col gap-1 mt-1 ml-6">
             {visibleDetails.map((detail, j) => (
-              <span
-                key={j}
-                className="inline-block text-resume-primary text-xs px-2 py-0.5"
-              >
-                {typeof detail === 'string' ? detail : resolve(detail)}
-              </span>
+              <div key={j}>
+                <IconComponent className="w-4 h-4 text-resume-primary shrink-0" />
+                <span
+                  className="inline-block text-resume-primary text-xs px-2 py-0.5"
+                >
+                  {typeof detail === 'string' ? detail : resolve(detail)}
+                </span>
+              </div>
             ))}
 
             {maxDetails && details.length > maxDetails && (
