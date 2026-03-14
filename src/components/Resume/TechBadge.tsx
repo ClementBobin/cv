@@ -37,7 +37,6 @@ const LUMINANCE_THRESHOLD = 0.4
 
 export function TechBadge({ tech }: TechBadgeProps) {
   const isObj = isTechBadgeItem(tech)
-  console.log(tech);
 
   const displayText = isObj ? (tech.name) : (tech as string)
   const colorKey = isObj ? (tech.name) : (tech as string)
