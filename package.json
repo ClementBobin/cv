@@ -28,6 +28,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "@types/pako": "^2.0.4",
     "agentation": "^2.2.1",
     "clsx": "^2.1.1",
