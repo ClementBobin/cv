@@ -253,19 +253,12 @@ function HobbyWithLimit({
   if (IconComponent) {
     return (
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <IconComponent className="w-4 h-4 text-resume-primary shrink-0" />
-          <span className="font-medium text-sm text-resume-text">
-            {typeof hobby.title === 'string' ? hobby.title : resolve(hobby.title)}
-          </span>
-        </div>
-        
         {visibleDetails.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1 ml-6">
             {visibleDetails.map((detail, j) => (
               <span
                 key={j}
-                className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
+                className="inline-block text-resume-primary text-xs px-2 py-0.5"
               >
                 {typeof detail === 'string' ? detail : resolve(detail)}
               </span>
@@ -290,19 +283,12 @@ function HobbyWithLimit({
   // Original design for hobbies without icons
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-start gap-2">
-        <div className="w-1 h-1 mt-2 bg-resume-primary rounded-full shrink-0" />
-        <span className="font-medium text-sm text-resume-text">
-          {typeof hobby.title === 'string' ? hobby.title : resolve(hobby.title)}
-        </span>
-      </div>
-
       {visibleDetails.length > 0 && (
         <div className="flex flex-wrap flex-column gap-1 mt-1">
           {visibleDetails.map((detail, j) => (
             <span
               key={j}
-              className="inline-block bg-resume-primary/10 text-resume-primary text-xs px-2 py-0.5 rounded-full"
+              className="inline-block text-resume-primary text-xs px-2 py-0.5"
             >
               {typeof detail === 'string' ? detail : resolve(detail)}
             </span>
