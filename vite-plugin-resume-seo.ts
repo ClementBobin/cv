@@ -112,7 +112,7 @@ function buildJsonLd(config: ResumeConfig, resolve: (ls?: Record<string, string>
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: personal.name,
-    jobTitle: resolve(personal.title),
+    jobTitle: resolve(personal.title?.libelle),
     ...(url && { url }),
     ...(email && { email }),
     ...(personal.location && {
@@ -152,7 +152,7 @@ function buildNoscriptHtml(
   // Header
   lines.push(`${indent}  <header style="margin-bottom: 2rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">`)
   lines.push(`${indent}    <h1 style="margin: 0 0 0.25rem 0; font-size: 1.75rem;">${escapeHtml(personal.name ?? '')}</h1>`)
-  lines.push(`${indent}    <p style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #555;">${escapeHtml(resolve(personal.title))}</p>`)
+  lines.push(`${indent}    <p style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #555;">${escapeHtml(resolve(personal.title?.libelle))}</p>`)
   if (personal.subtitle) lines.push(`${indent}    <p style="margin: 0 0 0.25rem 0; color: #777;">${escapeHtml(resolve(personal.subtitle))}</p>`)
   if (personal.location) lines.push(`${indent}    <p style="margin: 0; color: #777;">${escapeHtml(personal.location)}</p>`)
   lines.push(`${indent}  </header>`)
