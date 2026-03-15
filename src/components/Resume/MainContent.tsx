@@ -74,12 +74,12 @@ export function MainContent({ config }: MainContentProps) {
         </h1>
         {personal.title.href ? (
           <a href={personal.title.href} className="text-base text-resume-text-secondary tracking-widest mt-2">
-            {resolve(personal.title.libelle).toUpperCase()}
+            {resolve(personal.title.libelle)}
             <ExternalLinkIcon className="w-3 h-3 text-resume-primary" />
           </a>
         ) : (
           <p className="text-base text-resume-text-secondary tracking-widest mt-2">
-            {resolve(personal.title.libelle).toUpperCase()}
+            {resolve(personal.title.libelle)}
           </p>
         )}
         {personal.subtitle && (
