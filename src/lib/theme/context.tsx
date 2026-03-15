@@ -44,7 +44,7 @@ export function ThemeProvider({
     return { ...base, ...overrides }
   }
 
-  const defaultPreset: PresetName = resumeConfig.theme?.preset ?? 'minimal'
+  const defaultPreset: PresetName = resumeConfig.theme?.preset ?? 'ocean'
 
   const [isDark, setIsDark] = useState(getInitialDark)
   const [preset, setPreset] = useState<PresetName>(defaultPreset)
