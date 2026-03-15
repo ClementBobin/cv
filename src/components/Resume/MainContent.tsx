@@ -71,9 +71,15 @@ export function MainContent({ config }: MainContentProps) {
         <h1 className="text-3xl md:text-4xl font-bold tracking-[0.15em] text-resume-text">
           {personal.name.toUpperCase()}
         </h1>
-        <p className="text-base text-resume-text-secondary tracking-widest mt-2">
-          {resolve(personal.title).toUpperCase()}
-        </p>
+        {personal.title.href ? (
+          <a href={personal.title.href} className="text-base text-resume-text-secondary tracking-widest mt-2">
+            {resolve(personal.title.libelle).toUpperCase()}
+          </a>
+        ) : (
+          <p className="text-base text-resume-text-secondary tracking-widest mt-2">
+            {resolve(personal.title.libelle).toUpperCase()}
+          </p>
+        )}
         {personal.subtitle && (
           <p className="text-sm text-resume-primary mt-1">{resolve(personal.subtitle)}</p>
         )}

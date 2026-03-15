@@ -299,7 +299,10 @@ export interface ResumeConfig {
     name: string
     photo?: string
     photoBackEmoji?: string
-    title: LocalizedString
+    title: {
+      libelle: LocalizedString
+      href?: string
+    }
     subtitle?: LocalizedString
     summary?: LocalizedString
     location?: string
