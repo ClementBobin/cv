@@ -4,6 +4,7 @@ import type { ResumeConfig, LocalizedTrainingArray, TrainingItem } from '@/data/
 import { ExperienceItem } from './ExperienceItem'
 import { ProjectItem } from './ProjectItem'
 import { EducationItem } from './EducationItem'
+import { ExternalLinkIcon } from '@/components/icons'
 
 interface MainContentProps {
   config: ResumeConfig
@@ -74,6 +75,7 @@ export function MainContent({ config }: MainContentProps) {
         {personal.title.href ? (
           <a href={personal.title.href} className="text-base text-resume-text-secondary tracking-widest mt-2">
             {resolve(personal.title.libelle).toUpperCase()}
+            <ExternalLinkIcon className="w-3 h-3 text-resume-primary" />
           </a>
         ) : (
           <p className="text-base text-resume-text-secondary tracking-widest mt-2">
