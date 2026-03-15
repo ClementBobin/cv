@@ -73,12 +73,15 @@ export function MainContent({ config }: MainContentProps) {
           {personal.name.toUpperCase()}
         </h1>
         {personal.title.href ? (
-          <a href={personal.title.href} className="text-base text-resume-text-secondary tracking-widest mt-2">
+          <a
+            href={personal.title.href}
+            className="inline-flex items-center gap-1 text-base text-resume-text-secondary tracking-widest mt-2"
+          >
             {resolve(personal.title.libelle)}
             <ExternalLinkIcon className="w-3 h-3 text-resume-primary" />
           </a>
         ) : (
-          <p className="text-base text-resume-text-secondary tracking-widest mt-2">
+          <p className="inline-flex items-center text-base text-resume-text-secondary tracking-widest mt-2">
             {resolve(personal.title.libelle)}
           </p>
         )}
