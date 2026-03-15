@@ -75,13 +75,15 @@ export function MainContent({ config }: MainContentProps) {
         {personal.title.href ? (
           <a
             href={personal.title.href}
-            className="inline-flex items-center gap-1 text-base text-resume-text-secondary tracking-widest mt-2"
+            className="text-base text-resume-text-secondary tracking-widest mt-2"
           >
-            {resolve(personal.title.libelle)}
-            <ExternalLinkIcon className="w-3 h-3 text-resume-primary" />
+            <span className="inline">
+              {resolve(personal.title.libelle)}
+              <ExternalLinkIcon className="inline w-3 h-3 ml-1 align-text-top text-resume-primary" />
+            </span>
           </a>
         ) : (
-          <p className="inline-flex items-center text-base text-resume-text-secondary tracking-widest mt-2">
+          <p className="text-base text-resume-text-secondary tracking-widest mt-2">
             {resolve(personal.title.libelle)}
           </p>
         )}
