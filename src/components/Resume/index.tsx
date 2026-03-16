@@ -33,7 +33,7 @@ export function Resume({ config }: ResumeProps) {
 
   if (!loaded) return <div>Loading resume…</div>
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 mt-4">
+    <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:mt-6">
       {/* Top bar: theme toggle + language + pdf */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
