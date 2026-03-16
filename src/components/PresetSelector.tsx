@@ -63,7 +63,7 @@ export function PresetSelector() {
   }
 
   return (
-    <div className="fixed top-4 left-4 z-50" ref={dropdownRef}>
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50" ref={dropdownRef}>
       {/* Bouton principal */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
