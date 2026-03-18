@@ -1,3 +1,9 @@
+import { CheckIcon, EmailIcon, ExternalLinkIcon, GitHubIcon, LinkedInIcon, LocationIcon, PhoneIcon, WebsiteIcon, } from '@/components/icons' 
+import type { ContactType } from '@/data/types' 
+import { AnimatePresence, motion } from 'framer-motion' 
+import { useCallback, useState } from 'react' 
+import { useLocation } from 'react-router-dom'
+
 export function ContactItem({ type, label }: ContactItemProps) {
   const [copied, setCopied] = useState(false)
   const location = useLocation()
