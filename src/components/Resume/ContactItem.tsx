@@ -15,10 +15,11 @@ const ICON_COMPONENTS: Record<ContactType, React.FC<React.SVGProps<SVGSVGElement
 
 interface ContactItemProps { 
   type: ContactType, 
-  label: string 
+  label: string,
+  href?: string
 }
 
-export function ContactItem({ type, label }: ContactItemProps) {
+export function ContactItem({ type, label, href }: ContactItemProps) {
   const [copied, setCopied] = useState(false)
   const location = useLocation()
   const isInviteRoute = location.pathname.startsWith('/invite')
@@ -30,7 +31,6 @@ export function ContactItem({ type, label }: ContactItemProps) {
 
   const isCopyable = isSensitive
   const isExternal = type === 'github' || type === 'linkedin' || type === 'website'
-  const resolvedHref = !isPrivate && !isCopyable
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(label)
@@ -111,10 +111,10 @@ export function ContactItem({ type, label }: ContactItemProps) {
   }
 
   // 🔗 External links
-  if (resolvedHref) {
+  if (href) {
     return (
       <a
-        href={resolvedHref}
+        href={href}
         target={isExternal ? '_blank' : undefined}
         rel={isExternal ? 'noopener noreferrer' : undefined}
         className="group flex items-center gap-3 text-sm text-resume-text-secondary hover:text-resume-primary transition-colors duration-200"
