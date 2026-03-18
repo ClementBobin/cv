@@ -4,6 +4,20 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useState } from 'react' 
 import { useLocation } from 'react-router-dom'
 
+const ICON_COMPONENTS: Record<ContactType, React.FC<React.SVGProps<SVGSVGElement>>> = { 
+    github: GitHubIcon, 
+    linkedin: LinkedInIcon, 
+    email: EmailIcon, 
+    phone: PhoneIcon, 
+    location: LocationIcon, 
+    website: WebsiteIcon, 
+} 
+
+interface ContactItemProps { 
+  type: ContactType, 
+  label: string 
+}
+
 export function ContactItem({ type, label }: ContactItemProps) {
   const [copied, setCopied] = useState(false)
   const location = useLocation()
