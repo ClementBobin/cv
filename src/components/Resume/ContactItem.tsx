@@ -1,42 +1,10 @@
-import {
-  CheckIcon,
-  EmailIcon,
-  ExternalLinkIcon,
-  GitHubIcon,
-  LinkedInIcon,
-  LocationIcon,
-  PhoneIcon,
-  WebsiteIcon,
-} from '@/components/icons'
-import type { ContactType } from '@/data/types'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-
-const ICON_COMPONENTS: Record<ContactType, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  github: GitHubIcon,
-  linkedin: LinkedInIcon,
-  email: EmailIcon,
-  phone: PhoneIcon,
-  location: LocationIcon,
-  website: WebsiteIcon,
-}
-
-interface ContactItemProps {
-  type: ContactType
-  label: string
-}
-
 export function ContactItem({ type, label }: ContactItemProps) {
   const [copied, setCopied] = useState(false)
-  const [revealed, setRevealed] = useState(false)
-
   const location = useLocation()
   const isInviteRoute = location.pathname.startsWith('/invite')
 
   const IconComponent = ICON_COMPONENTS[type]
 
-  // 🔒 Sensitive data (email & phone)
   const isSensitive = type === 'email' || type === 'phone'
   const isPrivate = isSensitive && !isInviteRoute
 
@@ -44,7 +12,6 @@ export function ContactItem({ type, label }: ContactItemProps) {
   const isExternal = type === 'github' || type === 'linkedin' || type === 'website'
   const resolvedHref = !isPrivate && !isCopyable
 
-  // 📋 Copy logic
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(label)
     setCopied(true)
@@ -60,52 +27,15 @@ export function ContactItem({ type, label }: ContactItemProps) {
     </span>
   )
 
-  // 🔒 PRIVATE (hidden unless /invite)
+  // 🔒 If the info is private, render a placeholder and skip everything else
   if (isPrivate) {
     return (
-      <button
-        type="button"
-        onClick={handleReveal}
-        className="group flex items-center gap-3 text-sm text-resume-text-secondary hover:text-resume-primary transition-colors duration-200 cursor-pointer"
-      >
-        <span className="text-resume-primary group-hover:scale-115 transition-transform duration-200">
-          <IconComponent className="w-4 h-4" />
-        </span>
-
-        <span className="relative flex items-center gap-2">
-          <AnimatePresence mode="wait">
-            {revealed && (
-              <motion.span
-                key="revealed"
-                initial={{ opacity: 0, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {label}
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </span>
-
-        <AnimatePresence>
-          {copied && (
-            <motion.span
-              initial={{ opacity: 0, x: -4 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 4 }}
-              transition={{ duration: 0.2 }}
-              className="text-xs text-green-500 ml-1"
-            >
-              Copied!
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </button>
+      <>
+      </>
     )
   }
 
-  // 📋 Copyable (visible on /invite)
+  // 📋 Copyable
   if (isCopyable) {
     return (
       <button
