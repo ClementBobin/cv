@@ -56,7 +56,7 @@ export function ContactItem({ type, label, href }: ContactItemProps) {
   )
 
   // 🔒 Private sensitive info
-  if (isPrivate) return <></>
+  //if (isPrivate) return <></>
 
   // 📋 Copyable
   if (isCopyable) {
