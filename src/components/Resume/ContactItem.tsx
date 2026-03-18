@@ -1,35 +1,43 @@
-import { CheckIcon, EmailIcon, ExternalLinkIcon, GitHubIcon, LinkedInIcon, LocationIcon, PhoneIcon, WebsiteIcon, } from '@/components/icons' 
-import type { ContactType } from '@/data/types' 
-import { AnimatePresence, motion } from 'framer-motion' 
-import { useCallback, useState } from 'react' 
-import { useLocation } from 'react-router-dom'
+import {
+  CheckIcon,
+  EmailIcon,
+  ExternalLinkIcon,
+  GitHubIcon,
+  LinkedInIcon,
+  LocationIcon,
+  PhoneIcon,
+  WebsiteIcon,
+} from '@/components/icons'
+import type { ContactType } from '@/data/types'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useCallback, useState } from 'react'
 
-const ICON_COMPONENTS: Record<ContactType, React.FC<React.SVGProps<SVGSVGElement>>> = { 
-    github: GitHubIcon, 
-    linkedin: LinkedInIcon, 
-    email: EmailIcon, 
-    phone: PhoneIcon, 
-    location: LocationIcon, 
-    website: WebsiteIcon, 
-} 
+const ICON_COMPONENTS: Record<ContactType, React.FC<React.SVGProps<SVGSVGElement>>> = {
+  github: GitHubIcon,
+  linkedin: LinkedInIcon,
+  email: EmailIcon,
+  phone: PhoneIcon,
+  location: LocationIcon,
+  website: WebsiteIcon,
+}
 
-interface ContactItemProps { 
-  type: ContactType, 
-  label: string,
+interface ContactItemProps {
+  type: ContactType
+  label: string
   href?: string
 }
 
 export function ContactItem({ type, label, href }: ContactItemProps) {
   const [copied, setCopied] = useState(false)
-  const location = useLocation()
-  const isInviteRoute = location.pathname.startsWith('/invite')
-
   const IconComponent = ICON_COMPONENTS[type]
+
+  // ✅ Detect "invite" route using the native browser API
+  const isInviteRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/invite')
 
   const isSensitive = type === 'email' || type === 'phone'
   const isPrivate = isSensitive && !isInviteRoute
 
-  const isCopyable = isSensitive
+  const isCopyable = isSensitive && isInviteRoute
   const isExternal = type === 'github' || type === 'linkedin' || type === 'website'
 
   const handleCopy = useCallback(() => {
@@ -47,13 +55,8 @@ export function ContactItem({ type, label, href }: ContactItemProps) {
     </span>
   )
 
-  // 🔒 If the info is private, render a placeholder and skip everything else
-  if (isPrivate) {
-    return (
-      <>
-      </>
-    )
-  }
+  // 🔒 Private sensitive info
+  if (isPrivate) return <></>
 
   // 📋 Copyable
   if (isCopyable) {
