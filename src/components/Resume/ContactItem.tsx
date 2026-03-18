@@ -32,12 +32,12 @@ export function ContactItem({ type, label, href }: ContactItemProps) {
   const IconComponent = ICON_COMPONENTS[type]
 
   // ✅ Detect "invite" route using the native browser API
-  const isInviteRoute = typeof window !== 'undefined' && window.location.pathname.includes('/invite')
+  //const isInviteRoute = typeof window !== 'undefined' && window.location.pathname.includes('/invite')
 
   const isSensitive = type === 'email' || type === 'phone'
-  const isPrivate = isSensitive && !isInviteRoute
+  //const isPrivate = isSensitive && !isInviteRoute
 
-  const isCopyable = isSensitive && isInviteRoute
+  const isCopyable = isSensitive
   const isExternal = type === 'github' || type === 'linkedin' || type === 'website'
 
   const handleCopy = useCallback(() => {
