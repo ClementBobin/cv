@@ -174,8 +174,6 @@ export function Sidebar({ config }: SidebarProps) {
                   key={i}
                   hobby={hobby}
                   resolve={resolve}
-                  showMoreLabel={showMoreLabel}
-                  showLessLabel={showLessLabel}
                 />
               ))}
           </div>
@@ -204,8 +202,6 @@ export function Sidebar({ config }: SidebarProps) {
                   key={i}
                   hobby={softSkill}
                   resolve={resolve}
-                  showMoreLabel={showMoreLabel}
-                  showLessLabel={showLessLabel}
                 />
               ))}
           </div>
@@ -229,14 +225,10 @@ export function Sidebar({ config }: SidebarProps) {
 /** Display a hobby with optional detail limit */
 function HobbyWithLimit({
   hobby,
-  resolve,
-  showMoreLabel,
-  showLessLabel,
+  resolve
 }: {
   hobby: Hobby
   resolve: (ls: Record<string, string>) => string
-  showMoreLabel: string
-  showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
 
