@@ -9,7 +9,7 @@ import type { ResumeConfig } from './src/data/types'
  * This plugin reads `resume-config` at build time and injects:
  * - JSON-LD structured data (schema.org Person)
  * - Proper <title> and <meta description>
- * - A rich <noscript> fallback with the full CV content in semantic HTML
+ * - A rich, animated <noscript> fallback with the full CV content in semantic HTML
  *
  * This ensures crawlers and ATS systems can read the resume data without JS.
  */
@@ -30,10 +30,8 @@ export function resumeSeoPlugin(): Plugin {
       }
 
       try {
-        // Fetch JSON config dynamically
         const res = await fetch(`${url}/cv`)
         if (!res.ok) throw new Error(`Failed to fetch cv: ${res.statusText}`)
-
         config = (await res.json()) as ResumeConfig
       } catch (e) {
         console.warn('[resume-seo] Could not load resume-config, skipping SEO injection:', e)
@@ -42,7 +40,6 @@ export function resumeSeoPlugin(): Plugin {
     transformIndexHtml(html) {
       if (!config) return html
 
-      // Safe resolve function
       const resolve = (ls?: Record<string, string> | string): string => {
         if (!ls) return ''
         if (typeof ls === 'string') return ls
@@ -50,31 +47,21 @@ export function resumeSeoPlugin(): Plugin {
         return ls[defaultLang] ?? Object.values(ls)[0] ?? ''
       }
 
-      // 1. Build JSON-LD
       const jsonLd = buildJsonLd(config, resolve)
-
-      // 2. Build noscript HTML
       const noscriptContent = buildNoscriptHtml(config, resolve, base)
 
-      // 3. Replace title
       html = html.replace(
         /<title>[^<]*<\/title>/,
         `<title>${escapeHtml(config.seo.title)}</title>`
       )
-
-      // 4. Replace meta description
       html = html.replace(
         /<meta name="description" content="[^"]*"\s*\/?>/,
         `<meta name="description" content="${escapeHtml(config.seo.description)}" />`
       )
-
-      // 5. Inject JSON-LD before </head>
       html = html.replace(
         '</head>',
         `  <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n  </head>`
       )
-
-      // 6. Replace <noscript> content
       html = html.replace(
         /<noscript>[\s\S]*?<\/noscript>/,
         `<noscript>\n${noscriptContent}\n    </noscript>`
@@ -116,15 +103,16 @@ function buildJsonLd(config: ResumeConfig, resolve: (ls?: Record<string, string>
     ...(url && { url }),
     ...(email && { email }),
     ...(personal.location && {
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: personal.location,
-      },
+      address: { '@type': 'PostalAddress', addressLocality: personal.location },
     }),
     ...(sameAs.length > 0 && { sameAs }),
     ...(techs.length > 0 && { knowsAbout: techs }),
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NOSCRIPT HTML — animated, full-fidelity CV fallback
+// ─────────────────────────────────────────────────────────────────────────────
 
 function buildNoscriptHtml(
   config: ResumeConfig,
@@ -139,170 +127,627 @@ function buildNoscriptHtml(
     education = [],
     projects = [],
     hobbies = [],
+    softSkills = [],
     pdf,
+    labels,
   } = config
 
-  const lines: string[] = []
-  const indent = '      '
-
-  lines.push(
-    `${indent}<div style="max-width: 800px; margin: 2rem auto; padding: 2rem; font-family: system-ui, -apple-system, sans-serif; color: #1c1c1c; line-height: 1.6;">`
-  )
-
-  // Header
-  lines.push(`${indent}  <header style="margin-bottom: 2rem; border-bottom: 2px solid #e5e5e5; padding-bottom: 1rem;">`)
-  lines.push(`${indent}    <h1 style="margin: 0 0 0.25rem 0; font-size: 1.75rem;">${escapeHtml(personal.name ?? '')}</h1>`)
-  lines.push(`${indent}    <p style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #555;">${escapeHtml(resolve(personal.title?.libelle))}</p>`)
-  if (personal.subtitle) lines.push(`${indent}    <p style="margin: 0 0 0.25rem 0; color: #777;">${escapeHtml(resolve(personal.subtitle))}</p>`)
-  if (personal.location) lines.push(`${indent}    <p style="margin: 0; color: #777;">${escapeHtml(personal.location)}</p>`)
-  lines.push(`${indent}  </header>`)
-
-  // Contact
-  if (contact.length > 0 && config.labels.sections?.contact) {
-    lines.push(`${indent}  <section style="margin-bottom: 1.5rem;">`)
-    lines.push(
-      `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.contact))}</h2>`
-    )
-    lines.push(`${indent}    <ul style="list-style: none; padding: 0; margin: 0;">`)
-    for (const c of contact) {
-      const label = c.label ?? ''
-      const href = c.href
-      lines.push(
-        `${indent}      <li style="margin-bottom: 0.25rem;">` +
-          (href ? `<a href="${escapeHtml(href)}" style="color: #1e6091;">${escapeHtml(label)}</a>` : escapeHtml(label)) +
-          `</li>`
-      )
-    }
-    lines.push(`${indent}    </ul>`)
-    lines.push(`${indent}  </section>`)
+  // ── resolve helpers ───────────────────────────────────────────────────────
+  const resolveTech = (t: unknown): string => {
+    if (typeof t === 'string') return t
+    if (t && typeof t === 'object' && 'name' in t) return String((t as { name: string }).name)
+    return ''
   }
 
-  // Skills
-  if (skills.length > 0 && config.labels.sections?.skills) {
-    lines.push(`${indent}  <section style="margin-bottom: 1.5rem;">`)
-    lines.push(
-      `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.skills))}</h2>`
-    )
-    for (const cat of skills) {
-      lines.push(`${indent}    <p style="margin: 0.5rem 0 0.25rem 0; font-weight: 600;">${escapeHtml(resolve(cat.title))}</p>`)
-      const items = (cat.items ?? []).map(item => typeof item === 'string' ? { name: item } : item)
-      const skillNames = items.map(item => {
-        const obj = typeof item === 'string' ? { name: item } : item
-        const name = typeof obj.name === 'string' ? obj.name : resolve(obj.name)
-        if (cat.type === 'languages' && obj.level) return `${name} (${resolve(obj.level)})`
-        return name
-      })
-      if (skillNames.length > 0) lines.push(`${indent}    <p style="margin: 0; color: #555;">${escapeHtml(skillNames.join(' · '))}</p>`)
+  const pdfPath = pdf
+    ? typeof pdf.path === 'string'
+      ? pdf.path
+      : pdf.path[config.languages.default] ?? Object.values(pdf.path ?? {})[0] ?? null
+    : null
+  const pdfHref = pdfPath
+    ? pdfPath.startsWith('http')
+      ? pdfPath
+      : `${base.replace(/\/$/, '')}${pdfPath}`
+    : null
+
+  // ── contact icon SVGs (inline, so no external requests needed) ───────────
+  const contactIcon = (type: string): string => {
+    const icons: Record<string, string> = {
+      email: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`,
+      phone: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>`,
+      location: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>`,
+      github: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>`,
+      linkedin: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`,
+      website: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>`,
     }
-    lines.push(`${indent}  </section>`)
+    return icons[type] ?? ''
   }
 
-  // Experiences
-  if (experiences.length > 0 && config.labels.sections?.experience) {
-    lines.push(`${indent}  <section style="margin-bottom: 1.5rem;">`)
-    lines.push(
-      `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.experience))}</h2>`
-    )
-    for (const exp of experiences) {
-      const role = resolve(exp.role)
-      const company = resolve(exp.company)
-      const period = resolve(exp.period)
-      const type = exp.type ? resolve(exp.type) : null
-      const description = resolve(exp.description)
-      const techs = exp.techs ?? []
-      const tasks = exp.details?.tasks?.[config.languages.default] ?? Object.values(exp.details?.tasks ?? {})[0] ?? []
+  // ── section header helper ─────────────────────────────────────────────────
+  const sectionHeader = (title: string, delay: number): string =>
+    `<h2 class="ns-section-title" style="animation-delay:${delay}ms">${escapeHtml(title)}</h2>`
 
-      lines.push(`${indent}    <article style="margin-bottom: 1.25rem;">`)
-      lines.push(`${indent}      <h3 style="margin: 0 0 0.15rem 0; font-size: 1rem;">${escapeHtml(role)} — ${escapeHtml(company)}</h3>`)
-      lines.push(`${indent}      <p style="margin: 0 0 0.25rem 0; color: #777; font-size: 0.9rem;">${escapeHtml([period, type].filter(Boolean).join(' · '))}</p>`)
-      lines.push(`${indent}      <p style="margin: 0 0 0.25rem 0;">${escapeHtml(description)}</p>`)
-      if (techs.length > 0) lines.push(`${indent}      <p style="margin: 0; color: #555; font-size: 0.9rem;">${escapeHtml(techs.join(', '))}</p>`)
-      if (tasks.length > 0) {
-        lines.push(`${indent}      <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">`)
-        for (const task of tasks) lines.push(`${indent}        <li style="margin-bottom: 0.15rem; font-size: 0.9rem;">${escapeHtml(task)}</li>`)
-        lines.push(`${indent}      </ul>`)
+  // ── badge helper ──────────────────────────────────────────────────────────
+  const badge = (text: string): string =>
+    `<span class="ns-badge">${escapeHtml(text)}</span>`
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Build sections HTML
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // SIDEBAR ─ contact
+  let contactHtml = ''
+  for (const c of contact) {
+    const icon = contactIcon(c.type)
+    const inner = c.href
+      ? `<a href="${escapeHtml(c.href)}" class="ns-contact-link" target="_blank" rel="noopener noreferrer">${escapeHtml(c.label)}</a>`
+      : `<span>${escapeHtml(c.label)}</span>`
+    contactHtml += `<div class="ns-contact-item">${icon ? `<span class="ns-contact-icon">${icon}</span>` : ''}${inner}</div>\n`
+  }
+
+  // SIDEBAR ─ skills
+  let skillsHtml = ''
+  for (const cat of skills) {
+    const catTitle = resolve(cat.title)
+    const items = (cat.items ?? []).map(item => {
+      const obj = typeof item === 'string' ? { name: item } : item
+      const name = typeof obj.name === 'string' ? obj.name : resolve(obj.name as Record<string, string>)
+      if (cat.type === 'languages' && 'level' in obj && obj.level) {
+        return `${name} (${resolve(obj.level as Record<string, string>)})`
       }
-      lines.push(`${indent}    </article>`)
-    }
-    lines.push(`${indent}  </section>`)
-  }
-
-  // Education
-  if (education.length > 0 && config.labels.sections?.education) {
-    lines.push(`${indent}  <section style="margin-bottom: 1.5rem;">`)
-    lines.push(
-      `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.education))}</h2>`
-    )
-    for (const edu of education) {
-      const degree = resolve(edu.degree)
-      const specialty = resolve(edu.specialty)
-      const school = resolve(edu.school)
-      const period = edu.period ?? ''
-      lines.push(`${indent}    <div style="margin-bottom: 0.75rem;">`)
-      if (degree) lines.push(`${indent}      <p style="margin: 0; font-weight: 600;">${escapeHtml(degree)}</p>`)
-      if (specialty) lines.push(`${indent}      <p style="margin: 0; color: #555;">${escapeHtml(specialty)}</p>`)
-      if (school) lines.push(`${indent}      <p style="margin: 0; color: #777; font-size: 0.9rem;">${escapeHtml([school, period].filter(Boolean).join(' · '))}</p>`)
-      lines.push(`${indent}    </div>`)
-    }
-    lines.push(`${indent}  </section>`)
-  }
-
-  // Projects
-  if (projects.length > 0 && config.labels.sections?.projects) {
-    lines.push(`${indent}  <section style="margin-bottom: 1.5rem;">`)
-    lines.push(
-      `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.projects))}</h2>`
-    )
-    for (const proj of projects) {
-      const title = resolve(proj.title)
-      const description = resolve(proj.description)
-      const techs = proj.techs ?? []
-      const url = proj.url
-      lines.push(`${indent}    <div style="margin-bottom: 0.75rem;">`)
-      const titleHtml = url ? `<a href="${escapeHtml(url)}" style="color: #1e6091;">${escapeHtml(title)}</a>` : escapeHtml(title)
-      if (title) lines.push(`${indent}      <p style="margin: 0; font-weight: 600;">${titleHtml}</p>`)
-      if (description) lines.push(`${indent}      <p style="margin: 0; color: #555;">${escapeHtml(description)}</p>`)
-      if (techs.length > 0) lines.push(`${indent}      <p style="margin: 0; color: #777; font-size: 0.9rem;">${escapeHtml(techs.join(', '))}</p>`)
-      lines.push(`${indent}    </div>`)
-    }
-    lines.push(`${indent}  </section>`)
-  }
-
-  // Hobbies
-  if (hobbies.length > 0 && config.labels.sections?.hobbies) {
-    lines.push(`${indent}  <section style="margin-bottom: 1.5rem;">`)
-    lines.push(
-      `${indent}    <h2 style="font-size: 1.1rem; text-transform: uppercase; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.5rem;">${escapeHtml(resolve(config.labels.sections.hobbies))}</h2>`
-    )
-    
-    // Map through each hobby's details array and resolve each LocalizedString
-    const hobbyNames = hobbies
-      .map(h => resolve(h.title))
-      .filter(Boolean)
-    
-    if (hobbyNames.length > 0) {
-      lines.push(`${indent}    <p style="margin: 0; color: #555;">${escapeHtml(hobbyNames.join(' · '))}</p>`)
-    }
-    lines.push(`${indent}  </section>`)
-  }
-
-  // PDF
-  if (pdf) {
-    const pdfPath =
-      typeof pdf.path === 'string'
-        ? pdf.path
-        : pdf.path[config.languages.default] ?? Object.values(pdf.path ?? {})[0] ?? null
-    if (pdfPath) {
-      const pdfHref = pdfPath.startsWith('/') ? `${base.replace(/\/$/, '')}${pdfPath}` : pdfPath
-      lines.push(
-        `${indent}  <p style="margin-top: 2rem; text-align: center;"><a href="${escapeHtml(
-          pdfHref
-        )}" style="color: #1e6091; font-weight: 500;">📄 Download PDF</a></p>`
-      )
+      return name
+    })
+    if (cat.type === 'badges') {
+      skillsHtml += `<div class="ns-skill-cat"><p class="ns-skill-cat-title">${escapeHtml(catTitle)}</p><div class="ns-badges">${items.map(badge).join('')}</div></div>\n`
+    } else {
+      skillsHtml += `<div class="ns-skill-cat"><p class="ns-skill-cat-title">${escapeHtml(catTitle)}</p><p class="ns-skill-items">${escapeHtml(items.join(' · '))}</p></div>\n`
     }
   }
 
-  lines.push(`${indent}</div>`)
+  // SIDEBAR ─ hobbies & soft skills
+  let hobbiesHtml = ''
+  for (const h of hobbies) {
+    hobbiesHtml += `<span class="ns-hobby">${escapeHtml(resolve(h.title))}</span>\n`
+  }
+  let softSkillsHtml = ''
+  for (const s of softSkills) {
+    softSkillsHtml += `<span class="ns-hobby">${escapeHtml(resolve(s.title))}</span>\n`
+  }
 
-  return lines.join('\n')
+  // MAIN ─ education
+  let educationHtml = ''
+  for (const edu of education) {
+    const school = resolve(edu.school)
+    const degree = resolve(edu.degree)
+    const specialty = edu.specialty ? resolve(edu.specialty) : ''
+    const period = edu.period ?? ''
+    const eduTechs = (edu.techs ?? []).map(resolveTech).filter(Boolean)
+    educationHtml += `
+<div class="ns-edu-item">
+  <div class="ns-edu-header">
+    ${edu.href
+      ? `<a href="${escapeHtml(edu.href)}" class="ns-edu-school" target="_blank" rel="noopener noreferrer">${escapeHtml(school)}</a>`
+      : `<p class="ns-edu-school">${escapeHtml(school)}</p>`}
+    ${period ? `<span class="ns-period">${escapeHtml(period)}</span>` : ''}
+  </div>
+  <p class="ns-edu-degree">${escapeHtml(degree)}</p>
+  ${specialty ? `<p class="ns-edu-specialty">${escapeHtml(specialty)}</p>` : ''}
+  ${eduTechs.length > 0 ? `<div class="ns-badges ns-badges-sm">${eduTechs.map(badge).join('')}</div>` : ''}
+</div>`
+  }
+
+  // MAIN ─ experiences
+  let experiencesHtml = ''
+  let expDelay = 100
+  for (const exp of experiences) {
+    const role = resolve(exp.role)
+    const company = resolve(exp.company)
+    const period = resolve(exp.period)
+    const type = exp.type ? resolve(exp.type) : ''
+    const description = resolve(exp.description)
+    const techs = (exp.techs ?? []).map(resolveTech).filter(Boolean)
+    const tasks = exp.details?.tasks
+      ? exp.details.tasks[config.languages.default] ?? Object.values(exp.details.tasks)[0] ?? []
+      : []
+    const context = exp.details?.context ? resolve(exp.details.context) : ''
+    const env = exp.details?.env ? resolve(exp.details.env) : ''
+    const typeBadgeClass = exp.workType === 'experience' ? 'ns-type-badge ns-type-xp' : 'ns-type-badge ns-type-work'
+
+    experiencesHtml += `
+<div class="ns-exp-item" style="animation-delay:${expDelay}ms">
+  <div class="ns-exp-year">${escapeHtml(period)}</div>
+  <div class="ns-exp-body">
+    <div class="ns-exp-header">
+      ${exp.href
+        ? `<a href="${escapeHtml(exp.href)}" class="ns-exp-company" target="_blank" rel="noopener noreferrer">${escapeHtml(company)}</a>`
+        : `<span class="ns-exp-company">${escapeHtml(company)}</span>`}
+      ${type ? `<span class="${typeBadgeClass}">${escapeHtml(type)}</span>` : ''}
+    </div>
+    <p class="ns-exp-role">${escapeHtml(role)}</p>
+    <p class="ns-exp-desc">${escapeHtml(description)}</p>
+    ${techs.length > 0 ? `<div class="ns-badges">${techs.map(badge).join('')}</div>` : ''}
+    ${context ? `<p class="ns-exp-context">${escapeHtml(context)}</p>` : ''}
+    ${tasks.length > 0
+      ? `<ul class="ns-task-list">${tasks.map((t: string) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>`
+      : ''}
+    ${env ? `<p class="ns-exp-env"><strong>${escapeHtml(resolve(labels.experience.techEnv))}</strong> ${escapeHtml(env)}</p>` : ''}
+    ${exp.subItem
+      ? `<div class="ns-subitem"><p class="ns-subitem-title">${escapeHtml(resolve(exp.subItem.title))}</p><p class="ns-subitem-desc">${escapeHtml(resolve(exp.subItem.description))}</p></div>`
+      : ''}
+  </div>
+</div>`
+    expDelay += 80
+  }
+
+  // MAIN ─ projects
+  let projectsHtml = ''
+  for (const proj of projects) {
+    const title = resolve(proj.title)
+    const description = resolve(proj.description)
+    const techs = (proj.techs ?? []).map(resolveTech).filter(Boolean)
+    projectsHtml += `
+<div class="ns-proj-item">
+  <div class="ns-proj-header">
+    <p class="ns-proj-title">${escapeHtml(title)}</p>
+    <div class="ns-proj-links">
+      ${proj.url ? `<a href="${escapeHtml(proj.url)}" class="ns-proj-link" target="_blank" rel="noopener noreferrer">↗ site</a>` : ''}
+      ${proj.github ? `<a href="${escapeHtml(proj.github)}" class="ns-proj-link" target="_blank" rel="noopener noreferrer">⌥ github</a>` : ''}
+    </div>
+  </div>
+  <p class="ns-proj-desc">${escapeHtml(description)}</p>
+  ${techs.length > 0 ? `<div class="ns-badges ns-badges-sm">${techs.map(badge).join('')}</div>` : ''}
+</div>`
+  }
+
+  // photo
+  const photoHtml = personal.photo
+    ? `<div class="ns-photo-wrap"><img src="${escapeHtml(
+        personal.photo.startsWith('http') ? personal.photo : `${base.replace(/\/$/, '')}/${personal.photo.replace(/^\//, '')}`
+      )}" alt="Photo de ${escapeHtml(personal.name)}" class="ns-photo" /></div>`
+    : `<div class="ns-photo-placeholder">${escapeHtml((personal.photoBackEmoji ?? personal.name[0]).slice(0, 2))}</div>`
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // CSS — scoped under .ns-root to avoid collisions
+  // ─────────────────────────────────────────────────────────────────────────
+  const css = `
+<style>
+  /* ── Reset & Base ─────────────────────────────────── */
+  .ns-root *, .ns-root *::before, .ns-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .ns-root {
+    --ns-primary: #1e6091;
+    --ns-primary-light: #5aade4;
+    --ns-bg: #f5f8fa;
+    --ns-card: #ffffff;
+    --ns-sidebar: #eef3f7;
+    --ns-sidebar-end: #e2eaf0;
+    --ns-text: #1a2b3c;
+    --ns-muted: #5a7184;
+    --ns-border: rgba(30, 96, 145, 0.15);
+    --ns-radius: 12px;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    background: var(--ns-bg);
+    color: var(--ns-text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Keyframes ───────────────────────────────────── */
+  @keyframes ns-fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ns-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes ns-slide-right {
+    from { opacity: 0; transform: translateX(-14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes ns-scale-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ns-shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* ── Card ────────────────────────────────────────── */
+  .ns-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--ns-card);
+    border-radius: var(--ns-radius);
+    box-shadow: 0 20px 60px rgba(30,96,145,.12), 0 4px 16px rgba(30,96,145,.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: ns-scale-in 0.5s cubic-bezier(.22,1,.36,1) both;
+  }
+  @media (min-width: 700px) { .ns-card { flex-direction: row; } }
+
+  /* ── Sidebar ─────────────────────────────────────── */
+  .ns-sidebar {
+    width: 100%;
+    background: linear-gradient(160deg, var(--ns-sidebar), var(--ns-sidebar-end));
+    padding: 2rem 1.5rem;
+    animation: ns-fade-in 0.6s ease both;
+  }
+  @media (min-width: 700px) { .ns-sidebar { width: 38%; min-width: 220px; } }
+
+  /* ── Main ────────────────────────────────────────── */
+  .ns-main {
+    flex: 1;
+    padding: 2rem 1.75rem;
+    animation: ns-fade-in 0.6s ease 0.15s both;
+  }
+
+  /* ── Photo ───────────────────────────────────────── */
+  .ns-photo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    animation: ns-fade-up 0.6s cubic-bezier(.22,1,.36,1) 0.05s both;
+  }
+  .ns-photo {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(30,96,145,.2);
+    box-shadow: 0 8px 24px rgba(30,96,145,.15);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .ns-photo:hover { transform: scale(1.04) rotate(2deg); box-shadow: 0 12px 32px rgba(30,96,145,.25); }
+  .ns-photo-placeholder {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--ns-primary), var(--ns-primary-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 1.5rem;
+    border: 4px solid rgba(30,96,145,.2);
+    box-shadow: 0 8px 24px rgba(30,96,145,.15);
+  }
+
+  /* ── Name / Title ────────────────────────────────── */
+  .ns-name {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--ns-text);
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, var(--ns-text) 0%, var(--ns-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: ns-fade-up 0.5s cubic-bezier(.22,1,.36,1) 0.1s both;
+  }
+  .ns-title {
+    text-align: center;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    color: var(--ns-muted);
+    margin-bottom: 0.2rem;
+    animation: ns-fade-up 0.5s cubic-bezier(.22,1,.36,1) 0.18s both;
+  }
+  .ns-subtitle {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ns-primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    animation: ns-fade-up 0.5s cubic-bezier(.22,1,.36,1) 0.24s both;
+  }
+  .ns-summary {
+    font-size: 0.8rem;
+    color: var(--ns-muted);
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem;
+    background: rgba(30,96,145,.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--ns-primary);
+    animation: ns-fade-up 0.5s cubic-bezier(.22,1,.36,1) 0.3s both;
+  }
+
+  /* ── Section Titles ──────────────────────────────── */
+  .ns-section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ns-text);
+    border-bottom: 1px solid var(--ns-border);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.85rem;
+    margin-top: 1.5rem;
+    animation: ns-slide-right 0.4s cubic-bezier(.22,1,.36,1) both;
+  }
+  .ns-section-title:first-child { margin-top: 0; }
+
+  /* Sidebar section titles have a slightly different look */
+  .ns-sidebar .ns-section-title {
+    font-size: 0.6rem;
+    color: var(--ns-text);
+  }
+
+  /* ── Contact ─────────────────────────────────────── */
+  .ns-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--ns-muted);
+    margin-bottom: 0.55rem;
+    animation: ns-slide-right 0.35s cubic-bezier(.22,1,.36,1) both;
+  }
+  .ns-contact-icon { color: var(--ns-primary); display: flex; align-items: center; flex-shrink: 0; }
+  .ns-contact-link {
+    color: var(--ns-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .ns-contact-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 1px; width: 100%;
+    background: var(--ns-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s;
+  }
+  .ns-contact-link:hover { color: var(--ns-primary); }
+  .ns-contact-link:hover::after { transform: scaleX(1); }
+
+  /* ── Skills ──────────────────────────────────────── */
+  .ns-skill-cat { margin-bottom: 1rem; }
+  .ns-skill-cat-title { font-size: 0.72rem; font-weight: 600; color: var(--ns-text); margin-bottom: 0.4rem; }
+  .ns-skill-items { font-size: 0.73rem; color: var(--ns-muted); }
+
+  /* ── Badges ──────────────────────────────────────── */
+  .ns-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.35rem; }
+  .ns-badges-sm .ns-badge { font-size: 0.63rem; padding: 0.15rem 0.5rem; }
+  .ns-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: rgba(30,96,145,.1);
+    color: var(--ns-primary);
+    letter-spacing: 0.01em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .ns-badge:hover { background: rgba(30,96,145,.18); transform: translateY(-1px); }
+
+  /* ── Hobbies ─────────────────────────────────────── */
+  .ns-hobbies { display: flex; flex-direction: column; gap: 0.3rem; }
+  .ns-hobby { font-size: 0.75rem; color: var(--ns-primary); font-weight: 500; }
+
+  /* ── Education ───────────────────────────────────── */
+  .ns-edu-item {
+    margin-bottom: 1.1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--ns-border);
+    animation: ns-fade-up 0.4s cubic-bezier(.22,1,.36,1) both;
+  }
+  .ns-edu-item:last-child { border-bottom: none; }
+  .ns-edu-header { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+  .ns-edu-school { font-size: 0.9rem; font-weight: 700; color: var(--ns-text); text-decoration: none; }
+  a.ns-edu-school:hover { color: var(--ns-primary); text-decoration: underline; }
+  .ns-edu-degree { font-size: 0.78rem; color: var(--ns-muted); margin-top: 0.1rem; }
+  .ns-edu-specialty { font-size: 0.75rem; color: var(--ns-primary); font-weight: 500; margin-top: 0.1rem; }
+  .ns-period { font-size: 0.7rem; color: var(--ns-muted); white-space: nowrap; flex-shrink: 0; }
+
+  /* ── Experiences ─────────────────────────────────── */
+  .ns-exp-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+    animation: ns-fade-up 0.45s cubic-bezier(.22,1,.36,1) both;
+  }
+  .ns-exp-item:hover { background: rgba(30,96,145,.04); }
+  .ns-exp-year { width: 72px; flex-shrink: 0; font-size: 0.72rem; font-weight: 700; color: var(--ns-primary); padding-top: 0.15rem; line-height: 1.3; }
+  .ns-exp-body { flex: 1; min-width: 0; }
+  .ns-exp-header { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.1rem; }
+  .ns-exp-company { font-size: 0.85rem; font-weight: 700; color: var(--ns-text); text-decoration: none; }
+  a.ns-exp-company:hover { color: var(--ns-primary); text-decoration: underline; }
+  .ns-exp-role { font-size: 0.73rem; color: var(--ns-muted); margin-bottom: 0.2rem; }
+  .ns-exp-desc { font-size: 0.72rem; color: var(--ns-muted); opacity: 0.85; margin-bottom: 0.35rem; }
+  .ns-exp-context {
+    font-size: 0.71rem;
+    color: var(--ns-muted);
+    font-style: italic;
+    border-left: 2px solid rgba(30,96,145,.3);
+    padding-left: 0.6rem;
+    margin-top: 0.4rem;
+    margin-bottom: 0.35rem;
+  }
+  .ns-exp-env { font-size: 0.68rem; color: var(--ns-primary); margin-top: 0.35rem; }
+  .ns-task-list { padding-left: 1rem; margin-top: 0.35rem; }
+  .ns-task-list li { font-size: 0.7rem; color: var(--ns-muted); margin-bottom: 0.15rem; }
+  .ns-task-list li::marker { color: var(--ns-primary); }
+
+  /* ── Type badges (experience / work) ─────────────── */
+  .ns-type-badge {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .ns-type-work { background: rgba(59,130,246,.12); color: #2563eb; }
+  .ns-type-xp   { background: rgba(139,92,246,.12); color: #7c3aed; }
+
+  /* ── Sub item ────────────────────────────────────── */
+  .ns-subitem {
+    margin-top: 0.5rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid rgba(30,96,145,.2);
+  }
+  .ns-subitem-title { font-size: 0.73rem; font-weight: 600; color: var(--ns-text); }
+  .ns-subitem-desc  { font-size: 0.7rem; color: var(--ns-muted); }
+
+  /* ── Projects ────────────────────────────────────── */
+  .ns-proj-item {
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.3rem;
+    transition: background 0.2s;
+    animation: ns-fade-up 0.4s cubic-bezier(.22,1,.36,1) both;
+  }
+  .ns-proj-item:hover { background: rgba(30,96,145,.04); }
+  .ns-proj-header { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.2rem; }
+  .ns-proj-title { font-size: 0.82rem; font-weight: 700; color: var(--ns-text); }
+  .ns-proj-desc  { font-size: 0.71rem; color: var(--ns-muted); margin-bottom: 0.25rem; }
+  .ns-proj-links { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  .ns-proj-link  { font-size: 0.68rem; color: var(--ns-primary); text-decoration: none; font-weight: 500; }
+  .ns-proj-link:hover { text-decoration: underline; }
+
+  /* ── PDF strip ───────────────────────────────────── */
+  .ns-pdf-strip {
+    text-align: center;
+    padding: 1.25rem;
+    border-top: 1px solid var(--ns-border);
+    margin-top: 0.5rem;
+    background: rgba(30,96,145,.03);
+    animation: ns-fade-in 0.5s ease 0.8s both;
+  }
+  .ns-pdf-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 8px;
+    background: var(--ns-primary);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 12px rgba(30,96,145,.3);
+  }
+  .ns-pdf-link:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ── Divider ─────────────────────────────────────── */
+  .ns-divider {
+    width: 32px; height: 3px;
+    background: linear-gradient(90deg, var(--ns-primary), var(--ns-primary-light));
+    border-radius: 2px;
+    margin: 0 auto 1.5rem;
+    animation: ns-fade-in 0.4s ease 0.4s both;
+  }
+
+  /* ── Top bar ─────────────────────────────────────── */
+  .ns-topbar {
+    max-width: 900px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    animation: ns-fade-in 0.4s ease both;
+  }
+  .ns-noscript-notice {
+    font-size: 0.72rem;
+    background: rgba(30,96,145,.08);
+    color: var(--ns-primary);
+    border: 1px solid rgba(30,96,145,.18);
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+</style>`
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Assemble final HTML
+  // ─────────────────────────────────────────────────────────────────────────
+  const hasProjects = projects.length > 0 && labels.sections?.projects
+  const hasHobbies = hobbies.length > 0 && labels.sections?.hobbies
+  const hasSoftSkills = softSkills.length > 0 && labels.sections?.softSkills
+
+  return `      ${css}
+      <div class="ns-root">
+
+        <!-- top notice -->
+        <div class="ns-topbar">
+          <span class="ns-noscript-notice">⚡ JavaScript requis pour la version interactive</span>
+          ${pdfHref ? `<a href="${escapeHtml(pdfHref)}" class="ns-pdf-link" download>📄 PDF</a>` : ''}
+        </div>
+
+        <div class="ns-card">
+
+          <!-- SIDEBAR -->
+          <aside class="ns-sidebar">
+            ${photoHtml}
+
+            ${personal.summary
+              ? `<p class="ns-summary">${escapeHtml(resolve(personal.summary))}</p>`
+              : ''}
+
+            ${sectionHeader(resolve(labels.sections.contact), 100)}
+            <div>${contactHtml}</div>
+
+            ${sectionHeader(resolve(labels.sections.skills), 200)}
+            <div>${skillsHtml}</div>
+
+            ${hasHobbies
+              ? `${sectionHeader(resolve(labels.sections.hobbies!), 280)}
+                <div class="ns-hobbies">${hobbiesHtml}</div>`
+              : ''}
+
+            ${hasSoftSkills
+              ? `${sectionHeader(resolve(labels.sections.softSkills!), 320)}
+                <div class="ns-hobbies">${softSkillsHtml}</div>`
+              : ''}
+          </aside>
+
+          <!-- MAIN -->
+          <main class="ns-main">
+
+            <!-- Header -->
+            <h1 class="ns-name">${escapeHtml(personal.name.toUpperCase())}</h1>
+            <p class="ns-title">${escapeHtml(resolve(personal.title.libelle))}</p>
+            ${personal.subtitle ? `<p class="ns-subtitle">${escapeHtml(resolve(personal.subtitle))}</p>` : ''}
+            <div class="ns-divider"></div>
+
+            <!-- Education -->
+            ${education.length > 0 && labels.sections?.education
+              ? `${sectionHeader(resolve(labels.sections.education), 150)}
+                <div>${educationHtml}</div>`
+              : ''}
+
+            <!-- Experiences -->
+            ${sectionHeader(resolve(labels.sections.experience), 200)}
+            <div>${experiencesHtml}</div>
+
+            <!-- Projects -->
+            ${hasProjects
+              ? `${sectionHeader(resolve(labels.sections.projects!), 300)}
+                <div>${projectsHtml}</div>`
+              : ''}
+
+          </main>
+        </div>
+
+        <!-- PDF download strip -->
+        ${pdfHref
+          ? `<div class="ns-pdf-strip">
+              <a href="${escapeHtml(pdfHref)}" class="ns-pdf-link" download>
+                📄 Télécharger le CV en PDF
+              </a>
+            </div>`
+          : ''}
+
+      </div>`
 }
