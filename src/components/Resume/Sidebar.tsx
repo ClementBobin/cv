@@ -174,7 +174,6 @@ export function Sidebar({ config }: SidebarProps) {
                   key={i}
                   hobby={hobby}
                   resolve={resolve}
-                  maxDetails={limits?.hobbiesDetails}
                   showMoreLabel={showMoreLabel}
                   showLessLabel={showLessLabel}
                 />
@@ -205,7 +204,6 @@ export function Sidebar({ config }: SidebarProps) {
                   key={i}
                   hobby={softSkill}
                   resolve={resolve}
-                  maxDetails={limits?.softSkillsDetails}
                   showMoreLabel={showMoreLabel}
                   showLessLabel={showLessLabel}
                 />
@@ -232,89 +230,39 @@ export function Sidebar({ config }: SidebarProps) {
 function HobbyWithLimit({
   hobby,
   resolve,
-  maxDetails,
   showMoreLabel,
   showLessLabel,
 }: {
   hobby: Hobby
   resolve: (ls: Record<string, string>) => string
-  maxDetails?: number
   showMoreLabel: string
   showLessLabel: string
 }) {
   const [expanded, setExpanded] = useState(false)
 
   const title = hobby.title
-  const details: (string | Record<string, string>)[] = hobby.details ?? []
-  const visibleDetails = maxDetails && !expanded ? details.slice(0, maxDetails) : details
 
   const IconComponent = hobby.icon && (LucideIcons as unknown as Record<string, LucideIcon>)[hobby.icon]
 
   if (IconComponent) {
     return (
       <div className="flex flex-col gap-1">
-        {visibleDetails.length > 0 ? (
-          <div className="flex flex-col gap-1 mt-1 ml-6">
-            {visibleDetails.map((detail, j) => (
-              <div key={j} className="flex items-start gap-2">
-                <IconComponent className="w-4 h-4 text-resume-primary shrink-0 mt-[2px]" />
+        <div className="flex items-start gap-2">
+          <IconComponent className="w-4 h-4 text-resume-primary shrink-0 mt-[2px]" />
 
-                <span className="text-resume-primary text-xs">
-                  {typeof detail === "string" ? detail : resolve(detail)}
-                </span>
-              </div>
-            ))}
-
-            {maxDetails && details.length > maxDetails && (
-              <button
-                onClick={() => setExpanded(!expanded)}
-                className="text-xs text-resume-primary hover:underline ml-6"
-              >
-                {expanded
-                  ? showLessLabel
-                  : `+${details.length - maxDetails} ${showMoreLabel}`}
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="flex items-start gap-2">
-            <IconComponent className="w-4 h-4 text-resume-primary shrink-0 mt-[2px]" />
-
-            <span className="text-resume-primary text-xs">
-              {typeof title === "string" ? title : resolve(title)}
-            </span>
-          </div>
-        )}
+          <span className="text-resume-primary text-xs">
+            {typeof title === "string" ? title : resolve(title)}
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="flex flex-col gap-1">
-      {visibleDetails.length > 0 ? (
-        <div className="flex flex-col gap-1 mt-1">
-          {visibleDetails.map((detail, j) => (
-            <span key={j} className="text-resume-primary text-xs">
-              {typeof detail === "string" ? detail : resolve(detail)}
-            </span>
-          ))}
-
-          {maxDetails && details.length > maxDetails && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="text-xs text-resume-primary hover:underline"
-            >
-              {expanded
-                ? showLessLabel
-                : `+${details.length - maxDetails} ${showMoreLabel}`}
-            </button>
-          )}
-        </div>
-      ) : (
-        <span className="text-resume-primary text-xs">
-          {typeof title === "string" ? title : resolve(title)}
-        </span>
-      )}
+      <span className="text-resume-primary text-xs">
+        {typeof title === "string" ? title : resolve(title)}
+      </span>
     </div>
   )
 }
