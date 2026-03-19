@@ -276,9 +276,9 @@ function buildNoscriptHtml(
     )
     
     // Map through each hobby's details array and resolve each LocalizedString
-    const hobbyNames = hobbies.flatMap(h => 
-      h.details?.map(detail => resolve(detail)).filter(Boolean) || []
-    )
+    const hobbyNames = hobbies
+      .map(h => resolve(h.title))
+      .filter(Boolean)
     
     if (hobbyNames.length > 0) {
       lines.push(`${indent}    <p style="margin: 0; color: #555;">${escapeHtml(hobbyNames.join(' · '))}</p>`)
