@@ -230,8 +230,6 @@ function HobbyWithLimit({
   hobby: Hobby
   resolve: (ls: Record<string, string>) => string
 }) {
-  const [expanded, setExpanded] = useState(false)
-
   const title = hobby.title
 
   const IconComponent = hobby.icon && (LucideIcons as unknown as Record<string, LucideIcon>)[hobby.icon]
