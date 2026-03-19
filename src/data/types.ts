@@ -123,6 +123,7 @@ export interface Education {
 // ===== HOBBIES =====
 
 export interface Hobby {
+  title : LocalizedString
   icon? : string
   details?: LocalizedString[]
 }

@@ -244,18 +244,16 @@ function HobbyWithLimit({
 }) {
   const [expanded, setExpanded] = useState(false)
 
+  const title = hobby.title
   const details: (string | Record<string, string>)[] = hobby.details ?? []
   const visibleDetails = maxDetails && !expanded ? details.slice(0, maxDetails) : details
 
-  // Get the icon component if icon name is provided
-  const IconComponent =
-    hobby.icon && (LucideIcons as unknown as Record<string, LucideIcon>)[hobby.icon]
+  const IconComponent = hobby.icon && (LucideIcons as unknown as Record<string, LucideIcon>)[hobby.icon]
 
-  // If icon exists → show with icon bullets
   if (IconComponent) {
     return (
       <div className="flex flex-col gap-1">
-        {visibleDetails.length > 0 && (
+        {visibleDetails.length > 0 ? (
           <div className="flex flex-col gap-1 mt-1 ml-6">
             {visibleDetails.map((detail, j) => (
               <div key={j} className="flex items-start gap-2">
@@ -278,15 +276,22 @@ function HobbyWithLimit({
               </button>
             )}
           </div>
+        ) : (
+          <div className="flex items-start gap-2">
+            <IconComponent className="w-4 h-4 text-resume-primary shrink-0 mt-[2px]" />
+
+            <span className="text-resume-primary text-xs">
+              {typeof title === "string" ? title : resolve(title)}
+            </span>
+          </div>
         )}
       </div>
     )
   }
 
-  // Original design for hobbies without icons
   return (
     <div className="flex flex-col gap-1">
-      {visibleDetails.length > 0 && (
+      {visibleDetails.length > 0 ? (
         <div className="flex flex-col gap-1 mt-1">
           {visibleDetails.map((detail, j) => (
             <span key={j} className="text-resume-primary text-xs">
@@ -305,6 +310,10 @@ function HobbyWithLimit({
             </button>
           )}
         </div>
+      ) : (
+        <span className="text-resume-primary text-xs">
+          {typeof title === "string" ? title : resolve(title)}
+        </span>
       )}
     </div>
   )
