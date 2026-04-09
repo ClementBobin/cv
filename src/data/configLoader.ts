@@ -22,27 +22,29 @@ export async function loadResumeConfig(): Promise<ResumeConfig> {
   await fetchTechRegistry()
 
   try {
-      const configUrl = import.meta.env.VITE_RESSOURCES_URL;
+    const configUrl = import.meta.env.VITE_RESSOURCES_URL
+    if (!configUrl) throw new ResumeConfigError('Decoded config URL is empty', 'url')
 
-      if (!configUrl) {
-        throw new ResumeConfigError('Decoded config URL is empty', 'url')
-      }
+    const response = await fetch(`${configUrl}/cv`)
+    if (!response.ok) {
+      throw new ResumeConfigError(`HTTP ${response.status} – ${response.statusText}`, 'url')
+    }
 
-      const response = await fetch(`${import.meta.env.VITE_RESSOURCES_URL}/cv`)
+    const parsed = await response.json() as ResumeConfig
 
-      if (!response.ok) {
-        throw new ResumeConfigError(
-          `HTTP ${response.status} – ${response.statusText}`,
-          'url'
-        )
-      }
+    const params = new URLSearchParams(window.location.search)
+    const email = params.get('email')
+    const phone = params.get('phone')
 
-      const parsed = await response.json()
-      return parsed
+    const injected = [
+      ...(email ? [{ type: 'email' as const, label: email }] : []),
+      ...(phone ? [{ type: 'phone' as const, label: phone }] : []),
+    ]
+
+    parsed.contact = [...injected, ...parsed.contact]
+
+    return parsed
   } catch (error) {
     throw new ResumeConfigError(`Failed to load resume configuration: ${error}`, 'url')
   }
-
-  /* ---------- DEFAULT ---------- */
-  // return defaultConfig
 }
