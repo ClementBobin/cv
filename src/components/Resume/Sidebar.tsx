@@ -283,7 +283,7 @@ function SkillCategoryWithLimit({
       {category.type === 'badges' && (
         <div className="flex flex-wrap gap-1.5">
           {visibleItems.map((item) => (
-            <TechBadge key={typeof item.name === 'string' ? item.name : item.name.en} tech={item} />
+            <TechBadge key={item.name} tech={item} />
           ))}
           {maxItems && items.length > maxItems && (
             <button
