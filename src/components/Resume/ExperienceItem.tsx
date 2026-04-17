@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { ChevronDownIcon, ExternalLinkIcon } from '@/components/icons'
 import { useBreakpoints } from '@/lib/hooks/useBreakpoints'
 import { Modal } from '@/components/ui/Modal'
-import { cn } from '@/lib/utils'
+import { cn, techKey } from '@/lib/utils'
 import { TechBadge } from './TechBadge'
 import { ExperienceDetailsContent } from './ExperienceDetails'
 import type { TechEntry } from '@/data/types'
@@ -102,7 +102,7 @@ export function ExperienceItem({
   }
 
   return (
-    <motion.div
+    <m.div
       className="relative"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -128,12 +128,12 @@ export function ExperienceItem({
 
           <div className="flex-1 min-w-0 relative">
             {details && (
-              <motion.div
+              <m.div
                 animate={{ rotate: expanded ? 180 : 0 }}
                 className="absolute top-0 right-0"
               >
                 <ChevronDownIcon className="w-4 h-4 text-resume-primary" />
-              </motion.div>
+              </m.div>
             )}
             <div className="flex items-center gap-2 flex-wrap pr-6 md:pr-0">
               {href ? (
@@ -160,8 +160,8 @@ export function ExperienceItem({
 
             {techs && techs.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {visibleTechs.map((tech, i) => (
-                  <TechBadge key={i} tech={tech} />
+                {visibleTechs.map((tech) => (
+                  <TechBadge key={techKey(tech)} tech={tech} />
                 ))}
                 {hiddenTechsCount > 0 && (
                   <button
@@ -189,7 +189,7 @@ export function ExperienceItem({
       {isDesktop && details && (
         <AnimatePresence>
           {expanded && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -207,7 +207,7 @@ export function ExperienceItem({
                   maxTraining={maxTraining}
                 />
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       )}
@@ -244,6 +244,6 @@ export function ExperienceItem({
           )}
         </Modal>
       )}
-    </motion.div>
+    </m.div>
   )
 }

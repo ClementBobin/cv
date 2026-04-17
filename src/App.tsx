@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useReducer } from 'react'
 import { LanguageProvider } from '@/lib/i18n'
 import { ThemeProvider } from '@/lib/theme'
 import { Resume } from '@/components/Resume'
@@ -24,6 +24,22 @@ function SeoHead({ config }: { config: ResumeConfig }) {
   return null
 }
 
+type AppState =
+  | { status: 'loading' }
+  | { status: 'ready'; config: ResumeConfig }
+  | { status: 'error'; message: string }
+
+type AppAction =
+  | { type: 'loaded'; config: ResumeConfig }
+  | { type: 'failed'; message: string }
+
+function appReducer(_: AppState, action: AppAction): AppState {
+  switch (action.type) {
+    case 'loaded': return { status: 'ready', config: action.config }
+    case 'failed': return { status: 'error', message: action.message }
+  }
+}
+
 function LoadingSpinner() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-resume-bg">
@@ -36,53 +52,38 @@ function LoadingSpinner() {
 }
 
 export default function App() {
-  const [config, setConfig] = useState<ResumeConfig | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [state, dispatch] = useReducer(appReducer, { status: 'loading' })
 
   useEffect(() => {
     loadResumeConfig()
-      .then((loadedConfig) => {
-        setConfig(loadedConfig)
-        setLoading(false)
-      })
+      .then((config) => dispatch({ type: 'loaded', config }))
       .catch((err) => {
         console.error('Failed to load config:', err)
-        setError('Failed to load resume configuration')
-        setLoading(false)
+        dispatch({ type: 'failed', message: 'Failed to load resume configuration' })
       })
   }, [])
 
-  if (loading) {
-    return <LoadingSpinner />
-  }
-
-  if (error || !config) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-resume-bg p-4">
-        <div className="max-w-md text-center">
-          <h1 className="text-2xl font-bold text-resume-text mb-4">Error Loading Resume</h1>
-          <p className="text-resume-text-secondary mb-4">{error || 'Configuration not found'}</p>
-        </div>
+  if (state.status === 'loading') return <LoadingSpinner />
+  if (state.status === 'error') return (
+    <div className="min-h-screen flex items-center justify-center bg-resume-bg p-4">
+      <div className="max-w-md text-center">
+        <h1 className="text-2xl font-bold text-resume-text mb-4">Error Loading Resume</h1>
+        <p className="text-resume-text-secondary mb-4">{state.message}</p>
       </div>
-    )
-  }
+    </div>
+  )
 
   return (
-    <ThemeProvider resumeConfig={config}>
-      <LanguageProvider resumeConfig={config}>
-        <SeoHead config={config} />
+    <ThemeProvider resumeConfig={state.config}>
+      <LanguageProvider resumeConfig={state.config}>
+        <SeoHead config={state.config} />
         <ThemeVarsInjector>
           <PresetSelector />
-          <Resume config={config} />
+          <Resume config={state.config} />
         </ThemeVarsInjector>
       </LanguageProvider>
       {import.meta.env.DEV && (
-        <>
-          <Suspense>
-            <Agentation />
-          </Suspense>
-        </>
+        <Suspense><Agentation /></Suspense>
       )}
     </ThemeProvider>
   )

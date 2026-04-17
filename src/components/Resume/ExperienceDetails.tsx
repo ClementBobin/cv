@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TechBadge } from './TechBadge'
 import type { TechEntry } from '@/data/types'
 import { ExternalLinkIcon } from '../icons'
+import { techKey } from "@/lib/utils";
 
 interface ResolvedTrainingItem {
   text: string
@@ -71,8 +72,8 @@ export function ExperienceDetailsContent({
         <div>
           <p className="text-xs font-semibold text-resume-text mb-2">{labels.technologies}</p>
           <div className="flex flex-wrap gap-2">
-            {techs.map((tech, i) => (
-              <TechBadge key={i} tech={tech} />
+            {techs.map((tech) => (
+              <TechBadge key={techKey(tech)} tech={tech} />
             ))}
           </div>
         </div>
@@ -82,8 +83,8 @@ export function ExperienceDetailsContent({
         <div>
           <p className="text-xs font-semibold text-resume-text mb-2">{labels.mainTasks}</p>
           <ul className="text-xs text-resume-text-secondary space-y-1">
-            {visibleTasks.map((task, i) => (
-              <li key={i} className="flex items-start gap-2">
+            {visibleTasks.map((task) => (
+              <li key={task} className="flex items-start gap-2">
                 <span className="text-resume-primary">&#8226;</span>
                 <span>{task}</span>
               </li>
@@ -106,8 +107,8 @@ export function ExperienceDetailsContent({
         <div>
           <p className="text-xs font-semibold text-resume-text mb-2">{labels.training}</p>
           <ul className="text-xs text-resume-text-secondary space-y-1">
-            {visibleTraining.map((item, i) => (
-              <li key={i} className="flex items-start gap-2">
+            {visibleTraining.map((item) => (
+              <li key={item.href ?? item.text} className="flex items-start gap-2">
                 <span className="text-resume-primary">&#8226;</span>
                 {item.href ? (
                   <a

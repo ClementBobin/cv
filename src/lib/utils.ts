@@ -22,3 +22,7 @@ export function assetUrl(path: string): string {
   }
   return `${base}${path}`
 }
+
+export function techKey(tech: TechEntry): string {
+  return typeof tech === 'object' ? tech.name : tech
+}

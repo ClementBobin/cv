@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import type { ResumeConfig, SkillItem, Hobby } from '@/data/types'
 import { assetUrl } from '@/lib/utils'
@@ -40,7 +40,7 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
 
   return (
     <div className="flex justify-center mb-6" style={{ perspective: '300px' }}>
-      <motion.div
+      <m.div
         onClick={handleFlip}
         onKeyDown={handleKeyDown}
         onAnimationComplete={() => setIsSpinning(false)}
@@ -70,7 +70,7 @@ function SidebarPhoto({ photo, name, emoji }: { photo: string; name: string; emo
         >
           <span className="text-4xl">{emoji || '👨‍💻'}</span>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   )
 }
@@ -137,19 +137,16 @@ export function Sidebar({ config }: SidebarProps) {
       {/* Skills */}
       <SidebarSection title={resolve(labels.sections.skills)}>
         <div className="space-y-4">
-          {visibleSkills.map((category, i) => {
-            const maxItems = limits?.skillItems
-            return (
-              <SkillCategoryWithLimit
-                key={`${resolve(category.title)}-${i}`}
-                category={category}
-                resolve={resolve}
-                maxItems={maxItems}
-                showMoreLabel={showMoreLabel}
-                showLessLabel={showLessLabel}
-              />
-            )
-          })}
+          {visibleSkills.map((category) => (
+            <SkillCategoryWithLimit
+              key={resolve(category.title)}
+              category={category}
+              resolve={resolve}
+              maxItems={limits?.skillItems}
+              showMoreLabel={showMoreLabel}
+              showLessLabel={showLessLabel}
+            />
+          ))}
           {limits?.skills && skills.length > limits.skills && (
             <button
               onClick={() => setShowAllSkills(!showAllSkills)}
@@ -169,9 +166,9 @@ export function Sidebar({ config }: SidebarProps) {
           <div className="flex flex-col gap-2">
             {(hobbies ?? [])
               .slice(0, limits?.hobbies && !showAllHobbies ? limits.hobbies : undefined)
-              .map((hobby, i) => (
+              .map((hobby) => (
                 <HobbyWithLimit
-                  key={i}
+                  key={typeof hobby.title === 'string' ? hobby.title : resolve(hobby.title)}
                   hobby={hobby}
                   resolve={resolve}
                 />
@@ -197,9 +194,9 @@ export function Sidebar({ config }: SidebarProps) {
           <div className="flex flex-col gap-2">
             {(softSkills ?? [])
               .slice(0, limits?.softSkills && !showAllSoftSkills ? limits.softSkills : undefined)
-              .map((softSkill, i) => (
+              .map((softSkill) => (
                 <HobbyWithLimit
-                  key={i}
+                  key={typeof softSkill.title === 'string' ? softSkill.title : resolve(softSkill.title)}
                   hobby={softSkill}
                   resolve={resolve}
                 />
@@ -285,8 +282,8 @@ function SkillCategoryWithLimit({
     <SkillCategory title={resolve(category.title)}>
       {category.type === 'badges' && (
         <div className="flex flex-wrap gap-1.5">
-          {visibleItems.map((item, idx) => (
-            <TechBadge key={idx} tech={item} />
+          {visibleItems.map((item) => (
+            <TechBadge key={typeof item.name === 'string' ? item.name : item.name.en} tech={item} />
           ))}
           {maxItems && items.length > maxItems && (
             <button

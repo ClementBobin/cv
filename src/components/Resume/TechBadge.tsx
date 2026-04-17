@@ -35,6 +35,17 @@ function ensureDarkModeReadable(hex: string): string {
 }
 const LUMINANCE_THRESHOLD = 0.4
 
+// add above TechBadge
+function TechIcon({ iconHref, iconClass, displayText }: {
+  iconHref?: string
+  iconClass?: string
+  displayText: string
+}) {
+  if (iconHref) return <img src={iconHref} alt={displayText} className="h-3 w-3 mr-1" />
+  if (iconClass) return <i className={`${iconClass} mr-1`} />
+  return null
+}
+
 export function TechBadge({ tech }: TechBadgeProps) {
   const isObj = isTechBadgeItem(tech)
 
@@ -49,12 +60,6 @@ export function TechBadge({ tech }: TechBadgeProps) {
   const isLight = getLuminance(color) > LUMINANCE_THRESHOLD
   const darkModeColor = ensureDarkModeReadable(color)
 
-  const renderIcon = () => {
-    if (iconHref) return <img src={iconHref} alt={displayText} className="h-3 w-3 mr-1" />
-    if (iconClass) return <i className={`${iconClass} mr-1`} />
-    return null
-  }
-
   const badgeContent = (
     <>
       {/* Light mode */}
@@ -65,7 +70,7 @@ export function TechBadge({ tech }: TechBadgeProps) {
           color: isLight ? '#374151' : color,
         }}
       >
-        {renderIcon()}
+        <TechIcon iconHref={iconHref} iconClass={iconClass} displayText={displayText} />
         {displayText}
         {href && (
           <ExternalLinkIcon
@@ -88,7 +93,7 @@ export function TechBadge({ tech }: TechBadgeProps) {
           color: darkModeColor,
         }}
       >
-        {renderIcon()}
+        <TechIcon iconHref={iconHref} iconClass={iconClass} displayText={displayText} />
         {displayText}
         {href && (
           <ExternalLinkIcon

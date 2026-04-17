@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TechBadge } from './TechBadge'
 import { GitHubIcon, ExternalLinkIcon } from '@/components/icons'
 import type { TechEntry } from '@/data/types'
+import { techKey } from '@/lib/utils'
 
 interface ProjectItemProps {
   title: string
@@ -49,8 +50,8 @@ export function ProjectItem({
       <p className="text-xs text-resume-text-secondary mb-2">{description}</p>
       {visibleTechs && visibleTechs.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
-          {visibleTechs.map((tech, i) => (
-            <TechBadge key={i} tech={tech} />
+          {visibleTechs.map((tech) => (
+            <TechBadge key={techKey(tech)} tech={tech} />
           ))}
           {maxTechs && techs && techs.length > maxTechs && (
             <button

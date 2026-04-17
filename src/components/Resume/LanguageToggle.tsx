@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { ChevronDownIcon } from '@/components/icons'
 import { useTranslation } from '@/lib/i18n'
 import type { ResumeConfig } from '@/data/types'
@@ -36,14 +36,14 @@ export function LanguageToggle({ config }: { config: ResumeConfig }) {
         aria-expanded={isOpen}
       >
         {labels[language]}
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+        <m.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDownIcon className="w-3 h-3" />
-        </motion.div>
+        </m.div>
       </button>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.ul
+          <m.ul
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
@@ -68,7 +68,7 @@ export function LanguageToggle({ config }: { config: ResumeConfig }) {
                 </button>
               </li>
             ))}
-          </motion.ul>
+          </m.ul>
         )}
       </AnimatePresence>
     </div>

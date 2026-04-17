@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { assetUrl } from '@/lib/utils'
+import { assetUrl, techKey } from '@/lib/utils'
 import { TechBadge } from './TechBadge'
 import type { TechEntry } from '@/data/types'
 import { ExternalLinkIcon } from '../icons'
@@ -55,8 +55,8 @@ export function EducationItem({
       <div className="flex items-start gap-4">{inner}</div>
       {visibleTechs && visibleTechs.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
-          {visibleTechs.map((tech, i) => (
-            <TechBadge key={i} tech={tech} />
+          {visibleTechs.map((tech) => (
+            <TechBadge key={techKey(tech)} tech={tech} />
           ))}
           {maxTechs && techs && techs.length > maxTechs && (
             <button

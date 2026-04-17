@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { m, LazyMotion, domAnimation } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n'
 import type { ResumeConfig } from '@/data/types'
 import { Sidebar } from './Sidebar'
@@ -8,6 +8,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { LanguageToggle } from './LanguageToggle'
 import { PdfDownload } from './PdfDownload'
 import { fetchTechRegistry } from '@/data/tech-registry'
+import { useReducedMotion } from '@/lib/hooks/useReducedMotion'
 
 interface ResumeProps {
   config: ResumeConfig
@@ -16,6 +17,7 @@ interface ResumeProps {
 export function Resume({ config }: ResumeProps) {
   const { resolve } = useTranslation()
   const [loaded, setLoaded] = useState(false)
+  const prefersReduced = useReducedMotion()
 
     useEffect(() => {
     async function loadRegistry() {
@@ -33,35 +35,37 @@ export function Resume({ config }: ResumeProps) {
 
   if (!loaded) return <div>Loading resume…</div>
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 mt-8 sm:mt-0">
-      {/* Top bar: theme toggle + language + pdf */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <PdfDownload config={config} />
+    <LazyMotion features={domAnimation}>
+      <div className="w-full max-w-4xl mx-auto px-4 py-8 mt-8 sm:mt-0">
+        {/* Top bar: theme toggle + language + pdf */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <PdfDownload config={config} />
+          </div>
+          <div className="flex items-center gap-2">
+            <LanguageToggle config={config} />
+            <ThemeToggle label={resolve(config.labels.actions.switchTheme)} />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <LanguageToggle config={config} />
-          <ThemeToggle label={resolve(config.labels.actions.switchTheme)} />
-        </div>
+
+        {/* Resume card */}
+        <m.div
+          initial={prefersReduced ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-resume-bg-card rounded-lg shadow-2xl overflow-hidden dark:border dark:border-resume-primary/10"
+          id='CV'
+        >
+          <div className="flex flex-col-reverse md:flex-row">
+            <Sidebar config={config} />
+            <MainContent config={config} />
+          </div>
+        </m.div>
+
+        {/* Hint */}
+        <p className="text-center text-sm text-resume-text-secondary mt-6">
+          {resolve(config.labels.actions.clickHint)}
+        </p>
       </div>
-
-      {/* Resume card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-resume-bg-card rounded-lg shadow-2xl overflow-hidden dark:border dark:border-resume-primary/10"
-        id='CV'
-      >
-        <div className="flex flex-col-reverse md:flex-row">
-          <Sidebar config={config} />
-          <MainContent config={config} />
-        </div>
-      </motion.div>
-
-      {/* Hint */}
-      <p className="text-center text-sm text-resume-text-secondary mt-6">
-        {resolve(config.labels.actions.clickHint)}
-      </p>
-    </div>
+    </LazyMotion>
   )
 }

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { SunIcon, MoonIcon } from '@/components/icons'
 import { useTheme } from '@/lib/theme'
 
@@ -15,7 +15,7 @@ export function ThemeToggle({ label }: ThemeToggleProps) {
       className="p-2 rounded-full hover:bg-resume-primary/10 transition-colors"
       aria-label={label || 'Toggle dark mode'}
     >
-      <motion.div
+      <m.div
         key={isDark ? 'moon' : 'sun'}
         initial={{ rotate: -90, opacity: 0 }}
         animate={{ rotate: 0, opacity: 1 }}
@@ -27,7 +27,7 @@ export function ThemeToggle({ label }: ThemeToggleProps) {
         ) : (
           <MoonIcon className="w-5 h-5 text-resume-primary" />
         )}
-      </motion.div>
+      </m.div>
     </button>
   )
 }

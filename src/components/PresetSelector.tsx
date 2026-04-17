@@ -2,7 +2,7 @@ import { presets } from '@/data/presets'
 import type { PresetName } from '@/data/types'
 import { useTheme } from '@/lib/theme'
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 
 export function ThemeVarsInjector({ children }: { children: React.ReactNode }) {
   const { colors } = useTheme()
@@ -68,7 +68,7 @@ export function PresetSelector() {
       ref={dropdownRef}
     >
       {/* Bouton principal */}
-      <motion.button
+      <m.button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full sm:w-auto gap-2 px-3 py-2 rounded-lg bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700"
         whileHover={{ scale: 1.02 }}
@@ -91,7 +91,7 @@ export function PresetSelector() {
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize mx-2">
           {preset}
         </span>
-        <motion.svg
+        <m.svg
           width="16"
           height="16"
           viewBox="0 0 16 16"
@@ -108,13 +108,13 @@ export function PresetSelector() {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        </motion.svg>
-      </motion.button>
+        </m.svg>
+      </m.button>
     
       {/* Menu déroulant */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -128,7 +128,7 @@ export function PresetSelector() {
               {presetNames.map((name) => {
                 const colors = getPresetColors(name)
                 return (
-                  <motion.button
+                  <m.button
                     key={name}
                     onClick={() => {
                       setPreset(name)
@@ -166,13 +166,13 @@ export function PresetSelector() {
                       {name}
                     </span>
                     {preset === name && (
-                      <motion.svg
+                      <m.svg
                         width="18"
                         height="18"
                         viewBox="0 0 18 18"
                         fill="none"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
                         className="text-green-500"
                       >
                         <path
@@ -182,9 +182,9 @@ export function PresetSelector() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                      </motion.svg>
+                      </m.svg>
                     )}
-                  </motion.button>
+                  </m.button>
                 )
               })}
             </div>
@@ -195,7 +195,7 @@ export function PresetSelector() {
                 {presetNames.length} thèmes disponibles
               </p>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useId } from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m, AnimatePresence } from 'framer-motion'
 import { CloseIcon } from '@/components/icons'
 
 interface ModalProps {
@@ -59,14 +59,14 @@ export function Modal({ isOpen, onClose, children, title, header, closeLabel = '
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
-          <motion.div
+          <m.div
             ref={modalRef}
             role="dialog"
             aria-modal="true"
@@ -93,7 +93,7 @@ export function Modal({ isOpen, onClose, children, title, header, closeLabel = '
               </button>
             </div>
             <div className="p-5">{children}</div>
-          </motion.div>
+          </m.div>
         </>
       )}
     </AnimatePresence>,

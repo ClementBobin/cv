@@ -9,7 +9,7 @@ import {
   WebsiteIcon,
 } from '@/components/icons'
 import type { ContactType } from '@/data/types'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import { useCallback, useState } from 'react'
 
 const ICON_COMPONENTS: Record<ContactType, React.FC<React.SVGProps<SVGSVGElement>>> = {
@@ -69,27 +69,27 @@ export function ContactItem({ type, label, href }: ContactItemProps) {
         <span className="relative w-4 h-4 text-resume-primary group-hover:scale-115 transition-transform duration-200">
           <AnimatePresence mode="wait">
             {copied ? (
-              <motion.span
+              <m.span
                 key="check"
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
+                exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ duration: 0.1 }}
                 className="absolute inset-0 text-green-500"
               >
                 <CheckIcon className="w-4 h-4" />
-              </motion.span>
+              </m.span>
             ) : (
-              <motion.span
+              <m.span
                 key="icon"
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
+                exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ duration: 0.1 }}
                 className="absolute inset-0"
               >
                 <IconComponent className="w-4 h-4" />
-              </motion.span>
+              </m.span>
             )}
           </AnimatePresence>
         </span>
@@ -98,7 +98,7 @@ export function ContactItem({ type, label, href }: ContactItemProps) {
 
         <AnimatePresence>
           {copied && (
-            <motion.span
+            <m.span
               initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 4 }}
@@ -106,7 +106,7 @@ export function ContactItem({ type, label, href }: ContactItemProps) {
               className="text-xs text-green-500 ml-1"
             >
               Copied!
-            </motion.span>
+            </m.span>
           )}
         </AnimatePresence>
       </button>
