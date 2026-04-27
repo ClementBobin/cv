@@ -115,11 +115,12 @@ export function PresetSelector() {
       <AnimatePresence>
         {isOpen && (
           <m.div
+            key="preset-dropdown"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 sm:w-64 w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 sm:w-64 w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
           >
             <div className="p-2">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-2 uppercase tracking-wider">

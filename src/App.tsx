@@ -5,6 +5,7 @@ import { Resume } from '@/components/Resume'
 import { loadResumeConfig } from '@/data/configLoader'
 import type { ResumeConfig } from '@/data/types'
 import { ThemeVarsInjector, PresetSelector } from '@/components/PresetSelector'
+import { LazyMotion, domAnimation } from 'framer-motion'
 
 const Agentation = lazy(() =>
   import('agentation').then((m) => ({ default: m.Agentation }))
@@ -77,10 +78,12 @@ export default function App() {
     <ThemeProvider resumeConfig={state.config}>
       <LanguageProvider resumeConfig={state.config}>
         <SeoHead config={state.config} />
-        <ThemeVarsInjector>
-          <PresetSelector />
-          <Resume config={state.config} />
-        </ThemeVarsInjector>
+        <LazyMotion features={domAnimation}>
+          <ThemeVarsInjector>
+            <PresetSelector />
+            <Resume config={state.config} />
+          </ThemeVarsInjector>
+        </LazyMotion> 
       </LanguageProvider>
       {import.meta.env.DEV && (
         <Suspense><Agentation /></Suspense>
